@@ -1,0 +1,126 @@
+[
+  {
+    "code": "CABLE",
+    "nameEn": "Cables and wires",
+    "nameHi": "केबल और तार",
+    "nameMr": "केबल आणि तारा",
+    "iconKey": "cable",
+    "hazardLevel": "NONE",
+    "unit": "KG",
+    "baseRate": "180.00",
+    "sortOrder": 1,
+    "subCategories": [
+      { "code": "COPPER_WIRE", "nameEn": "Copper wire", "nameHi": "तांबे का तार", "nameMr": "तांब्याची तार", "sortOrder": 1 },
+      { "code": "MIXED_CABLE", "nameEn": "Mixed cable", "nameHi": "मिक्स्ड केबल", "nameMr": "मिश्र केबल", "sortOrder": 2 },
+      { "code": "CHARGER_CABLE", "nameEn": "Charger cables", "nameHi": "चार्जर केबल", "nameMr": "चार्जर केबल", "sortOrder": 3 }
+    ]
+  },
+  {
+    "code": "PCB",
+    "nameEn": "Circuit boards",
+    "nameHi": "सर्किट बोर्ड",
+    "nameMr": "सर्किट बोर्ड",
+    "iconKey": "pcb",
+    "hazardLevel": "NONE",
+    "unit": "KG",
+    "baseRate": "320.00",
+    "sortOrder": 2,
+    "subCategories": [
+      { "code": "MOTHERBOARD", "nameEn": "Computer motherboard", "nameHi": "मदरबोर्ड", "nameMr": "मदरबोर्ड", "sortOrder": 1 },
+      { "code": "MOBILE_PCB", "nameEn": "Mobile phone PCB", "nameHi": "मोबाइल सर्किट", "nameMr": "मोबाईल सर्किट", "sortOrder": 2 },
+      { "code": "MIXED_PCB", "nameEn": "Mixed electronics PCB", "nameHi": "मिक्स्ड सर्किट बोर्ड", "nameMr": "मिश्र सर्किट बोर्ड", "sortOrder": 3 }
+    ]
+  },
+  {
+    "code": "BATTERY",
+    "nameEn": "Batteries",
+    "nameHi": "बैटरी",
+    "nameMr": "बॅटरी",
+    "iconKey": "battery",
+    "hazardLevel": "HIGH",
+    "unit": "KG",
+    "baseRate": "70.00",
+    "sortOrder": 3,
+    "subCategories": [
+      { "code": "LEAD_ACID", "nameEn": "Lead acid battery", "nameHi": "लेड एसिड बैटरी", "nameMr": "लेड ॲसिड बॅटरी", "sortOrder": 1 },
+      { "code": "LITHIUM_ION", "nameEn": "Lithium-ion pack", "nameHi": "लिथियम-आयन बैटरी", "nameMr": "लिथियम-आयन बॅटरी", "sortOrder": 2 },
+      { "code": "OTHER_CELL", "nameEn": "Assorted small cells", "nameHi": "अन्य छोटी बैटरी", "nameMr": "इतर लहान पेशी", "sortOrder": 3 }
+    ]
+  },
+  {
+    "code": "CRT",
+    "nameEn": "Old TV or CRT monitor",
+    "nameHi": "पुराना टीवी / CRT",
+    "nameMr": "जुना टीव्ही / CRT",
+    "iconKey": "crt",
+    "hazardLevel": "HIGH",
+    "unit": "KG",
+    "baseRate": "12.00",
+    "sortOrder": 4,
+    "subCategories": [
+      { "code": "CRT_TV", "nameEn": "CRT television unit", "nameHi": "सीआरटी टीवी", "nameMr": "सीआरटी टीव्ही", "sortOrder": 1 },
+      { "code": "CRT_MONITOR", "nameEn": "CRT computer monitor", "nameHi": "सीआरटी कंप्यूटर मॉनिटर", "nameMr": "सीआरटी मॉनिटर", "sortOrder": 2 }
+    ]
+  },
+  {
+    "code": "LCD",
+    "nameEn": "Flat screen or LCD",
+    "nameHi": "फ्लैट स्क्रीन / LCD",
+    "nameMr": "फ्लॅट स्क्रीन / LCD",
+    "iconKey": "lcd",
+    "hazardLevel": "LOW",
+    "unit": "KG",
+    "baseRate": "35.00",
+    "sortOrder": 5,
+    "subCategories": [
+      { "code": "LCD_MONITOR", "nameEn": "LCD monitor", "nameHi": "एलसीडी मॉनिटर", "nameMr": "एलसीडी मॉनिटर", "sortOrder": 1 },
+      { "code": "LCD_TV", "nameEn": "LCD / LED TV", "nameHi": "एलसीडी टीवी", "nameMr": "एलसीडी टीव्ही", "sortOrder": 2 },
+      { "code": "LAPTOP_SCREEN", "nameEn": "Laptop display panel", "nameHi": "लैपटॉप स्क्रीन", "nameMr": "लॅपटॉप स्क्रीन", "sortOrder": 3 }
+    ]
+  },
+  {
+    "code": "MOTOR",
+    "nameEn": "Motors and magnets",
+    "nameHi": "मोटर और चुंबक",
+    "nameMr": "मोटर आणि चुंबक",
+    "iconKey": "motor",
+    "hazardLevel": "NONE",
+    "unit": "KG",
+    "baseRate": "90.00",
+    "sortOrder": 6,
+    "subCategories": [
+      { "code": "FAN_MOTOR", "nameEn": "Fan / appliance motor", "nameHi": "पंखा व मोटर", "nameMr": "फॅन व मोटर", "sortOrder": 1 },
+      { "code": "HDD_MAGNET", "nameEn": "HDD voice-coil magnet", "nameHi": "हार्ड डिस्क चुंबक", "nameMr": "हार्ड डिस्क चुंबक", "sortOrder": 2 },
+      { "code": "MIXED_MOTOR", "nameEn": "Mixed small motors", "nameHi": "मिक्स्ड मोटर", "nameMr": "मिश्र मोटर", "sortOrder": 3 }
+    ]
+  },
+  {
+    "code": "PLASTIC",
+    "nameEn": "Mixed plastic casing",
+    "nameHi": "प्लास्टिक केसिंग",
+    "nameMr": "प्लास्टिक केसिंग",
+    "iconKey": "plastic",
+    "hazardLevel": "NONE",
+    "unit": "KG",
+    "baseRate": "15.00",
+    "sortOrder": 7,
+    "subCategories": [
+      { "code": "ABS_CASING", "nameEn": "ABS rigid casing", "nameHi": "कठोर प्लास्टिक", "nameMr": "कडक प्लास्टिक", "sortOrder": 1 },
+      { "code": "MIXED_PLASTIC", "nameEn": "Shredded mixed polymers", "nameHi": "मिक्स्ड प्लास्टिक", "nameMr": "मिश्र प्लास्टिक", "sortOrder": 2 }
+    ]
+  },
+  {
+    "code": "OTHER",
+    "nameEn": "Other e-waste",
+    "nameHi": "अन्य ई-कचरा",
+    "nameMr": "इतर ई-कचरा",
+    "iconKey": "other",
+    "hazardLevel": "NONE",
+    "unit": "KG",
+    "baseRate": "25.00",
+    "sortOrder": 8,
+    "subCategories": [
+      { "code": "MIXED", "nameEn": "Mixed electrical scrap", "nameHi": "मिश्रित ई-कचरा", "nameMr": "मिश्र ई-कचरा", "sortOrder": 1 }
+    ]
+  }
+]

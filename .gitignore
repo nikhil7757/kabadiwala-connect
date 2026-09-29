@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing & Coverage
+coverage/
+test-results/
+playwright-report/
+
+# Build Output
+dist/
+build/
+.vercel
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Uploads & Runtime storage
+uploads/
+*.tsbuildinfo
+
+# OS Metadata
+.DS_Store
+Thumbs.db

@@ -1,0 +1,23 @@
+[
+  {
+    "phone": "9000000001",
+    "preferredLanguage": "HI",
+    "state": "MH",
+    "district": "Pune",
+    "operatingArea": "Bhosari / Pimpri"
+  },
+  {
+    "phone": "9000000002",
+    "preferredLanguage": "MR",
+    "state": "MH",
+    "district": "Pune",
+    "operatingArea": "Hadapsar / Swargate"
+  },
+  {
+    "phone": "9000000003",
+    "preferredLanguage": "MR",
+    "state": "MH",
+    "district": "Nagpur",
+    "operatingArea": "Hingna / Sitabuldi"
+  }
+]

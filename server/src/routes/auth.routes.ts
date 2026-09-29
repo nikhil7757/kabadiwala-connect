@@ -1,0 +1,298 @@
+import { Router } from 'express';
+import { z } from 'zod';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { prisma } from '../lib/prisma.js';
+import { config } from '../config.js';
+import { AppError } from '../lib/errors.js';
+import { validate } from '../middleware/validate.js';
+import { authenticate } from '../middleware/authenticate.js';
+import { authRateLimiter } from '../middleware/rateLimit.js';
+import { hmacSha256Hex, timingSafeEqualString } from '../lib/crypto.js';
+import { nowUtc } from '../lib/time.js';
+
+export const authRouter = Router();
+
+// Apply auth rate limiter
+authRouter.use(authRateLimiter);
+
+// Fixed dummy hash for constant-time comparisons when email does not exist
+const DUMMY_HASH = '$2a$10$wK1c7Fh7Z9yO2h7L1N8L3.aP1n7M4B7V2C9X6Z3Q0W8E5R2T1Y4U';
+
+const phoneSchema = z.string().regex(/^[6-9]\d{9}$/, 'Phone must be a valid 10-digit Indian mobile number');
+
+const otpRequestSchema = z.object({
+  phone: phoneSchema,
+});
+
+const otpVerifySchema = z.object({
+  phone: phoneSchema,
+  otp: z.string().length(6, 'Code must be 6 digits'),
+  preferredLanguage: z.enum(['HI', 'MR', 'EN']).optional().default('HI'),
+});
+
+const staffLoginSchema = z.object({
+  email: z.string().email().transform((val) => val.toLowerCase().trim()),
+  password: z.string().min(1, 'Password is required'),
+});
+
+// POST /auth/otp/request
+authRouter.post(
+  '/otp/request',
+  validate({ body: otpRequestSchema }),
+  async (req, res, next) => {
+    try {
+      const { phone } = req.body;
+
+      if (!config.DEMO_MODE) {
+        throw AppError.notImplemented('Real SMS provider is not implemented in prototype. Run with DEMO_MODE=true');
+      }
+
+      // Check rate limit: 5 OTP requests per phone in last 15 minutes
+      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+      const recentCount = await prisma.otpRequest.count({
+        where: {
+          phone,
+          createdAt: { gte: fifteenMinutesAgo },
+        },
+      });
+
+      if (recentCount >= 5) {
+        throw AppError.rateLimited('Maximum code request limit reached for this phone. Please wait 15 minutes.');
+      }
+
+      // In demo mode, code is always 123456
+      const code = '123456';
+      const codeHash = hmacSha256Hex(config.JWT_SECRET, code);
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min expiry
+
+      await prisma.otpRequest.create({
+        data: {
+          phone,
+          codeHash,
+          expiresAt,
+          attempts: 0,
+        },
+      });
+
+      // Always return { sent: true }, never return or log the code
+      res.json({
+        data: { sent: true },
+        error: null,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// POST /auth/otp/verify
+authRouter.post(
+  '/otp/verify',
+  validate({ body: otpVerifySchema }),
+  async (req, res, next) => {
+    try {
+      const { phone, otp, preferredLanguage } = req.body;
+
+      // 1. Find latest unconsumed, unexpired OtpRequest
+      const now = nowUtc();
+      const latestRequest = await prisma.otpRequest.findFirst({
+        where: {
+          phone,
+          consumedAt: null,
+          expiresAt: { gt: now },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      if (!latestRequest) {
+        throw AppError.otpInvalid('Code is invalid or expired. Please request a new code.');
+      }
+
+      // 2. Increment attempts first
+      const updatedRequest = await prisma.otpRequest.update({
+        where: { id: latestRequest.id },
+        data: { attempts: { increment: 1 } },
+      });
+
+      if (updatedRequest.attempts > 5) {
+        throw AppError.rateLimited('Maximum attempts exceeded for this code. Please request a new code.');
+      }
+
+      // 3. Compare HMACs with timing-safe comparison
+      const providedHash = hmacSha256Hex(config.JWT_SECRET, otp);
+      if (!timingSafeEqualString(providedHash, latestRequest.codeHash)) {
+        throw AppError.otpInvalid('Invalid code. Please try again.');
+      }
+
+      // 4. Mark code consumed
+      await prisma.otpRequest.update({
+        where: { id: latestRequest.id },
+        data: { consumedAt: now },
+      });
+
+      // 5. Upsert Collector
+      const collector = await prisma.collector.upsert({
+        where: { phone },
+        update: {
+          lastLoginAt: now,
+          preferredLanguage: preferredLanguage || undefined,
+        },
+        create: {
+          phone,
+          preferredLanguage,
+          state: config.DEFAULT_STATE_CODE,
+          isSampleData: phone.startsWith('900000000'),
+          lastLoginAt: now,
+        },
+      });
+
+      // 6. Sign JWT (sub, role)
+      const token = jwt.sign(
+        { sub: collector.id, role: 'COLLECTOR' },
+        config.JWT_SECRET,
+        { expiresIn: config.JWT_COLLECTOR_TTL as any }
+      );
+
+      res.json({
+        data: {
+          token,
+          collector: {
+            id: collector.id,
+            phone: collector.phone,
+            preferredLanguage: collector.preferredLanguage,
+            state: collector.state,
+            district: collector.district,
+            operatingArea: collector.operatingArea,
+            isSampleData: collector.isSampleData,
+          },
+        },
+        error: null,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// POST /auth/login (Staff login for Recycler or Admin)
+authRouter.post(
+  '/login',
+  validate({ body: staffLoginSchema }),
+  async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
+
+      // 1. Look up Recycler first, then Admin
+      let userRole: 'RECYCLER' | 'ADMIN' | null = null;
+      let userObj: { id: string; name: string; email: string; passwordHash: string } | null = null;
+
+      const recycler = await prisma.recycler.findUnique({
+        where: { email },
+        select: { id: true, name: true, email: true, passwordHash: true },
+      });
+
+      if (recycler) {
+        userRole = 'RECYCLER';
+        userObj = recycler;
+      } else {
+        const admin = await prisma.admin.findUnique({
+          where: { email },
+          select: { id: true, name: true, email: true, passwordHash: true },
+        });
+        if (admin) {
+          userRole = 'ADMIN';
+          userObj = admin;
+        }
+      }
+
+      // Always execute bcrypt.compare to prevent timing attacks
+      const hashToCompare = userObj ? userObj.passwordHash : DUMMY_HASH;
+      const isMatch = await bcrypt.compare(password, hashToCompare);
+
+      if (!userObj || !userRole || !isMatch) {
+        throw AppError.unauthenticated('Invalid email or password');
+      }
+
+      // Sign JWT with staff TTL
+      const token = jwt.sign(
+        { sub: userObj.id, role: userRole },
+        config.JWT_SECRET,
+        { expiresIn: config.JWT_STAFF_TTL as any }
+      );
+
+      res.json({
+        data: {
+          token,
+          user: {
+            id: userObj.id,
+            role: userRole,
+            name: userObj.name,
+            email: userObj.email,
+          },
+        },
+        error: null,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// GET /auth/me
+authRouter.get('/me', authenticate, async (req, res, next) => {
+  try {
+    const auth = req.auth!;
+    if (auth.role === 'COLLECTOR') {
+      const collector = await prisma.collector.findUnique({
+        where: { id: auth.sub },
+        select: {
+          id: true,
+          phone: true,
+          preferredLanguage: true,
+          state: true,
+          district: true,
+          operatingArea: true,
+          isSampleData: true,
+          createdAt: true,
+        },
+      });
+      if (!collector) throw AppError.notFound('Collector not found');
+      return res.json({ data: { role: auth.role, ...collector }, error: null });
+    }
+
+    if (auth.role === 'RECYCLER') {
+      const recycler = await prisma.recycler.findUnique({
+        where: { id: auth.sub },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          city: true,
+          district: true,
+          state: true,
+          authorizationStatus: true,
+          serviceRadiusKm: true,
+          pickupAvailable: true,
+          isSampleData: true,
+        },
+      });
+      if (!recycler) throw AppError.notFound('Recycler not found');
+      return res.json({ data: { role: auth.role, ...recycler }, error: null });
+    }
+
+    if (auth.role === 'ADMIN') {
+      const admin = await prisma.admin.findUnique({
+        where: { id: auth.sub },
+        select: { id: true, name: true, email: true },
+      });
+      if (!admin) throw AppError.notFound('Admin not found');
+      return res.json({ data: { role: auth.role, ...admin }, error: null });
+    }
+
+    throw AppError.unauthenticated();
+  } catch (err) {
+    next(err);
+  }
+});

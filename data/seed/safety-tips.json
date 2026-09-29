@@ -1,0 +1,80 @@
+[
+  {
+    "code": "burning",
+    "titleEn": "No Burning Cables",
+    "titleHi": "तार न जलाएं",
+    "titleMr": "केबल जाळू नका",
+    "bodyEn": "Never burn cables. The smoke is poison. Sell them to an authorized buyer.",
+    "bodyHi": "तारों को कभी न जलाएं। धुआं ज़हरीला है। अधिकृत खरीदार को बेचें।",
+    "bodyMr": "केबल कधीही जाळू नका. धूर विषारी आहे. अधिकृत खरेदीदाराला विका.",
+    "pictogramKey": "no-burning",
+    "audioKey": "safety_burning",
+    "appliesToCategoryCode": null,
+    "sortOrder": 1
+  },
+  {
+    "code": "crt",
+    "titleEn": "Do Not Open CRT",
+    "titleHi": "CRT मॉनिटर न खोलें",
+    "titleMr": "CRT टीव्ही उघडू नका",
+    "bodyEn": "Never open an old TV or monitor. The glass tube can burst. Carry it with both hands.",
+    "bodyHi": "पुराना टीवी या मॉनिटर कभी न खोलें। कांच का ट्यूब फूट सकता है। दोनों हाथों से उठाएं।",
+    "bodyMr": "जुना टीव्ही किंवा मॉनिटर उघडू नका. काचेची नळी फुटू शकते. दोन्ही हातांनी उचला.",
+    "pictogramKey": "do-not-open-crt",
+    "audioKey": "safety_crt",
+    "appliesToCategoryCode": "CRT",
+    "sortOrder": 2
+  },
+  {
+    "code": "battery",
+    "titleEn": "Safe Battery Handling",
+    "titleHi": "बैटरी सुरक्षा",
+    "titleMr": "बॅटरी सुरक्षा",
+    "bodyEn": "Keep batteries dry and apart. Do not press or cut a battery. A swollen battery must stay away from heat.",
+    "bodyHi": "बैटरी को सूखा और अलग रखें। बैटरी को दबाएं या काटें नहीं। फूली हुई बैटरी को गर्मी से दूर रखें।",
+    "bodyMr": "बॅटरी कोरडी आणि वेगळी ठेवा. बॅटरी दाबू नका किंवा कापू नका. फुगलेली बॅटरी उष्णतेपासून दूर ठेवा.",
+    "pictogramKey": "safe-battery",
+    "audioKey": "safety_battery",
+    "appliesToCategoryCode": "BATTERY",
+    "sortOrder": 3
+  },
+  {
+    "code": "acid",
+    "titleEn": "No Acid Leaching",
+    "titleHi": "तेज़ाब का उपयोग न करें",
+    "titleMr": "ॲसिड वापरू नका",
+    "bodyEn": "Never pour acid on circuit boards. It burns skin and pollutes water.",
+    "bodyHi": "सर्किट बोर्ड पर कभी तेज़ाब न डालें। यह त्वचा जलाता है और पानी प्रदूषित करता है।",
+    "bodyMr": "सर्किट बोर्डवर कधीही ॲसिड टाकू नका. हे त्वचा जाळते आणि पाणी दूषित करते.",
+    "pictogramKey": "no-acid",
+    "audioKey": "safety_acid",
+    "appliesToCategoryCode": null,
+    "sortOrder": 4
+  },
+  {
+    "code": "gloves",
+    "titleEn": "Wear Protective Gloves",
+    "titleHi": "दस्ताने पहनें",
+    "titleMr": "हातमोजे वापरा",
+    "bodyEn": "Wear gloves when you sort. Wash your hands before eating.",
+    "bodyHi": "छंटाई करते समय दस्ताने पहनें। खाने से पहले हाथ धोएं।",
+    "bodyMr": "वर्गीकरण करताना हातमोजे वापरा. खाण्यापूर्वी हात धुवा.",
+    "pictogramKey": "wear-gloves",
+    "audioKey": "safety_gloves",
+    "appliesToCategoryCode": null,
+    "sortOrder": 5
+  },
+  {
+    "code": "children",
+    "titleEn": "Keep Children Safe",
+    "titleHi": "बच्चों को दूर रखें",
+    "titleMr": "मुलांना सुरक्षित ठेवा",
+    "bodyEn": "Keep children away from scrap. Store it in a closed place.",
+    "bodyHi": "बच्चों को कबाड़ से दूर रखें। इसे बंद जगह पर रखें।",
+    "bodyMr": "मुलांना भंगारापासून दूर ठेवा. ते सुरक्षित जागी ठेवा.",
+    "pictogramKey": "keep-children-away",
+    "audioKey": "safety_children",
+    "appliesToCategoryCode": null,
+    "sortOrder": 6
+  }
+]
