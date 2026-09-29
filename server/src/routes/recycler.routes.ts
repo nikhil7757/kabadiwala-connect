@@ -25,9 +25,8 @@ recyclerRouter.get(
     }),
   }),
   async (req, res, next) => {
+    const district = (req.query.district as string) || '';
     try {
-      const { district } = req.query as { district: string };
-
       const recyclers = await prisma.recycler.findMany({
         where: {
           district,
