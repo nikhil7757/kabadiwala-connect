@@ -13,6 +13,12 @@ import { safetyRouter } from './routes/safety.routes.js';
 import { priceRouter } from './routes/price.routes.js';
 import { recyclerRouter } from './routes/recycler.routes.js';
 import { collectorRouter } from './routes/collector.routes.js';
+import { lotRouter } from './routes/lot.routes.js';
+import { photoRouter } from './routes/photo.routes.js';
+import { handoverRouter } from './routes/handover.routes.js';
+import { ledgerRouter } from './routes/ledger.routes.js';
+import { syncRouter } from './routes/sync.routes.js';
+import { adminRouter } from './routes/admin.routes.js';
 
 export const app = express();
 
@@ -45,6 +51,9 @@ app.use(
   })
 );
 
+// Authenticated photo streaming endpoint mounted at root /uploads
+app.use(photoRouter);
+
 // API v1 router
 const apiRouter = express.Router();
 apiRouter.use(healthRouter);
@@ -54,6 +63,11 @@ apiRouter.use(safetyRouter);
 apiRouter.use(priceRouter);
 apiRouter.use(recyclerRouter);
 apiRouter.use(collectorRouter);
+apiRouter.use(lotRouter);
+apiRouter.use(handoverRouter);
+apiRouter.use(ledgerRouter);
+apiRouter.use(syncRouter);
+apiRouter.use(adminRouter);
 
 // Mount under PUBLIC_API_BASE (/api/v1)
 app.use(config.PUBLIC_API_BASE, apiRouter);

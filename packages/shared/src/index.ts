@@ -15,3 +15,4 @@ export * from './schemas/ledger.schema.js';
 export * from './schemas/price.schema.js';
 export * from './schemas/recycler.schema.js';
 export * from './schemas/sync.schema.js';
+export * from './schemas/admin.schema.js';
