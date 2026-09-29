@@ -1,0 +1,580 @@
+Kabadiwala Connect: Backend, Database and Authentication Guide
+
+Companion to TRD.md (which wins on any conflict), PRD.md, APP_FLOW.md
+and prisma/schema.prisma. This file explains the database, the
+authentication design, the authorization rules and the exact server
+logic the API must implement. The endpoint list itself stays in TRD
+Section 10; this file does not repeat it.
+
+1. What the backend must do (from the official SIH26229 brief)
+
+  -----------------------------------------------------------------------
+  Official requirement                Backend feature
+  ----------------------------------- -----------------------------------
+  Material and transaction dataset    Lot, LotPhoto, Handover,
+  with traceability                   TraceRecord with a hash chain
+
+  Price discovery, history and trends PriceEntry, /prices, /prices/board,
+                                      moving-average trend
+
+  Authorized recycler dataset,        Recycler, RecyclerMaterial, shared
+  ranking and matching                matching.ts, /recyclers/*
+
+  Abnormal transaction detection      anomaly check on quote and handover
+                                      confirm (TRD 11.3)
+
+  Digital, verifiable handover        /handover/initiate,
+  confirmed by the recycler           /handover/confirm, QR and 6-digit
+                                      code
+
+  Earnings ledger with dues           LedgerEntry, /ledger
+
+  Safety guidance                     SafetyTip, /safety
+
+  Offline-first with later sync       POST /sync, SyncAction (idempotent
+                                      replay)
+
+  Minimal collector data, anonymized  Collector (phone only),
+  exports                             /export/:dataset.csv with hashing
+
+  Datasets generated, validated,      seed script plus live writes from
+  updated and used, not static        recycler rates and transactions,
+                                      validated by Zod, exported by admin
+  -----------------------------------------------------------------------
+
+2. Server structure
+
+    server/src/
+      index.ts              # boot, graceful shutdown on SIGTERM
+      app.ts                # express app: helmet, cors, json(200kb), pino-http, routes, error middleware
+      config.ts             # reads and validates env with Zod; refuses to start on bad config
+      lib/prisma.ts  lib/logger.ts  lib/errors.ts (AppError)  lib/crypto.ts  lib/time.ts
+      middleware/
+        authenticate.ts     # verifies JWT, attaches req.auth = { sub, role }
+        requireRole.ts      # requireRole('COLLECTOR' | 'RECYCLER' | 'ADMIN')
+        validate.ts         # validate({ body, query, params }) using schemas from packages/shared
+        rateLimit.ts        # /auth/* only
+        error.ts            # AppError -> envelope
+      routes/               # thin: parse, call service, wrap in envelope
+      services/
+        auth.service.ts  lot.service.ts  handover.service.ts  ledger.service.ts
+        trace.service.ts  price.service.ts  recycler.service.ts  sync.service.ts
+        anomaly.service.ts  photo.service.ts  export.service.ts  admin.service.ts
+
+Rules: routes contain no business logic. Services receive plain typed
+arguments and a Prisma transaction client, so REST handlers and /sync
+call the same functions. Pure algorithms (matching, valuation, trend,
+anomaly maths, canonical JSON, hashing) live in packages/shared and are
+imported by both server and web.
+
+3. Database guide
+
+The schema file is the source of truth. All ids are UUID. Money is
+Decimal(10,2), sent in JSON as a string with two decimals. Weight is
+Float kilograms.
+
+3.1 Models
+
+  -----------------------------------------------------------------------
+  Model                   Purpose                 Official dataset it
+                                                  serves
+  ----------------------- ----------------------- -----------------------
+  Collector               phone login, language,  Collector dataset
+                          district, operating     
+                          area                    
+
+  Admin                   verifier login          none (access control)
+
+  Recycler                facility, location,     Recycler dataset
+                          authorization, pickup,  
+                          service radius, login   
+
+  RecyclerMaterial        accepted categories and Recycler dataset
+                          offered rate per unit   (materials accepted,
+                                                  offered rate)
+
+  MaterialCategory,       canonical categories    Material dataset
+  MaterialSubCategory     with hi, mr, en names   
+
+  PriceEntry              dated buying price,     Price dataset
+                          quoted price, market    
+                          range, unit, source     
+
+  Lot                     one collected lot,      Material and
+                          quote, final price,     Transaction datasets
+                          status, anomaly flag    
+
+  LotPhoto                photo path and SHA-256  Material and
+                                                  Traceability datasets
+
+  Handover                reference, OTP expiry,  Traceability dataset
+                          weights, GPS, recycler  
+                          confirmation            
+
+  TraceRecord             append-only hash chain  Traceability dataset
+                          per lot                 
+
+  LedgerEntry             payments and dues       Transaction dataset
+                                                  (payment status)
+
+  SafetyTip               trilingual safety cards Safety guidance
+
+  OtpRequest              collector login codes   auth support
+
+  SyncAction              processed offline       sync support
+                          actions                 
+
+  AuditLog                verify, suspend, create governance
+                          recycler, rate change   
+  -----------------------------------------------------------------------
+
+3.2 Additions beyond the TRD field list (log each in DECISIONS.md)
+
+1.  OtpRequest, SyncAction, AuditLog tables. TRD requires OTP expiry and
+    attempt limits, DUPLICATE sync results and admin verification, and
+    these cannot be done without storage.
+2.  Lot.locationSource (GPS, LAST, DISTRICT): TRD 12.5 wants it
+    recorded; a real column is easier to export than text inside
+    description.
+3.  Lot status timestamps (selectedAt, quotedAt, acceptedAt,
+    handedOverAt, confirmedAt, paidAt, cancelledAt) drive the timeline
+    in the app and the 90-day reliability figure.
+4.  Lot.anomalyDetail (JSON) stores the expected range and z-score so
+    /admin/flags can show them without recomputing.
+5.  PriceEntry.quotedPrice and PriceSource.FIELD_SURVEY: the official
+    Price dataset lists “selling/quoted price” and the brief requires
+    field research with real collectors.
+6.  Handover.otpAttempts and Handover.weightDiffPercent.
+7.  isSampleData on Collector, Recycler, PriceEntry, Lot.
+
+3.3 Prisma version note
+
+The schema targets Prisma 6.x (url = env("DATABASE_URL") in the
+datasource). Prisma 7 moved the connection URL into prisma.config.ts.
+Pin prisma and @prisma/client to the latest 6.x with --save-exact unless
+you deliberately migrate, and record the exact version.
+
+3.4 Lot reference code
+
+refCode = KC-<STATE>-<YYYYMMDD>-<NNNN>. Inside the create transaction:
+count lots whose createdAt falls on the current UTC day and whose
+refCode starts with KC-<STATE>-<YYYYMMDD>-, add 1, pad to 4 digits.
+refCode is unique; on unique violation retry once with a fresh count,
+then return 409 CONFLICT. STATE comes from DEFAULT_STATE_CODE unless the
+collector’s state is set.
+
+3.5 Trace hash chain implementation notes
+
+-   Insert the trace record in the same transaction as the state change
+    (TRD 11.5).
+-   Lock the lot row first (SELECT ... FOR UPDATE through
+    prisma.$queryRaw, or pg_advisory_xact_lock(hashtext(lotId))) so two
+    concurrent transitions cannot both take the same seq. The unique
+    (lotId, seq) index is the backstop.
+-   Postgres timestamp(3) keeps milliseconds. Create
+    createdAt = new Date() in application code, store it, and hash
+    createdAt.toISOString() so verification recomputes the same string.
+-   Payload includes ids, weights, prices, photo SHA-256 values and the
+    actor role. It never includes phone numbers.
+-   GET /lots/:id/trace/verify recomputes from seq = 1 and returns the
+    first mismatching seq or null.
+
+4. Authentication design
+
+4.1 Roles and login methods
+
+  -------------------------------------------------------------------------
+  Role              Identity          Login             Token TTL
+  ----------------- ----------------- ----------------- -------------------
+  COLLECTOR         phone number (10  phone plus        JWT_COLLECTOR_TTL
+                    digits)           6-digit code      (30d)
+
+  RECYCLER          email             email plus        JWT_STAFF_TTL (12h)
+                                      password          
+
+  ADMIN             email             email plus        JWT_STAFF_TTL (12h)
+                                      password          
+  -------------------------------------------------------------------------
+
+No public sign-up for recyclers or admins. A collector record is created
+on the first successful code verification.
+
+4.2 Collector code flow
+
+POST /auth/otp/request 1. Validate phone with the shared Zod schema:
+exactly 10 digits, first digit 6 to 9. 2. If DEMO_MODE=false, return
+501 NOT_IMPLEMENTED (no SMS provider in the prototype). 3. Count
+OtpRequest rows for this phone created in the last 15 minutes. If 5 or
+more, return 429 RATE_LIMITED. 4. Create an OtpRequest:
+codeHash = HMAC_SHA256(JWT_SECRET, code), expiresAt = now + 5 min. The
+code is always 123456 in demo mode. 5. Return { sent: true }. Never
+return or log the code (the web app shows the demo hint from its own
+build flag, not from the API).
+
+POST /auth/otp/verify 1. Find the latest unconsumed, unexpired
+OtpRequest for the phone. None: 400 OTP_INVALID. 2. Increment attempts
+first. If attempts > 5: 429 RATE_LIMITED. 3. Compare HMACs with
+crypto.timingSafeEqual. Mismatch: 400 OTP_INVALID. 4. Set consumedAt.
+Upsert the Collector by phone (preferredLanguage from the request,
+default HI). Set lastLoginAt. 5. Sign a JWT and return
+{ token, collector }.
+
+4.3 Staff login
+
+POST /auth/login with { email, password }. 1. Normalise email to lower
+case and trim. 2. Look up Recycler by email, then Admin by email. Emails
+must be unique across both tables (seed and POST /admin/recyclers check
+this). 3. Always run bcrypt.compare. If no user was found, compare
+against a fixed dummy hash so response time does not reveal whether the
+email exists. 4. Wrong email or password: 401 UNAUTHENTICATED with the
+same message either way. 5. Success:
+{ token, user: { id, role, name } }. A recycler with status PENDING or
+SUSPENDED can log in (APP_FLOW 7) but the API blocks rate changes,
+quotes and payments for them (see 5.2).
+
+4.4 JWT
+
+-   Algorithm HS256 with JWT_SECRET. In non-dev, refuse to start if the
+    secret is shorter than 32 characters or equals change-me.
+-   Payload exactly { sub, role, iat, exp }. No phone, email or name
+    inside the token.
+-   authenticate middleware: read Authorization: Bearer <token>, verify,
+    attach req.auth. Any failure: 401 UNAUTHENTICATED.
+-   Tokens are stateless. Logout is client-side (delete the token).
+    Because a recycler can be suspended after login,
+    requireVerifiedRecycler re-reads authorizationStatus from the
+    database on every recycler write, so suspension takes effect
+    immediately without token revocation.
+-   The web app stores the token in IndexedDB meta, not localStorage
+    (TRD 7). A 401 during sync clears the token and sends the collector
+    to /login while offline use continues (APP_FLOW 3).
+
+4.5 Password and secret handling
+
+-   bcryptjs, cost 10, for recycler and admin passwords. Never log or
+    return passwordHash; Prisma selects for API responses must exclude
+    it (define a shared recyclerPublicSelect).
+-   Seed passwords come from SEED_DEMO_PASSWORD (default Demo@1234) and
+    only when DEMO_MODE=true. The login screen never shows them; they
+    live in README demo notes marked SAMPLE.
+-   .env is never committed. .env.example has no real secrets.
+
+4.6 Rate limits and lockouts
+
+  -----------------------------------------------------------------------
+  Target                              Limit
+  ----------------------------------- -----------------------------------
+  /auth/* per IP                      RATE_LIMIT_AUTH_PER_15MIN (20) via
+                                      express-rate-limit
+
+  Collector code requests per phone   5 per 15 minutes (database count)
+
+  Collector code attempts per code    5
+
+  Handover code attempts per handover 5 wrong tries then 429 RATE_LIMITED
+                                      (proposed, log in DECISIONS.md)
+  -----------------------------------------------------------------------
+
+5. Authorization
+
+5.1 Middleware order per route
+
+authenticate → requireRole(...) → validate(...) → (recyclers on write
+routes) requireVerifiedRecycler → handler → service checks object
+ownership.
+
+5.2 Object-level rules
+
+  --------------------------------------------------------------------------
+  Actor                   May read                May write
+  ----------------------- ----------------------- --------------------------
+  Collector               own lots, own photos,   own lots through the state
+                          own ledger, own         machine, own profile
+                          handover code, all      
+                          reference data          
+
+  Recycler (VERIFIED)     lots that selected      rates, quote on lots that
+                          them; lots in DRAFT or  selected them, handover
+                          LISTED within their     confirm for lots that
+                          radius that match an    selected them, payments
+                          accepted category       for those lots
+                          (discovery only); own   
+                          profile and rates       
+
+  Recycler (PENDING or    own profile             own profile fields only.
+  SUSPENDED)                                      PUT /recyclers/me/rates,
+                                                  POST /prices,
+                                                  POST /lots/:id/quote,
+                                                  POST /handover/confirm,
+                                                  POST /ledger return
+                                                  403 FORBIDDEN
+
+  Admin                   everything except phone recycler verification,
+                          numbers                 recycler creation, exports
+  --------------------------------------------------------------------------
+
+Extra rules: - A recycler sees a collector only as the general
+operatingArea and a 12-character SHA-256 hash of the collector id. Never
+the phone. - A recycler must not be able to quote or confirm on a lot
+that selected a different recycler: 403 FORBIDDEN. - Trace routes
+(/lots/:id/trace, /trace/verify) follow the same lot access rules; admin
+can read any. - Photos are read through an authenticated route that
+applies the lot access rules (TRD 13). Browsers cannot attach headers to
+<img>, so the web app fetches the blob with the token and shows an
+object URL.
+
+6. Service logic in detail
+
+6.1 Lot transitions
+
+  ------------------------------------------------------------------------------------------
+  Action         From           To             Actor          Side effects
+  -------------- -------------- -------------- -------------- ------------------------------
+  create         none           DRAFT          collector      assign refCode, trace
+  (POST /lots,                                                LOT_CREATED; if clientId
+  LOT_CREATE)                                                 exists return existing lot
+                                                              (200)
+
+  select         DRAFT          LISTED         collector      recycler must be VERIFIED
+  recycler                                                    (422 RECYCLER_NOT_VERIFIED);
+                                                              set selectedRecyclerId,
+                                                              pickupRequested, selectedAt;
+                                                              trace RECYCLER_SELECTED
+
+  quote          LISTED         QUOTED         recycler       must be the selected recycler;
+                                                              set quotedPrice, quotedAt;
+                                                              anomaly check; trace QUOTED
+
+  accept quote   QUOTED         ACCEPTED       collector      acceptedAt; trace
+                                                              QUOTE_ACCEPTED
+
+  handover       ACCEPTED       HANDED_OVER    collector      create Handover; handedOverAt;
+  initiate                                                    trace HANDOVER_INITIATED
+
+  handover       HANDED_OVER    CONFIRMED      recycler       finalPrice = quotedPrice;
+  confirm                                                     weight difference check;
+                                                              anomaly check; confirmedAt;
+                                                              trace HANDOVER_CONFIRMED
+
+  ledger paid    CONFIRMED      PAID           recycler       when due reaches 0; paidAt;
+                                                              trace PAYMENT_RECORDED on
+                                                              every payment
+
+  cancel         DRAFT, LISTED, CANCELLED      collector      cancelledAt; trace CANCELLED
+                 QUOTED,                                      
+                 ACCEPTED                                     
+  ------------------------------------------------------------------------------------------
+
+Anything else returns 409 INVALID_STATE_TRANSITION. Every transition
+runs inside prisma.$transaction.
+
+6.2 Handover
+
+-   handoverRef = "HO-" + last 8 digits of refCode digits + "-" + 4 random uppercase alphanumerics
+    (for KC-MH-20260929-0007 the digits are 202609290007, so
+    HO-09290007-K4Q9). Retry on unique conflict.
+-   The 6-digit code is derived, not stored:
+    code = (uint32 from the first 4 bytes of HMAC_SHA256(JWT_SECRET, handoverRef)) mod 1,000,000,
+    zero-padded. This lets the owning collector see the same code again
+    (“Show code again”) without storing it in plain text.
+    otpExpiresAt = now + 24 hours.
+-   qrPayload = base64url(JSON {"v":1,"t":"KC-HO","ref":<handoverRef>,"lot":<lot uuid>,"w":<weightKg>}).
+-   Confirm accepts either handoverRef + otp or qrPayload. Compare codes
+    with timingSafeEqual. Expired: 400 OTP_INVALID. QR decoding failure:
+    400 VALIDATION_ERROR.
+-   If weightKgVerified differs from the collector weight by more than
+    15 percent, set anomalyFlag, reason WEIGHT_DIFFERENCE, and include
+    warnings: ["WEIGHT_DIFFERENCE"] in the response. Never block.
+-   The handover code and QR are returned only to the owning collector
+    (in the /handover/initiate response and inside their own /sync
+    updates.lots), never in lists returned to recyclers.
+
+6.3 Ledger
+
+-   Only for a lot in CONFIRMED (or already partially paid) that
+    selected this recycler.
+-   paidSoFar = sum(amountPaid) for the lot.
+    newPaid = paidSoFar + amountPaid. dueAmount = finalPrice - newPaid.
+-   amountPaid >= 0 (zero records a pending entry). If
+    newPaid > finalPrice return 400 VALIDATION_ERROR with
+    details: { code: "AMOUNT_EXCEEDS_DUE" }.
+-   Status: PENDING when newPaid = 0, PAID when dueAmount = 0, else
+    PARTIAL. On PAID, move the lot to PAID.
+-   Collector /ledger totals: earned = sum(amountPaid),
+    pending = sum over confirmed lots of (finalPrice - paid so far).
+-   Do all decimal maths with Prisma Decimal or integer paise, never
+    JavaScript floats. Serialize with two decimals.
+
+6.4 Prices and board
+
+-   POST /prices and PUT /recyclers/me/rates write PriceEntry rows with
+    source = RECYCLER, using the recycler’s city and district.
+-   /prices/board returns the latest price per category for the
+    district, ma7, ma30, trend (TRD 11.4), marketMin, marketMax,
+    updatedAt and isSampleData. If the district has no data, fall back
+    to the state average and add isFallback: true.
+
+6.5 Photos
+
+1.  Multer memory storage, single field file, limit UPLOAD_MAX_BYTES
+    (413 FILE_TOO_LARGE).
+2.  file-type magic bytes must be image/jpeg (415 UNSUPPORTED_MEDIA).
+3.  Recompute SHA-256 and compare with the body value; mismatch is
+    400 VALIDATION_ERROR.
+4.  Write to UPLOAD_DIR/<lotId>/<photoId>.jpg, create LotPhoto.
+    Duplicate (lotId, sha256) returns the existing photo.
+5.  Only the lot’s collector uploads. Maximum 4 collection photos plus 1
+    handover photo per lot.
+6.  The photo hash is not a trace event by itself. It is included in the
+    LOT_CREATED payload when known, and in HANDOVER_INITIATED. Photos
+    that arrive after sync are covered by including all known photo
+    hashes in the next trace payload.
+
+6.6 Sync
+
+For each action in createdAt ascending order (ties by actionId): 1. If a
+SyncAction with this actionId exists, return its stored result with
+status: DUPLICATE. 2. Otherwise open a transaction, validate the payload
+with the shared schema, call the same service function as the REST
+endpoint using the authenticated collector id, and insert the SyncAction
+row (APPLIED or REJECTED with errorCode and errorMessage). 3. A rejected
+action never blocks later independent actions. An action that depends on
+a rejected one is also rejected with the underlying error.
+
+updates contains only rows with updatedAt > since (all rows when since
+is null): materials, prices for the collector’s district (last 60 days),
+verified recyclers in the district with rates, the collector’s own lots
+(with handover code and QR for HANDED_OVER and later), the collector’s
+ledger, and safety tips. Server wins on status fields. For an existing
+lot still in DRAFT or LISTED, a repeated LOT_CREATE may update
+description, approxWeightKg and estimatedValue (client wins); after that
+it is ignored.
+
+6.7 Anomaly checks
+
+Exactly as TRD 11.3. Store anomalyFlag, anomalyReason, and
+anomalyDetail = { z, mean, sd, expectedMin, expectedMax, weightRange }.
+If several reasons apply, join them with ; in anomalyReason and keep the
+details for each. Flags never block a transaction.
+
+6.8 Exports
+
+GET /export/:dataset.csv (admin). Collector ids become the first 12 hex
+characters of SHA-256; GPS is rounded to 2 decimals; phone numbers are
+never included; isSampleData is a column in every dataset that has it.
+Use csv-stringify and stream the rows.
+
+7. Validation and errors
+
+-   One Zod schema per request body, query and param in
+    packages/shared/src/schemas/, exported with inferred types so the
+    web app and the API cannot disagree.
+-   validate middleware turns a Zod failure into 400 VALIDATION_ERROR
+    with details as a list of { path, message }.
+-   Throw new AppError(code, status, message, details?) from services.
+    The central error middleware maps it to
+    { data: null, error: { code, message, details? } }. Unknown errors
+    become 500 INTERNAL with no stack trace in the response.
+-   Response envelope and codes are exactly TRD Section 8.
+-   Money inputs are strings matching ^\d{1,8}(\.\d{1,2})?$; reject
+    negative numbers and more than two decimals.
+-   Coordinates: latitude −90 to 90, longitude −180 to 180. Weight:
+    greater than 0 and at most 5000.
+
+8. Data governance
+
+  -----------------------------------------------------------------------
+  Data                                Rule
+  ----------------------------------- -----------------------------------
+  Collector phone                     stored for login only; never
+                                      logged, exported, put in a JWT,
+                                      shown to recyclers or included in
+                                      trace payloads
+
+  Collector id                        recyclers and exports see a hash
+                                      only
+
+  GPS                                 stored at full precision in the
+                                      database for traceability; rounded
+                                      to 2 decimals in exports
+
+  Photos                              stored on local disk under the lot
+                                      id; served only through the
+                                      authenticated route
+
+  Sample data                         every seeded row has
+                                      isSampleData = true; the UI shows a
+                                      SAMPLE DATA label wherever such
+                                      rows appear
+
+  Logs                                pino with request id; redact
+                                      authorization, phone, otp, password
+
+  Retention                           prototype keeps everything; note in
+                                      DECISIONS.md that a real deployment
+                                      needs a retention policy
+  -----------------------------------------------------------------------
+
+9. Backend test checklist
+
+Unit (Vitest): valuation, matching eligibility and weights and ties,
+anomaly skip cases and z-score and weight range, trend thresholds,
+canonical JSON, hash chain and tamper detection, sync idempotency.
+
+API (Vitest + supertest, real Postgres in Docker, database reset per
+file): 1. Collector OTP: correct code, wrong code, expired code, sixth
+attempt, DEMO_MODE=false returns 501. 2. Staff login: right and wrong
+password return the same error shape. 3. Role guards: collector calling
+recycler routes and the reverse return 403 FORBIDDEN. 4. Every valid
+transition and at least one invalid transition per action
+(409 INVALID_STATE_TRANSITION). 5. Suspended recycler: selecting returns
+422; existing selection cannot quote (403). 6. Recycler cannot quote or
+confirm a lot that selected someone else. 7. Handover: QR path, code
+path, wrong code, expired code, weight difference warning. 8. Ledger:
+partial payments, exact payment moves the lot to PAID, overpayment
+rejected, totals correct. 9. Trace: chain verifies; editing a payload
+directly in the database makes verify return that seq. 10. Sync:
+replaying the same batch returns DUPLICATE for every action and creates
+no extra rows; a rejected action does not block a later one. 11. Photos:
+wrong type, oversize, hash mismatch, duplicate. 12. Export: no phone
+numbers, hashed collector ids, GPS rounded.
+
+10. Local run
+
+    docker compose up -d db
+    npm run db:migrate     # prisma migrate dev
+    npm run db:seed        # idempotent, SAMPLE DATA only
+    npm run dev            # api on 4000, web on 5173
+
+Health check: GET /api/v1/health returns
+{ data: { status: "ok", time }, error: null }.
+
+11. Decisions to log in DECISIONS.md on day one
+
+  -----------------------------------------------------------------------
+  #                       Decision                Proposed answer
+  ----------------------- ----------------------- -----------------------
+  1                       Prisma major version    latest 6.x, exact pin
+
+  2                       Handover code storage   derived by HMAC, not
+                                                  stored
+
+  3                       Handover code lockout   5 wrong tries
+
+  4                       Overpayment             rejected with
+                                                  AMOUNT_EXCEEDS_DUE
+
+  5                       Zero-amount payment     allowed, records a
+                                                  pending entry
+
+  6                       Photo hash in trace     included in LOT_CREATED
+                                                  and HANDOVER_INITIATED
+                                                  payloads
+
+  7                       Category units          all seeded categories
+                                                  use KG; PIECE supported
+                                                  in code and tested
+
+  8                       Tables and columns      Section 3.2
+                          added beyond TRD        
+  -----------------------------------------------------------------------

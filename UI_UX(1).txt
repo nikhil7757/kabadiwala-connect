@@ -1,0 +1,1012 @@
+Kabadiwala Connect: UI/UX Specification
+
+Companion to PRD.md, TRD.md, BACKEND.md and APP_FLOW.md. This file
+defines the look, feel and interaction rules for every screen. Follow it
+exactly. Sections 1 to 14 set the foundation (legible, offline, light);
+Section 15 is the aesthetic polish layer that makes the product look
+sharp and memorable. Where something is not specified, choose the
+simplest option that respects Section 11 (low-literacy rules) and record
+it in DECISIONS.md.
+
+1. Purpose and how to use the reference design
+
+The team supplied two HTML files for a fitness studio website (brand
+name “IRONFORGE”, truncated). They are inspiration only, for mood and
+interaction ideas: dark cinematic contrast, one hot orange accent,
+condensed uppercase display type, outlined headline text, monospace
+micro-labels, corner-bracket frames, scan-line and grain textures,
+blinking status dot, animated sound-bars, marquee ticker, flip cards,
+sticky call-to-action bar, staggered reveal animations.
+
+Hard rules for using the reference: 1. Do not copy its code, CSS blocks,
+class names, HTML structure, copy text, brand name, images, or layout
+order. Write everything fresh for this product. 2. Do not use any of its
+external resources: no Tailwind CDN, no Google Fonts links, no Font
+Awesome, no picsum or stock images. Everything must be bundled locally
+so the app works offline. 3. Do not reproduce fitness content or
+wording. After implementation, search the codebase for IRONFORGE, forge,
+iron, picsum, cdn. and remove any hit. 4. Translate the ideas to this
+product using the mapping in Section 2. Keep only ideas that help a
+low-literacy collector working on a cheap phone in daylight.
+
+2. Design idea: “Field Grade”
+
+Concept: industrial, honest and legible, like a well-made weighing scale
+label. Strong contrast, big shapes, one safety-orange accent for the
+primary action, green for “recycled or confirmed”, and thin corner
+brackets that frame the important things (the estimate, the QR code, the
+lot record).
+
+Two themes, one identity: - Field theme (collector app): light, warm
+paper background, near-black ink, safety orange. Chosen because
+collectors work outdoors in sunlight on entry-level LCD phones where
+dark, low-contrast interfaces wash out. It keeps the reference’s bold
+type and bracket motifs. - Control theme (recycler and admin): dark,
+close to the reference mood (near-black, orange, silver), for desktop
+and tablet use indoors.
+
+Idea mapping (reference idea to our use):
+
+  -----------------------------------------------------------------------
+  Reference idea                      How we use it
+  ----------------------------------- -----------------------------------
+  Condensed uppercase display         English headings in Oswald
+  headlines                           uppercase; Devanagari headings in
+                                      Noto Sans Devanagari Bold (no
+                                      uppercase, no letter-spacing)
+
+  Outlined (stroked) big text         Large outlined step numbers “1 2 3”
+                                      on new-lot steps and outlined
+                                      numerals on the empty states (Field
+                                      theme uses ink outline; Control
+                                      uses silver outline)
+
+  Monospace micro-label with a        Small mono labels such as
+  leading line (“section marker”)     STEP 2 / 3 and lot codes KC-MH-...
+                                      with a short orange leading line
+
+  Corner-bracket notch frames         Featured cards: estimate, QR panel,
+                                      lot record, recycler top match
+
+  Blinking REC dot                    Connectivity indicator: green dot
+                                      “ONLINE”, orange blinking dot
+                                      “OFFLINE”
+
+  Mute toggle with animated           The speaker button: bars animate
+  sound-bars                          while audio plays
+
+  Marquee track                       Price ticker strip (Home and
+                                      Control dashboard); static when
+                                      reduced motion
+
+  Flip cards                          Safety cards (front pictogram, back
+                                      instructions)
+
+  Pulse call-to-action                Gentle single pulse on the primary
+                                      “New Lot” tile after 10 seconds
+                                      idle; disabled on reduced motion or
+                                      low-end devices
+
+  Sticky CTA bar                      Bottom primary action bar on every
+                                      collector screen
+
+  Staggered reveal                    Control theme lists and cards on
+                                      load; Field theme uses a simple
+                                      fade only
+
+  Pill selectors                      Language chips, condition chips,
+                                      district chips
+
+  Underlined inputs                   Recycler and admin forms
+
+  Slide-in toast                      Toasts for sync, saved, errors
+
+  Hover-lift cards                    Pressed-in effect on tap (translate
+                                      2 px) since phones have no hover
+
+  Grain and scan lines                Control theme only, as a small
+                                      static tiled PNG at low opacity
+                                      (never a live SVG filter)
+  -----------------------------------------------------------------------
+
+Not used: hero video-reel with slow zoom, draggable carousels (hard for
+low-dexterity users), parallax, cursor effects, sound autoplay. Backdrop
+blur is not used in the collector app (a narrow desktop-only exception
+is in Section 15.6).
+
+3. Colour and design tokens
+
+Define tokens as CSS variables, then map into Tailwind 4 with @theme.
+Set data-theme="field" or data-theme="control" on <html>.
+
+    :root, [data-theme="field"] {
+      --kc-bg: #F6F3EE;
+      --kc-surface: #FFFFFF;
+      --kc-surface-2: #EFEAE2;
+      --kc-ink: #141414;
+      --kc-ink-dim: #4A4A4A;
+      --kc-border: #D9D4CB;
+      --kc-border-strong: #141414;
+      --kc-accent: #FF5400;        /* fills only; text on it is ink */
+      --kc-accent-ink: #141414;
+      --kc-accent-text: #C2410C;   /* orange used as text or icon on light backgrounds */
+      --kc-accent-soft: #FFE6D9;
+      --kc-success: #17704A;
+      --kc-success-soft: #E3F3EA;
+      --kc-danger: #B3261E;
+      --kc-danger-soft: #FBE9E7;
+      --kc-warn: #8A5A00;
+      --kc-warn-soft: #FFF1D6;
+      --kc-info: #0B2E5C;
+      --kc-info-soft: #E6ECF5;
+      --kc-focus: #0B2E5C;
+    }
+    [data-theme="control"] {
+      --kc-bg: #0A0A0A;
+      --kc-bg-deep: #050505;
+      --kc-surface: #141414;
+      --kc-surface-2: #1A1A1A;
+      --kc-ink: #F5F5F5;
+      --kc-ink-dim: #C0C0C0;
+      --kc-ink-quiet: #9A9A9A;     /* smallest allowed secondary text colour */
+      --kc-border: #2A2A2A;
+      --kc-border-strong: #C8C8C8;
+      --kc-accent: #FF5400;
+      --kc-accent-hover: #FF7A33;
+      --kc-accent-deep: #B33A00;
+      --kc-accent-ink: #0A0A0A;
+      --kc-accent-text: #FF7A33;
+      --kc-silver: #C8C8C8;
+      --kc-success: #34C98B;
+      --kc-success-soft: #0F2A20;
+      --kc-danger: #FF6B5E;
+      --kc-danger-soft: #2E1512;
+      --kc-warn: #FFB020;
+      --kc-warn-soft: #2E2410;
+      --kc-info: #6EA8FF;
+      --kc-info-soft: #101B2E;
+      --kc-focus: #FFB020;
+    }
+
+Rules: - Text on the orange fill is always ink (--kc-accent-ink), never
+white (white on #FF5400 fails small-text contrast). - Orange as text on
+light backgrounds uses --kc-accent-text. - Contrast targets: body text
+at least 4.5:1, large text and UI borders at least 3:1. Verify each pair
+with a contrast checker and note results in DECISIONS.md. - Colour is
+never the only signal: pair status colours with an icon and a text
+label. - Status chips: neutral (surface-2), warning (warn-soft), accent
+(accent-soft), success (success-soft), danger (danger-soft).
+
+4. Typography
+
+Fonts are self-hosted through @fontsource packages, importing only the
+needed subsets and weights.
+
+  ------------------------------------------------------------------------------------------
+  Role              Font              Weights           Notes
+  ----------------- ----------------- ----------------- ------------------------------------
+  Display, headings Oswald            600, 700          uppercase, letter-spacing 0.02em
+  (English)                                             
+
+  Headings (Hindi,  Noto Sans         700               never uppercase, never letter-spaced
+  Marathi)          Devanagari                          
+
+  Body, labels (all Noto Sans         400, 500          its Latin glyphs cover English
+  languages)        Devanagari                          
+
+  Numbers and       Oswald            700               font-variant-numeric: tabular-nums
+  amounts                                               
+
+  Codes (lot ID,    JetBrains Mono    500               
+  handover ref,                                         
+  hash)                                                 
+  ------------------------------------------------------------------------------------------
+
+Scale for the Field theme (collector): body 18 px / 1.5; label 16 px;
+small 14 px (rare); h2 24 px; h1 32 px / 1.1; amount display 56 px; big
+step number 96 px outlined. Devanagari text: line-height at least 1.6
+(avoids clipped vowel marks) and size one step larger than Latin at the
+same role. Control theme (desktop): body 15 px, tables 14 px.
+
+Outlined text effect: -webkit-text-stroke with transparent fill, only
+for numerals and short English headings, never for Devanagari or body
+text.
+
+5. Layout, spacing and shape
+
+-   Base unit 4 px. Spacing scale: 4, 8, 12, 16, 24, 32, 48.
+-   Collector baseline viewport 360 x 640; content max width 480 px
+    centred on larger screens; screen padding 16 px; safe-area insets
+    respected for the sticky bar.
+-   Touch targets: 56 px height minimum for collector buttons and tiles
+    (48 px absolute minimum for small chips).
+-   Shape: squared and sturdy, radius 4 px on cards and buttons, 999 px
+    on chips only. Field theme uses 2 px ink borders on primary cards
+    and buttons; Control theme uses 1 px borders.
+-   Corner brackets (“notch”): two L-shaped 2 px accent strokes, 14 px
+    long, at top-left and bottom-right of a card. Only on featured
+    elements (max two per screen).
+-   Depth: no soft shadows on Field theme. Primary buttons use a hard 4
+    px offset shadow in ink that collapses on press. Control theme uses
+    borders and subtle surface steps.
+-   Control layout: left sidebar 240 px (icons plus labels), top bar 56
+    px, content max width 1280 px, tables with 44 px rows.
+
+6. Components
+
+Build these as small reusable React components in features/* or
+components/.
+
+  -----------------------------------------------------------------------
+  Component                           Spec
+  ----------------------------------- -----------------------------------
+  BigTile                             Home tiles: 2 x 2 grid, at least
+                                      140 px tall, large pictogram (64
+                                      px), label (English or Devanagari),
+                                      speaker button in the corner;
+                                      pressed state moves 2 px
+
+  PrimaryButton                       Full width, 56 px, orange fill, ink
+                                      text, uppercase for English, hard
+                                      offset shadow; disabled uses
+                                      surface-2 fill and dim text (never
+                                      invisible)
+
+  SecondaryButton                     Transparent, 2 px ink border
+
+  SpeakerButton                       48 px circle; shows five vertical
+                                      bars that animate while audio plays
+                                      (reference idea: sound-bars); tap
+                                      again to stop
+
+  StickyActionBar                     Bottom bar with one primary action
+                                      and optional secondary; respects
+                                      safe area; background bg with a top
+                                      border
+
+  TopBar                              Back arrow, screen title (short),
+                                      language chip, connectivity
+                                      indicator
+
+  ConnectivityDot                     Green dot plus “Online” or orange
+                                      blinking dot plus “Offline”; blink
+                                      only if motion is allowed
+
+  NotchCard                           Card with corner brackets for
+                                      featured content
+
+  StepHeader                          Mono label STEP 2 / 3 with leading
+                                      line, large outlined step number,
+                                      thin progress bar (orange fill on
+                                      surface-2)
+
+  MaterialIcon                        Square button with pictogram and
+                                      name; selected state: orange border
+                                      3 px plus tick badge; AI
+                                      suggestion: small “AI” tag with
+                                      confidence bar
+
+  NumberPad                           3 x 4 grid, 64 px keys, decimal
+                                      key, backspace; haptic-free
+
+  WeightSlider                        Large thumb (32 px), tick marks,
+                                      live numeric readout
+
+  Chip / ChipGroup                    Selectable pills for language,
+                                      condition, district
+
+  StatusChip                          Icon plus text plus colour
+
+  AmountDisplay                       Oswald 56 px with rupee symbol, a
+                                      “SAMPLE” or “rates last updated”
+                                      caption, and a speaker button
+
+  RecyclerCard                        Name, distance, rate, badges, value
+                                      at that rate, Choose button; top
+                                      match gets NotchCard frame
+
+  Timeline                            Vertical steps with dot, label and
+                                      time; completed dots green with
+                                      tick, current dot orange, future
+                                      dots outlined
+
+  QRPanel                             White square with quiet zone inside
+                                      a NotchCard; below it the 6-digit
+                                      code in large mono digits and the
+                                      handover reference
+
+  FlipCard                            Safety card: front pictogram, back
+                                      2 to 3 lines; flips on tap (no
+                                      hover dependence); keyboard
+                                      accessible; reduced motion swaps
+                                      instantly
+
+  Ticker                              Horizontal strip of rate items
+                                      scrolling slowly; pauses on touch;
+                                      static list if reduced motion
+
+  Sparkline                           Small inline SVG (no chart library)
+                                      for collector price rows
+
+  Toast                               Slides from the top on phones, from
+                                      the right on desktop; icon plus
+                                      text; auto-dismiss 4 s
+
+  Banner                              Full-width offline or stale-rate
+                                      notice with icon, text, speaker
+                                      button
+
+  Skeleton                            Grey blocks matching the layout; no
+                                      shimmer on low-end devices
+
+  EmptyState                          Outlined big pictogram plus one
+                                      line plus optional action
+
+  ConfirmDialog                       Two big buttons (green tick, red
+                                      cross) with icons and audio
+
+  DataTable (Control)                 Sticky header, zebra rows, status
+                                      chips, sortable columns
+
+  StatCard (Control)                  Mono label, large number, small
+                                      delta text
+
+  Sidebar (Control)                   Icons plus labels, active item with
+                                      orange left bar
+
+  ScaleLabel                          Scale-label card: 2 px border,
+                                      perforated edges, mono code, large
+                                      amount, dashed divider, optional
+                                      notch corners (Section 15)
+
+  GaugeDial                           Half-circle SVG dial with ticks;
+                                      needle rotates with the weight
+                                      value (transform only)
+
+  TickDraw                            Success ring and tick that draw
+                                      once, with the audio cue
+
+  HazardTape                          8 px diagonal orange and ink strip,
+                                      decorative only
+
+  RecycleLoader                       Three rotating arrows used instead
+                                      of a plain spinner
+
+  ChainViewer                         Linked blocks showing the trace
+                                      hash chain, with a green tick per
+                                      valid block and a red broken link
+                                      at the first mismatch
+
+  RouteLine                           Small SVG line from a dot to a pin
+                                      with the distance in mono type
+  -----------------------------------------------------------------------
+
+7. Motion
+
+-   Easing: cubic-bezier(0.22, 1, 0.36, 1). Durations: press 100 ms,
+    fade 150 ms, page 200 ms, flip 500 ms, toast 300 ms.
+-   Field theme: fade page transitions only; press effects; speaker
+    bars; connectivity blink; one idle pulse on the New Lot tile.
+-   Control theme: staggered list reveal (60 ms steps, max 6 items),
+    ticker, hover states.
+-   Respect prefers-reduced-motion: reduce: remove blink, pulse, ticker
+    scrolling, flip animation and reveal; keep state changes instant.
+-   Low-end guard: if navigator.deviceMemory is 2 or lower (when
+    available), treat the device as reduced motion.
+-   Forbidden on the collector app: backdrop blur, CSS filters on photos
+    (except a simple brightness on disabled), parallax, video
+    backgrounds, animated gradients, live SVG noise filters. The polish
+    layer in Section 15 lists the only allowed motion and decoration
+    additions.
+
+8. Iconography and illustration
+
+-   UI icons: lucide-react at 24 px (32 px in tiles), 2 px stroke.
+-   Custom SVG pictograms (create as local SVG files, 64 x 64 viewBox, 2
+    px ink stroke, flat, one orange accent shape each, no gradients, no
+    text inside):
+    -   Materials: CABLE (coiled cable), PCB (circuit board with chips),
+        BATTERY (cell with plus sign), CRT (boxy old monitor), LCD (flat
+        panel on stand), MOTOR (cylinder with shaft and magnet arc),
+        PLASTIC (crushed bottle and casing), OTHER (open box).
+    -   Safety: no-burning (flame with cross), do-not-open-CRT (monitor
+        with hammer crossed), safe-battery (battery with caution
+        triangle), no-acid (droplet on board with cross), wear-gloves
+        (hand with glove), keep-children-away (small figure with cross).
+    -   Status: tick in circle (green), cross in circle (red), clock
+        (waiting), cloud-off (offline).
+-   Illustrations: only inline SVG shapes generated in code or files; no
+    photographs except the user’s own lot photos; no stock images.
+-   App icon: orange square with a simple bracket-framed recycling arrow
+    mark (create as SVG, export 192 and 512 PNG plus maskable).
+
+9. Collector screen specifications (Field theme)
+
+Each screen: TopBar + content + StickyActionBar. Strings are keys;
+English text shown as the source (Hindi and Marathi to be translated and
+reviewed by a native speaker).
+
+  -------------------------------------------------------------------------
+  Screen                    Layout and content      Primary action
+  ------------------------- ----------------------- -----------------------
+  /welcome                  Large logo mark, prompt tapping a language
+                            line with speaker,      
+                            three full-width        
+                            language buttons        
+                            (हिन्दी, मराठी, English) 
+                            with a small audio icon 
+                            each                    
+
+  /login                    Title, one number field Send code
+                            with the number pad,    
+                            helper line “We only    
+                            use your number to sign 
+                            you in”                 
+
+  /otp                      Six large boxes, number Verify
+                            pad, resend timer       
+
+  /home                     Ticker strip, 2 x 2     tile taps
+                            BigTile grid (New Lot   
+                            with pulse, Price       
+                            Board, My Lots,         
+                            Earnings), wide Safety  
+                            button, Sync chip with  
+                            pending count           
+
+  /lot/new/photo            StepHeader 1/3, large   Next
+                            camera button in a      
+                            dashed frame,           
+                            thumbnails row (max 4)  
+                            with delete, hint       
+                            pictogram               
+
+  /lot/new/material         StepHeader 2/3,         tap an icon
+                            2-column grid of        (auto-advances after
+                            MaterialIcon (8 items), confirming)
+                            suggestion highlighted  
+                            with confidence bar,    
+                            speaker on the          
+                            suggestion              
+
+  Safety popup              Full-screen sheet:      I understand
+                            large pictogram, one    
+                            line, speaker           
+                            auto-plays once, big    
+                            green tick button “I    
+                            understand”             
+
+  /lot/new/weight           StepHeader 3/3, big     See value
+                            readout, NumberPad,     
+                            WeightSlider, condition 
+                            ChipGroup with icons    
+
+  /lot/new/estimate         NotchCard with          Find buyer; secondary
+                            AmountDisplay, weight   Save for later
+                            and material line,      
+                            caption “Rates last     
+                            updated ”, stale banner 
+                            if needed               
+
+  /lot/:clientId/match      Vertical list of up to  Choose (per card)
+                            3 RecyclerCard, top     
+                            card framed; “Pickup”   
+                            toggle on cards that    
+                            offer it; empty state   
+                            if none                 
+
+  /lot/:clientId            Photo strip, summary,   varies
+                            Timeline, StatusChip,   
+                            contextual primary      
+                            action per APP_FLOW 5.5 
+
+  /lot/:clientId/handover   Weight confirm,         Start handover / Done
+                            optional photo, then    
+                            after sync a QRPanel    
+                            with code and           
+                            reference; success      
+                            screen with big green   
+                            tick                    
+
+  /prices                   District chip, list     none
+                            rows (icon, name, rate, 
+                            trend arrow, market     
+                            range, speaker),        
+                            expandable Sparkline,   
+                            stale chip              
+
+  /earnings                 Two summary NotchCards  none
+                            (Received, Pending),    
+                            list of entries with    
+                            status chips            
+
+  /safety                   2-column FlipCard grid  tap to flip
+
+  /safety/:code             Large pictogram, 2 to 3 Back
+                            lines, speaker          
+
+  /sync                     Big status icon, last   Sync now
+                            sync time, pending      
+                            list, rejected items    
+                            with reasons            
+
+  /settings                 Rows with icon plus     none
+                            label: language,        
+                            district, text size,    
+                            audio, About, Clear     
+                            local data (danger),    
+                            Logout                  
+  -------------------------------------------------------------------------
+
+10. Recycler and admin screen specifications (Control theme)
+
+  -----------------------------------------------------------------------
+  Screen                              Layout and content
+  ----------------------------------- -----------------------------------
+  /recycler/login, /admin/login       Centred NotchCard with brand mark,
+                                      underlined email and password
+                                      inputs, orange button
+
+  /recycler                           Four StatCards (new lots, quotes
+                                      waiting, handovers to confirm,
+                                      payments pending), ticker of own
+                                      rates, recent lots table,
+                                      verification banner
+
+  /recycler/lots                      Filter chips (status, material),
+                                      DataTable with photo thumbnail,
+                                      material, weight, value, distance,
+                                      status chip
+
+  /recycler/lots/:id                  Left: photo gallery and details;
+                                      right: NotchCard with quote input
+                                      (prefilled), estimated value, “Send
+                                      quote”
+
+  /recycler/handover                  Two panels: camera scanner, and
+                                      manual fields (reference, 6-digit
+                                      code); verified weight input;
+                                      result panel with trace hash and
+                                      payment form
+
+  /recycler/rates                     Table with inline-editable rate
+                                      cells, freshness column, Save
+                                      button in a sticky footer
+
+  /recycler/profile                   Form sections: facility, location
+                                      with “Use my location”, radius,
+                                      pickup toggle, read-only
+                                      authorization block
+
+  /admin/recyclers                    Table with status chips, Verify and
+                                      Suspend buttons, Add recycler
+                                      dialog
+
+  /admin/flags                        Table with anomaly reason and
+                                      expected range, “Open trace” drawer
+                                      showing hash chain with validity
+                                      badge
+
+  /admin/data                         Dataset cards with row counts and
+                                      Download CSV; stat cards; simple
+                                      recharts bar chart of lots per day
+                                      (lazy loaded)
+  -----------------------------------------------------------------------
+
+11. Accessibility and low-literacy rules
+
+1.  Every screen has one clear primary action; never more than two
+    visible buttons.
+2.  Every meaningful text has an icon; every critical screen has a
+    speaker button.
+3.  Avoid typing: use number pad, chips and icon grids. Free text only
+    for recycler and admin forms.
+4.  Short sentences (under 8 words where possible). No jargon: use
+    “buyer” (खरीदार) not “counterparty”; use “code” not “OTP” in UI
+    copy.
+5.  Touch targets at least 56 px (48 px minimum); spacing between
+    targets at least 8 px.
+6.  Contrast and colour-independence per Section 3.
+7.  Error messages: pictogram plus one line plus audio plus the fix (“No
+    internet. Your work is saved. Try again later.”).
+8.  Confirmation for destructive actions with green tick and red cross
+    buttons, both with icons and audio.
+9.  Text size setting (Normal 100 percent, Large 125 percent) applied
+    through a root font-size variable.
+10. Screen reader labels in the current language; focus order follows
+    visual order; visible focus ring using --kc-focus, 3 px.
+11. Do not rely on hover, drag or long press as the only way to do
+    something. (Photo delete uses a visible delete icon; long press is
+    optional shortcut only.)
+12. Language switching never loses screen state.
+13. Money format: rupee symbol plus digits with Indian grouping (for
+    example 12,500); weights in kg with one decimal.
+14. Sunlight legibility: keep text on flat colours, never on photos or
+    gradients.
+
+12. Canonical material codes, audio keys and copy keys
+
+Material category codes (used in seed, model labels, icons and audio):
+CABLE, PCB, BATTERY, CRT, LCD, MOTOR, PLASTIC, OTHER. Hazardous (popup):
+BATTERY, CRT.
+
+Audio keys (files /audio/<hi|mr|en>/<key>.mp3): welcome_greeting,
+choose_language, enter_phone, enter_code, code_wrong, take_photo,
+choose_material, mat_cable, mat_pcb, mat_battery, mat_crt, mat_lcd,
+mat_motor, mat_plastic, mat_other, enter_weight, estimate_intro, num_0
+to num_9, num_hundred, num_thousand, rupees, rates_old, find_buyer,
+buyer_chosen, quote_received, accept_quote, start_handover,
+show_code_to_buyer, handover_confirmed, lot_saved, offline_saved,
+synced, sync_failed, no_buyer_near, price_board_intro, earnings_intro,
+safety_burning, safety_crt, safety_battery, safety_acid, safety_gloves,
+safety_children, safety_understand.
+
+Core English copy (source for translation; keys are snake_case):
+
+  Key                English
+  ------------------ --------------------------------------------
+  welcome_title      Choose your language
+  login_title        Your phone number
+  send_code          Send code
+  enter_code         Enter the code
+  home_new_lot       New Lot
+  home_prices        Price Board
+  home_my_lots       My Lots
+  home_earnings      Earnings
+  home_safety        Stay Safe
+  step_photo         Take a photo
+  step_material      What is it?
+  step_weight        How heavy?
+  see_value          See value
+  find_buyer         Find buyer
+  save_later         Save for later
+  estimate_caption   Estimated value
+  rates_updated      Rates updated {date}
+  rates_old          Rates may be old
+  ai_not_sure        Not sure. Please choose.
+  choose             Choose
+  pickup_available   Pickup available
+  authorized         Authorized
+  best_rate          Best rate
+  nearest            Nearest
+  no_buyer_near      No authorized buyer near you yet
+  accept_quote       Accept price
+  start_handover     Start handover
+  show_code          Show this code to the buyer
+  handover_done      Handover confirmed
+  offline_banner     Offline. Your work is saved on this phone.
+  synced             Synced
+  sync_failed        Could not sync. We will try again.
+  status_saved       Saved
+  status_waiting     Waiting for price
+  status_quote       Price received
+  status_ready       Ready for handover
+  status_confirmed   Buyer confirmed
+  status_paid        Paid
+  status_cancelled   Cancelled
+  received           Received
+  pending            Pending
+  i_understand       I understand
+  sample_data        SAMPLE DATA
+
+Hindi and Marathi drafts may be machine-generated first, then must be
+reviewed by a native speaker before the demo. Keep every string short
+enough to fit two lines at Large text size.
+
+13. Performance rules for the UI
+
+Use SVG for pictograms; lazy load recycler and admin routes and
+recharts; import only used font subsets; no image larger than 300 KB
+shipped in the bundle; model and audio load on demand and cache; avoid
+re-renders in the number pad and slider; virtualise lists only if a list
+exceeds 100 rows.
+
+14. Implementation checklist for the AI model
+
+1.  Read Section 1 and 2; write a short paragraph in DECISIONS.md
+    stating which reference ideas you used and confirming nothing was
+    copied.
+2.  Create tokens (Section 3), fonts (Section 4) and the two themes
+    first, with a small /dev/ui-kit page (development only) that shows
+    every component in both themes.
+3.  Build components from Section 6, then screens from Sections 9 and
+    10.
+4.  Verify: no external requests (network blocked test), contrast pairs
+    recorded, touch targets at least 48 px, Devanagari renders without
+    clipped marks, reduced-motion works, Large text setting works, all
+    i18n keys exist in hi, mr and en.
+5.  Search for forbidden strings from Section 1 rule 3 and remove them.
+6.  Test on a real entry-level Android phone in bright light and with
+    airplane mode on.
+7.  Build the Section 15 components (ScaleLabel, GaugeDial, TickDraw,
+    HazardTape, RecycleLoader, ChainViewer, RouteLine) alongside the
+    other components, add lib/motion.ts, and show each one in
+    /dev/ui-kit in both themes with motion on and off.
+8.  Run the visual QA checklist in Section 15.8 and record the result in
+    DECISIONS.md.
+
+15. Aesthetic layer: make it look sharp and memorable
+
+Sections 1 to 14 keep the app legible and light on a cheap phone. This
+section is the polish layer that makes it feel designed rather than
+default. Everything here is built from inline SVG, CSS transforms and
+opacity, so it stays offline and cheap. Where it conflicts with the “not
+used” and “forbidden” lists in Sections 2 and 7, this section lists the
+exact exceptions. Build the components early (Phases 6 to 9) and tune
+them in Phase 10.
+
+15.1 Look in one sentence
+
+A well-made weighing-scale label meets hazard tape: warm paper, hard ink
+lines, one safety-orange accent, bracket corners, big numerals that feel
+printed, and small moments of motion when something succeeds.
+
+15.2 Signature elements
+
+  -----------------------------------------------------------------------
+  Element                 Where                   How (all static or
+                                                  transform-only)
+  ----------------------- ----------------------- -----------------------
+  Scale label card        estimate, earnings      white card with 2 px
+  (ScaleLabel)            summary, lot record     ink border, perforated
+                                                  top and bottom edge,
+                                                  mono lot code top-left,
+                                                  big Oswald amount, thin
+                                                  dashed divider, notch
+                                                  corners
+
+  Hazard tape             safety screens, hazard  8 px diagonal orange
+  (HazardTape)            popup, danger dialogs   and ink strip used as a
+                                                  divider or header edge;
+                                                  never behind text
+
+  Gauge dial (GaugeDial)  weight screen           half-circle SVG dial
+                                                  with tick marks; the
+                                                  needle rotates with the
+                                                  slider or number pad
+                                                  value (transform only);
+                                                  the numeric readout
+                                                  stays the real input
+
+  Count-up amount         estimate, earnings      number counts from 0 to
+                                                  the value in 350 ms;
+                                                  instant when motion is
+                                                  off
+
+  Tick draw (TickDraw)    lot saved, quote        ring scales in once,
+                          accepted, handover      tick path draws in 400
+                          confirmed               ms, with the audio cue
+
+  Bracket draw-in         NotchCard mount         the two corner brackets
+                                                  scale in from the
+                                                  corner in 150 ms
+                                                  (Field) or 250 ms
+                                                  (Control)
+
+  Recycle loader          sync, initial load      three arrows rotating
+  (RecycleLoader)                                 as one (transform
+                                                  rotate), replaces plain
+                                                  spinners
+
+  Duotone pictograms      material icons, home    ink stroke plus one
+                          tiles, safety           orange accent shape
+                                                  plus a flat accent-soft
+                                                  shape behind; no
+                                                  gradients inside the
+                                                  pictogram
+
+  Outlined numerals       step numbers, empty     as in Section 4, Latin
+                          states, earnings symbol digits and the rupee
+                                                  symbol only
+
+  Route line              recycler card           small SVG line from a
+                                                  dot (you) to a pin
+                                                  (buyer) with the
+                                                  distance in mono type
+
+  Chain viewer            admin trace drawer,     vertical stack of
+  (ChainViewer)           recycler handover       linked blocks (seq,
+                          result, collector “View event, short hash in
+                          record”                 mono, time); valid
+                                                  blocks show a green
+                                                  tick; the first invalid
+                                                  block is red with a
+                                                  broken link, so tamper
+                                                  detection is visible at
+                                                  a glance
+
+  Dot-grid backdrop       splash, empty states,   static tiled dot
+                          Control login           pattern at 4 percent
+                                                  opacity, only on areas
+                                                  that have no text on
+                                                  them
+  -----------------------------------------------------------------------
+
+15.3 Screen upgrades
+
+  -----------------------------------------------------------------------
+  Screen                              Upgrade
+  ----------------------------------- -----------------------------------
+  Splash (first open per session)     bracket-framed recycle mark draws
+                                      itself in 800 ms, then fades to
+                                      /welcome or /home; skipped when
+                                      motion is off
+
+  /welcome                            big outlined glyph on each language
+                                      button (a large “हिं”, “मरा”, “En”
+                                      in outline) plus the native name in
+                                      solid type; audio icon to the right
+
+  /home                               duotone tiles; the New Lot tile is
+                                      orange-filled with an ink
+                                      pictogram; price ticker in mono
+                                      type; a friendly one-line greeting
+                                      with speaker; Sync chip shows the
+                                      pending count as an outlined
+                                      numeral
+
+  /lot/new/photo                      dashed frame with four bracket
+                                      corners that draw in; camera glyph
+                                      does one soft pulse when the screen
+                                      opens
+
+  /lot/new/material                   selected icon pops with a tick
+                                      badge (scale 1 to 1.06 to 1 in 150
+                                      ms); the AI suggestion shows a slim
+                                      confidence bar and the AI tag
+
+  /lot/new/weight                     GaugeDial above the number pad;
+                                      readout in huge Oswald digits
+
+  /lot/new/estimate                   ScaleLabel with count-up rupee
+                                      amount, caption, weight and
+                                      material line, perforated edges,
+                                      and a small “SAMPLE” or “rates last
+                                      updated” line
+
+  /lot/:clientId/match                top card gets the notch frame and a
+                                      mono BEST MATCH label; route line
+                                      and distance on every card
+
+  /lot/:clientId                      timeline connector fills with green
+                                      up to the current step; current dot
+                                      pulses once on arrival; StatusChip
+                                      at the top
+
+  Handover                            QRPanel with animated scan corners
+                                      (one sweep, then still); the six
+                                      code digits sit in separate large
+                                      boxes; success uses TickDraw
+
+  /prices                             sparkline gets a flat accent-soft
+                                      area fill under the line; trend
+                                      arrows sit in status chips (arrow
+                                      icon plus text plus colour)
+
+  /earnings                           two ScaleLabel cards (Received,
+                                      Pending) with outlined rupee
+                                      symbols
+
+  /safety                             HazardTape under the header; flip
+                                      cards with duotone pictograms
+
+  Recycler and admin login            centred NotchCard over a static
+                                      radial spotlight (orange at 8
+                                      percent) and dot grid; brand mark
+                                      draws in
+
+  Control dashboard                   StatCard with a mono label, large
+                                      numeral, tiny inline sparkline and
+                                      delta; ticker of own rates; recent
+                                      lots table with a 3 px orange bar
+                                      on row hover
+
+  Control tables and forms            orange focus glow (see 15.5),
+                                      sticky header, status chips,
+                                      underlined inputs
+
+  Admin charts                        recharts bars in accent orange on
+                                      surface-2, mono axis labels, no
+                                      default chart fonts or colours
+  -----------------------------------------------------------------------
+
+15.4 Motion budget and kill switch
+
+-   Animate only transform, opacity and SVG stroke-dashoffset. Never
+    animate width, height, top, left, box-shadow or filters.
+-   At most two animations running at once. Each 500 ms or less, except
+    the 800 ms splash.
+-   One helper decides everything:
+
+    // lib/motion.ts
+    export function motionOK(): boolean {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const mem = (navigator as { deviceMemory?: number }).deviceMemory;
+      const saveData = (navigator as { connection?: { saveData?: boolean } }).connection?.saveData === true;
+      return !(reduced || (mem !== undefined && mem <= 2) || saveData);
+    }
+    // on boot: document.documentElement.dataset.motion = motionOK() ? 'on' : 'off';
+
+    [data-motion="off"] *, [data-motion="off"] *::before, [data-motion="off"] *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+State changes must still be visible with motion off (tick shown, amount
+shown, needle in place).
+
+15.5 Token additions and snippets
+
+    :root, [data-theme="field"] {
+      --kc-hazard-a: #FF5400;
+      --kc-hazard-b: #141414;
+      --kc-shadow-hard: 4px 4px 0 var(--kc-ink);
+      --kc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    [data-theme="control"] {
+      --kc-hazard-a: #FF5400;
+      --kc-hazard-b: #0A0A0A;
+      --kc-glow: 0 0 0 1px var(--kc-accent), 0 0 24px rgb(255 84 0 / 0.18);
+      --kc-spot: radial-gradient(60% 50% at 50% 0%, rgb(255 84 0 / 0.08), transparent 70%);
+    }
+
+    /* Hazard tape: decorative strip, never behind text */
+    .kc-hazard {
+      height: 8px;
+      background: repeating-linear-gradient(-45deg, var(--kc-hazard-a) 0 10px, var(--kc-hazard-b) 10px 20px);
+    }
+
+    /* Perforated edge for ScaleLabel (static, sits outside the text area) */
+    .kc-perf {
+      height: 8px;
+      background: radial-gradient(circle at 6px 0, var(--kc-bg) 4px, transparent 4.5px) 0 0 / 12px 8px repeat-x;
+    }
+
+    /* Tick draw */
+    .kc-tick path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: kc-draw 400ms var(--kc-ease) forwards; }
+    @keyframes kc-draw { to { stroke-dashoffset: 0; } }
+
+    /* Bracket draw-in */
+    .kc-notch::before, .kc-notch::after { animation: kc-notch-in 150ms var(--kc-ease) both; }
+    @keyframes kc-notch-in { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
+
+    /* Control-only focus glow */
+    [data-theme="control"] :focus-visible { outline: 2px solid var(--kc-focus); box-shadow: var(--kc-glow); }
+
+Rules: the gradient strips above are decorative and static. Text is
+never placed on them, so the sunlight-legibility rule in Section 11
+still holds. Contrast pairs for anything new are checked and recorded
+like the others.
+
+15.6 Exceptions to earlier “not used” lists
+
+1.  Backdrop blur is allowed only in the Control theme at widths of 1024
+    px and above, on the top bar and drawers, with a solid surface
+    fallback under @supports not (backdrop-filter: blur(1px)). Still
+    forbidden in the collector app.
+2.  Static gradients are allowed for the hazard strip, perforation, and
+    the Control login spotlight. Animated gradients stay forbidden.
+3.  SVG stroke-dashoffset animation is allowed for the tick, splash mark
+    and scan corners. Live SVG noise filters stay forbidden.
+
+15.7 Microcopy tone
+
+Short, warm, direct. Success lines: “Saved on your phone”, “Buyer
+chosen”, “Handover done”. Errors say what happened and what to do, never
+blame the user. Hindi and Marathi lines use everyday spoken words (भाव,
+माल), not formal or English loan words when a common local word exists.
+
+15.8 Visual QA checklist
+
+1.  Screenshots at 360 x 640 (Field) and 1280 x 800 (Control) of every
+    screen in Sections 9 and 10, in Hindi, Marathi and English; compare
+    against this section.
+2.  Large text setting (125 percent) keeps every screen usable without
+    clipped text or overlapped buttons.
+3.  Motion off (reduced-motion setting and low-memory simulation): all
+    information is still visible and nothing is stuck mid-animation.
+4.  Sunlight check on a real phone at full brightness: amounts, buttons
+    and the QR are readable without shading the screen.
+5.  No text sits on a photo, a gradient strip or the dot grid.
+6.  Frame rate stays smooth while scrolling the lots list on a low-end
+    phone or with 4x CPU throttle in dev tools.

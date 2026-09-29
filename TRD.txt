@@ -1,0 +1,766 @@
+Kabadiwala Connect: Technical Requirements Document (TRD)
+
+Companion to PRD.md. The PRD says what to build. This TRD says exactly
+how. Read APP_FLOW.md for navigation and UI_UX.md for design.
+
+0. Rules for the coding agent
+
+1.  Do not assume anything. If a technical detail is not written here or
+    in PRD.md, do not invent it. Write the question and your proposed
+    answer in DECISIONS.md and continue with the simplest option.
+2.  Where this TRD and the PRD differ, this TRD wins. Differences from
+    the PRD are listed in Section 20.
+3.  Use only the dependencies in Section 3. Adding a dependency requires
+    an entry in DECISIONS.md with the reason.
+4.  Never invent package names, APIs or options. Check official
+    documentation when unsure.
+5.  The collector app must load and work with all external network
+    requests blocked (no CDNs, no Google Fonts, no remote images). Only
+    the app’s own API may be called, and only during sync.
+6.  All seed data is labelled SAMPLE DATA.
+
+1. Runtime and tooling
+
+  -----------------------------------------------------------------------
+  Item                                Requirement
+  ----------------------------------- -----------------------------------
+  Node.js                             22 LTS (or newer LTS if 22 is
+                                      unavailable). Record the exact
+                                      version in .nvmrc
+
+  Package manager                     npm with workspaces
+
+  Language                            TypeScript 5.x, strict: true
+                                      everywhere
+
+  PostgreSQL                          17
+
+  Docker                              Docker Engine with Compose v2
+
+  Browsers                            Chrome for Android (latest 2 major
+                                      versions) is the target; desktop
+                                      Chrome and Edge for recycler and
+                                      admin
+
+  Versioning                          Use the current stable major of
+                                      each library listed below. Install
+                                      with npm install --save-exact so
+                                      package-lock.json pins exact
+                                      versions. Record final versions in
+                                      DECISIONS.md
+  -----------------------------------------------------------------------
+
+Minimum majors expected: React 19, Vite (current stable major), Tailwind
+CSS 4, React Router 7, Express 5, Prisma 6 or newer, Zod 4, Dexie 4,
+TensorFlow.js 4, Vitest (current), Playwright (current).
+
+2. Repository layout (npm workspaces)
+
+    kabadiwala-connect/
+      package.json                 # workspaces: apps/*, server, packages/*
+      .nvmrc  .env.example  .gitignore  docker-compose.yml
+      PRD.md  TRD.md  APP_FLOW.md  UI_UX.md  DECISIONS.md
+      prisma/  schema.prisma  seed.ts  migrations/
+      packages/
+        shared/                    # imported by web and server
+          src/
+            schemas/               # Zod schemas for every request and response
+            types.ts
+            matching.ts            # ranking function (pure)
+            matching.config.ts     # weights
+            valuation.ts
+            plausibility.config.ts # weight ranges per category
+            trace.ts               # canonical JSON + hash helpers (pure)
+            constants.ts           # enums, thresholds
+      apps/web/                    # collector PWA + recycler panel + admin
+      server/                      # Express API
+      data/
+        seed/                      # CSV/JSON seed files
+        ml/                        # images, labels.csv, README.md
+      docs/  field-notes.md
+      tests/
+
+3. Dependency allow-list
+
+3.1 apps/web (runtime)
+
+  -----------------------------------------------------------------------
+  Package                             Purpose
+  ----------------------------------- -----------------------------------
+  react, react-dom                    UI
+
+  react-router                        Routing (library mode,
+                                      createBrowserRouter)
+
+  dexie, dexie-react-hooks            IndexedDB and live queries
+
+  zustand                             Small UI state only (language,
+                                      connectivity, sync status, theme)
+
+  i18next, react-i18next              Translations
+
+  @tensorflow/tfjs                    On-device inference (backends:
+                                      webgl, then cpu fallback)
+
+  qrcode                              Generate QR
+
+  html5-qrcode                        Scan QR
+
+  lucide-react                        Icons
+
+  recharts                            Charts, only in lazy-loaded
+                                      recycler and admin routes
+
+  @fontsource/noto-sans-devanagari,   Self-hosted fonts (import only the
+  @fontsource/oswald,                 needed subset and weight CSS files)
+  @fontsource/jetbrains-mono          
+
+  clsx                                Class names
+
+  zod (via packages/shared)           Validation
+  -----------------------------------------------------------------------
+
+3.2 apps/web (dev)
+
+vite, @vitejs/plugin-react, vite-plugin-pwa, tailwindcss and its Vite
+plugin, typescript, vitest, @testing-library/react, @playwright/test,
+eslint, prettier, fake-indexeddb (tests).
+
+3.3 server (runtime)
+
+express, cors, helmet, express-rate-limit, pino, pino-http, multer, zod
+(via shared), jsonwebtoken, bcryptjs, @prisma/client, dotenv,
+csv-stringify, file-type (magic-byte check).
+
+3.4 server (dev)
+
+typescript, tsx, vitest, supertest, prisma, eslint, prettier.
+
+3.5 Forbidden
+
+Redux, TanStack Query, Axios, Firebase, any CSS-in-JS library, any UI
+component kit (MUI, Chakra, Ant), Font Awesome, any CDN link, any
+analytics or tracking script, blockchain libraries, Mongo, GraphQL.
+
+4. Environment variables (.env.example)
+
+  -----------------------------------------------------------------------------------
+  Name                        Example                         Notes
+  --------------------------- ------------------------------- -----------------------
+  NODE_ENV                    development                     
+
+  PORT                        4000                            API port
+
+  DATABASE_URL                postgresql://kc:kc@db:5432/kc   
+
+  JWT_SECRET                  change-me                       min 32 chars in non-dev
+
+  JWT_COLLECTOR_TTL           30d                             collectors stay logged
+                                                              in offline
+
+  JWT_STAFF_TTL               12h                             recycler and admin
+
+  DEMO_MODE                   true                            enables fixed OTP
+                                                              123456; must be false
+                                                              for anything non-demo
+
+  CORS_ORIGINS                http://localhost:5173           comma separated
+
+  UPLOAD_DIR                  ./uploads                       local disk storage
+
+  UPLOAD_MAX_BYTES            1048576                         1 MB per photo
+
+  DEFAULT_STATE_CODE          MH                              used in lot reference
+                                                              codes
+
+  PUBLIC_API_BASE             /api/v1                         web uses relative base
+
+  RATE_LIMIT_AUTH_PER_15MIN   20                              
+  -----------------------------------------------------------------------------------
+
+5. Docker Compose
+
+Services: db (postgres:17, volume pgdata, port 5432), api (Node 22,
+mounts uploads volume, port 4000, runs migrate then start), web (Vite
+dev server, port 5173) for dev only. In production-like demo, the API
+serves the built web app from apps/web/dist at / and the API at /api/v1.
+MinIO is deferred (Section 20).
+
+6. Database
+
+-   Schema: prisma/schema.prisma (provided). Do not rename models or
+    fields without a DECISIONS.md entry.
+-   Migrations via prisma migrate dev (dev) and prisma migrate deploy
+    (demo).
+-   Money is Decimal(10,2). In API JSON, money is a string with two
+    decimals (for example "320.00"). Weight is a number in kilograms.
+-   All timestamps are stored UTC and sent as ISO 8601 strings.
+-   All ids are UUID strings.
+-   Seed (prisma/seed.ts) reads files in data/seed/ and follows PRD
+    Section 8. It must be idempotent (upsert by natural keys: category
+    code, recycler email, collector phone).
+-   Additional index: TraceRecord(lotId, seq) unique (already in
+    schema). Add a Postgres sequence or a DailyCounter approach for lot
+    reference numbers: implement as SELECT of the count of lots created
+    that UTC day for the state code, inside the same transaction, with a
+    unique constraint on refCode and one retry on conflict.
+
+7. Authentication and authorization
+
+  Role        How to log in                          Token TTL
+  ----------- -------------------------------------- -------------------
+  COLLECTOR   Phone number + OTP                     JWT_COLLECTOR_TTL
+  RECYCLER    Email + password (bcryptjs, cost 10)   JWT_STAFF_TTL
+  ADMIN       Email + password                       JWT_STAFF_TTL
+
+-   OTP: 6 digits. If DEMO_MODE=true, the OTP is always 123456 and no
+    SMS is sent. If DEMO_MODE=false, the endpoint returns
+    501 NOT_IMPLEMENTED (no real SMS provider in the prototype). OTP
+    validity 5 minutes, max 5 attempts per phone per 15 minutes.
+-   JWT payload: { sub, role, iat, exp }. Header
+    Authorization: Bearer <token>.
+-   Role checks are middleware functions
+    requireRole('COLLECTOR' | 'RECYCLER' | 'ADMIN'). A collector can
+    only read and write their own lots and ledger. A recycler can only
+    see lots addressed to them (selected them) plus lots in DRAFT/LISTED
+    within their service radius and accepted materials (for discovery).
+-   The web app stores the token in IndexedDB (meta table), not in
+    localStorage.
+-   Admin creation: only through seed or POST /admin/recyclers by an
+    existing admin. No public recycler self-registration.
+
+8. API conventions
+
+-   Base path: /api/v1. JSON only, except photo upload
+    (multipart/form-data) and CSV export (text/csv).
+-   Response envelope for JSON:
+    { "data": <payload or null>, "error": null | { "code": string, "message": string, "details"?: any }, "meta"?: { ... } }.
+-   Validation: every request body, query and param validated with Zod
+    schemas from packages/shared. Validation failure returns
+    400 VALIDATION_ERROR with details listing field errors.
+-   Pagination for list endpoints: ?page=1&limit=20 (max 100).
+    meta: { page, limit, total }.
+-   Idempotency: lots are keyed by client-generated clientId (UUID v4).
+    Repeating the same create returns the existing lot with 200, not an
+    error.
+-   Security headers via helmet. CORS limited to CORS_ORIGINS. Rate
+    limit on /auth/* only.
+-   Error codes and statuses:
+
+  --------------------------------------------------------------------------
+  HTTP                    code                       When
+  ----------------------- -------------------------- -----------------------
+  400                     VALIDATION_ERROR           body/query invalid
+
+  400                     OTP_INVALID                wrong or expired OTP
+
+  401                     UNAUTHENTICATED            missing or bad token
+
+  403                     FORBIDDEN                  wrong role or not owner
+
+  404                     NOT_FOUND                  resource missing
+
+  409                     INVALID_STATE_TRANSITION   lot status does not
+                                                     allow the action
+
+  409                     CONFLICT                   unique constraint
+
+  413                     FILE_TOO_LARGE             photo over limit
+
+  415                     UNSUPPORTED_MEDIA          not JPEG
+
+  422                     RECYCLER_NOT_VERIFIED      selecting a
+                                                     non-VERIFIED recycler
+
+  429                     RATE_LIMITED               
+
+  500                     INTERNAL                   
+
+  501                     NOT_IMPLEMENTED            real SMS OTP
+  --------------------------------------------------------------------------
+
+9. Lot state machine
+
+    DRAFT --select-recycler--> LISTED --quote--> QUOTED --accept-quote--> ACCEPTED
+    ACCEPTED --handover/initiate--> HANDED_OVER --handover/confirm--> CONFIRMED --ledger paid--> PAID
+    DRAFT | LISTED | QUOTED | ACCEPTED --cancel--> CANCELLED
+
+Any other transition returns 409 INVALID_STATE_TRANSITION. Every
+successful transition appends a TraceRecord.
+
+10. API catalogue
+
+Auth column: P = public, C = collector, R = recycler, A = admin, any =
+any authenticated.
+
+10.1 System and auth
+
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path                Auth           Request                                              Response data
+  -------------- ------------------- -------------- ---------------------------------------------------- ----------------------------------------------------------------------------
+  GET            /health             P              none                                                 { status: "ok", time }
+
+  POST           /auth/otp/request   P              { phone: string } (10 digits, Indian mobile)         { sent: true }
+
+  POST           /auth/otp/verify    P              { phone, otp, preferredLanguage?: "HI"|"MR"|"EN" }   { token, collector: { id, preferredLanguage, district?, operatingArea? } }
+                                                                                                         (creates collector on first verify)
+
+  POST           /auth/login         P              { email, password }                                  { token, user: { id, role, name } }
+
+  GET            /auth/me            any            none                                                 { id, role, ... }
+
+  PATCH          /collectors/me      C              { preferredLanguage?, district?, operatingArea? }    collector
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10.2 Reference data
+
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path            Auth           Request                                                              Response
+  -------------- --------------- -------------- -------------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------
+  GET            /materials      any            none                                                                 categories with subCategories, names in hi/mr/en, iconKey, hazardLevel, unit
+
+  GET            /safety         any            none                                                                 safety tips with audio keys and image keys
+
+  GET            /prices         any            query: district?, city?, categoryId?, days? (default 30)             list of price entries
+
+  GET            /prices/board   any            query: district (required)                                           per category:
+                                                                                                                     { categoryId, latest: "120.00", unit, ma7, ma30, trend: "UP"|"DOWN"|"FLAT", marketMin, marketMax, updatedAt, isSampleData }
+
+  POST           /prices         R              { categoryId, buyingPrice: string, unit?, marketMin?, marketMax? }   created entry (source RECYCLER, city and district from recycler profile)
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10.3 Recyclers
+
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path                   Auth           Request                                                             Response
+  -------------- ---------------------- -------------- ------------------------------------------------------------------- ----------------------------------------------------------
+  GET            /recyclers/directory   C              query: district (required)                                          VERIFIED recyclers with accepted categories, rates,
+                                                                                                                           location, radius, pickup, updatedAt (client caches this
+                                                                                                                           for offline ranking)
+
+  GET            /recyclers/match       C              query: lotClientId                                                  ranked list
+                                                                                                                           [{ recycler, distanceKm, offeredRate, score, badges[] }]
+                                                                                                                           computed with packages/shared/matching.ts (server
+                                                                                                                           confirmation of the client ranking)
+
+  GET            /recyclers/me          R              none                                                                own profile with materials
+
+  PUT            /recyclers/me          R              { name?, phone?, lat?, lng?, serviceRadiusKm?, pickupAvailable? }   profile
+
+  PUT            /recyclers/me/rates    R              { rates: [{ categoryId, offeredRatePerUnit: string }] }             updated rates (also writes PriceEntry, source RECYCLER)
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10.4 Lots
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path                        Auth           Request                                                                                                                                                                  Response
+  -------------- --------------------------- -------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -----------------------------------------------------
+  POST           /lots                       C              { clientId, categoryId, subCategory?, description?, condition, sourceType?, approxWeightKg, estimatedValue: string, aiLabel?, aiConfidence?, lat?, lng?, collectedAt }   lot (with refCode); 200 if clientId exists
+
+  GET            /lots                       C, R           query: status?, page, limit, updatedSince?                                                                                                                               lots scoped to the caller
+
+  GET            /lots/:id                   C, R           none                                                                                                                                                                     lot with photos, handover, recycler summary
+
+  POST           /lots/:id/photos            C              multipart: file (JPEG), sha256, takenAt                                                                                                                                  { photoId, path }; server recomputes SHA-256 and
+                                                                                                                                                                                                                                     rejects on mismatch with 400 VALIDATION_ERROR
+
+  POST           /lots/:id/select-recycler   C              { recyclerId, pickupRequested: boolean }                                                                                                                                 lot (status LISTED); 422 if recycler not VERIFIED
+
+  POST           /lots/:id/quote             R              { quotedPrice: string }                                                                                                                                                  lot (status QUOTED); runs anomaly check
+
+  POST           /lots/:id/accept-quote      C              none                                                                                                                                                                     lot (status ACCEPTED)
+
+  POST           /lots/:id/cancel            C              none                                                                                                                                                                     lot (status CANCELLED)
+
+  GET            /lots/:id/trace             C, R, A        none                                                                                                                                                                     ordered trace records
+
+  GET            /lots/:id/trace/verify      C, R, A        none                                                                                                                                                                     { valid: boolean, firstMismatchSeq: number | null }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+:id accepts the server UUID. For offline-created lots, the web app calls
+endpoints only after the lot exists on the server (sync ensures this
+order).
+
+10.5 Handover
+
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path                 Auth           Request                                                                    Response
+  -------------- -------------------- -------------- -------------------------------------------------------------------------- ------------------------------------------------------
+  POST           /handover/initiate   C              { lotId, weightKg, lat?, lng?, handoverAt }                                { handoverRef, otp: "6 digits", qrPayload: string };
+                                                                                                                                lot status HANDED_OVER; OTP valid 24 hours in the
+                                                                                                                                prototype so offline handovers can complete
+
+  POST           /handover/confirm    R              { handoverRef?, otp?, qrPayload?, weightKgVerified, method: "QR"|"OTP" }   handover with recyclerConfirmed: true; lot status
+                                                     (at least one of handoverRef+otp or qrPayload)                             CONFIRMED; sets finalPrice = quotedPrice; runs anomaly
+                                                                                                                                check
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-   handoverRef format:
+    HO-<last 8 chars of lot refCode digits>-<4 uppercase alphanumerics>.
+-   qrPayload: base64url of JSON
+    {"v":1,"t":"KC-HO","ref":"<handoverRef>","lot":"<lot uuid>","w":<weightKg>}.
+-   If weightKgVerified differs from collector weight by more than 15
+    percent, the response includes warnings: ["WEIGHT_DIFFERENCE"] and
+    the lot is flagged for review (not blocked).
+
+10.6 Ledger
+
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path           Auth           Request                                             Response
+  -------------- -------------- -------------- --------------------------------------------------- -----------------------------------------------------------------
+  GET            /ledger        C              none                                                { entries: [...], totals: { earned: "0.00", pending: "0.00" } }
+
+  POST           /ledger        R              { lotId, amountPaid: string, mode: "CASH"|"UPI" }   ledger entry; dueAmount = finalPrice - total paid so far; status
+                                                                                                   PENDING (0 paid), PARTIAL, or PAID (due 0); when PAID, lot status
+                                                                                                   becomes PAID
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10.7 Sync
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path           Auth           Request                                                             Response
+  -------------- -------------- -------------- ------------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  POST           /sync          C              { deviceId: string, since: ISO string | null, actions: Action[] }   { results: [{ actionId, status: "APPLIED"|"DUPLICATE"|"REJECTED", error?: {code, message}, serverLotId?, refCode? }], updates: { materials, prices, recyclers, lots, ledger, safety }, serverTime }
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Action types (each has actionId UUID, type, createdAt, payload): | type
+| payload | Server behaviour | |—|—|—| | LOT_CREATE | same as POST /lots
+body | create or return existing | | SELECT_RECYCLER |
+{ lotClientId, recyclerId, pickupRequested } | as select-recycler | |
+ACCEPT_QUOTE | { lotClientId } | as accept-quote | | CANCEL_LOT |
+{ lotClientId } | as cancel | | HANDOVER_INITIATE |
+{ lotClientId, weightKg, lat?, lng?, handoverAt } | as handover/initiate
+|
+
+Rules: actions are applied in createdAt order in one DB transaction per
+action. An action that fails is REJECTED and does not block later
+independent actions. Photos upload separately with POST /lots/:id/photos
+after the lot has a server id (returned in results). updates returns
+only rows with updatedAt > since (or all if since is null). Server wins
+on status fields; client wins on description and approxWeightKg until
+the lot leaves DRAFT/LISTED.
+
+10.8 Admin
+
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Method         Path                   Auth           Request                                                                                                                     Response
+  -------------- ---------------------- -------------- --------------------------------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------
+  GET            /admin/recyclers       A              query: status?, page, limit                                                                                                 recyclers with authorization details
+
+  POST           /admin/recyclers       A              { name, email, password, city, district, state, lat, lng, authorizationNo?, authorizationBody?, authorizationValidTill? }   recycler (status PENDING)
+
+  PATCH          /admin/recyclers/:id   A              { authorizationStatus: "VERIFIED"|"PENDING"|"SUSPENDED" }                                                                   recycler
+
+  GET            /admin/flags           A              query: page, limit                                                                                                          lots with anomalyFlag = true, anomalyReason, expected range
+
+  GET            /admin/stats           A              none                                                                                                                        { lotsByStatus, lotsPerDay(14), avgPricePerCategory, verifiedRecyclers }
+
+  GET            /export/:dataset.csv   A              dataset in materials|prices|recyclers|transactions|traceability|collectors                                                  CSV; collector ids hashed (SHA-256 truncated to 12 hex), GPS rounded to 2
+                                                                                                                                                                                   decimals, phone numbers never exported
+  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+11. Service algorithms (all pure functions live in packages/shared so web and server share them)
+
+11.1 Valuation
+
+estimate = round2(weightKg * rate) where rate = latest buyingPrice for
+category and district from cached price board; fallback: state average
+for the category, labelled isEstimateFallback: true. Units: if category
+unit is piece, weight input is replaced by a count.
+
+11.2 Matching
+
+Eligibility: authorizationStatus === VERIFIED, accepts category,
+distanceKm <= serviceRadiusKm. Score =
+40*rate + 25*distance + 15*pickup + 10*reliability + 10*freshness (PRD
+12.1). Weights in matching.config.ts. Distance uses the Haversine
+formula with Earth radius 6371 km. Ties: lower distance first. Return
+top 3 by default (limit 5 max). Badges: AUTHORIZED, PICKUP, BEST_RATE,
+NEAREST. reliability uses confirmed handovers divided by total selected
+lots for that recycler in the last 90 days, default 0.5 when fewer than
+3 lots. freshness from rate updatedAt.
+
+11.3 Anomaly detection
+
+Run on quote and handover/confirm. unitPrice = price / weightKg.
+Reference set: PriceEntry.buyingPrice for the same category and city in
+the previous 30 days. If fewer than 5 samples, skip (no flag). Else
+z = (unitPrice - mean) / stddev (if stddev is 0, skip). Flag if
+abs(z) > 3 with reason
+PRICE_OUTLIER: z=<value>, expected <mean-3sd> to <mean+3sd>. Also flag
+if weight is outside the category range in plausibility.config.ts with
+reason WEIGHT_IMPLAUSIBLE. Flags never block a transaction.
+
+11.4 Price trend
+
+Daily average buyingPrice per category and district. ma7 = mean of last
+7 daily averages, ma30 = mean of last 30 (use available days if fewer,
+minimum 3). change = (ma7 - ma30) / ma30. UP if change > 0.03, DOWN if
+< -0.03, else FLAT.
+
+11.5 Hash chain
+
+Canonical JSON: object keys sorted alphabetically at every level, no
+whitespace, UTF-8. For each record:
+hash = SHA256_hex( prevHash + lotId + String(seq) + eventType + canonicalJSON(payload) + createdAtISO ).
+First prevHash = 64 zeros. Event types: LOT_CREATED, RECYCLER_SELECTED,
+QUOTED, QUOTE_ACCEPTED, HANDOVER_INITIATED, HANDOVER_CONFIRMED,
+PAYMENT_RECORDED, CANCELLED. Payload includes relevant ids, weights,
+prices and photo SHA-256 values. Records are inserted inside the same
+transaction as the state change. Verification recomputes the chain in
+order.
+
+11.6 Lot reference
+
+KC-<STATE>-<YYYYMMDD>-<NNNN> assigned by the server. While offline, the
+app shows KC-LOCAL-<first 8 of clientId> and replaces it after sync.
+
+12. Web app technical specification
+
+12.1 Routing
+
+createBrowserRouter with lazy routes. Route table is in APP_FLOW.md.
+Recycler and admin routes are code-split. Unknown paths go to a NotFound
+screen with a Home button.
+
+12.2 State
+
+-   Persistent data: Dexie only.
+-   UI state: zustand store
+    { language, isOnline, pendingCount, syncing, theme }.
+-   No global server cache. Data reaches the UI through Dexie live
+    queries after sync.
+
+12.3 Dexie schema (version 1)
+
+  -----------------------------------------------------------------------
+  Store                   Primary key             Indexes
+  ----------------------- ----------------------- -----------------------
+  meta                    key                     none (token, deviceId,
+                                                  language, lastSyncAt,
+                                                  district)
+
+  materials               id                      code
+
+  prices                  id                      categoryId, district,
+                                                  recordedAt
+
+  recyclers               id                      district
+
+  lots                    clientId                status, updatedAt,
+                                                  serverId
+
+  photos                  id                      lotClientId
+
+  ledger                  id                      lotId
+
+  safety                  id                      code
+
+  outbox                  actionId                createdAt
+  -----------------------------------------------------------------------
+
+12.4 Sync client (lib/sync.ts)
+
+-   Triggers: app start, window online event, manual button, and every
+    60 seconds while online and outbox is not empty.
+-   Steps: read outbox ordered by createdAt; POST /sync; apply results
+    (store serverLotId, refCode); remove APPLIED/DUPLICATE actions; keep
+    REJECTED with error visible in the UI; write updates into Dexie;
+    upload pending photos sequentially; update lastSyncAt.
+-   Retry: exponential backoff 2s, 4s, 8s up to 60s; stop on 401 and
+    show login.
+-   deviceId is a UUID generated once and stored in meta.
+
+12.5 Camera, photos, GPS
+
+-   Photo capture:
+    <input type="file" accept="image/*" capture="environment">.
+-   Compression: draw to canvas, longest side 1024 px, JPEG quality 0.7,
+    target under 300 KB; store as Blob.
+-   SHA-256: crypto.subtle.digest (requires HTTPS or localhost).
+-   GPS: navigator.geolocation.getCurrentPosition with
+    enableHighAccuracy: false, timeout: 8000, maximumAge: 60000. If
+    denied or failed, fall back to the last known position, otherwise to
+    the district centre chosen in Settings; mark
+    locationSource: "GPS" | "LAST" | "DISTRICT" in the lot payload
+    description metadata.
+
+12.6 On-device AI (lib/ml.ts)
+
+-   Model: image classifier exported from Google Teachable Machine
+    (TensorFlow.js export: model.json, weights.bin, metadata.json)
+    placed in apps/web/public/model/.
+-   Load with tf.loadLayersModel('/model/model.json') lazily on first
+    lot creation, then keep in memory. Backend: try webgl, fall back to
+    cpu.
+-   Preprocessing: resize to 224 x 224 RGB, scale each pixel with
+    (value / 127) - 1.
+-   Output: softmax probabilities aligned with metadata.json labels.
+    Labels must equal MaterialCategory.code values.
+-   Threshold: confidence >= 0.60 shows a suggestion; below shows “not
+    sure, please choose”.
+-   Store aiLabel and aiConfidence, plus the final chosen category.
+    Collector choice always wins.
+-   Dataset and results are documented in data/ml/README.md: images per
+    class, capture conditions, train/validation split, validation
+    accuracy, confusion notes, limitations. Do not claim more than
+    measured.
+-   If the model files are missing, the app hides the suggestion and
+    works with manual selection only.
+
+12.7 Audio (lib/audio.ts)
+
+-   Files: /audio/<lang>/<key>.mp3 (lang hi or mr; English uses en).
+    Keys listed in UI_UX.md Section 12.
+-   Play with HTMLAudioElement. Only one audio plays at a time. Numbers
+    are composed from digit and rupee clips (num_0 to num_9,
+    num_hundred, num_thousand, rupees).
+-   Fallback when a file is missing: speechSynthesis with lang hi-IN,
+    mr-IN or en-IN; if no voice exists, show the text only.
+-   The speaker button shows the animated bars while audio plays (see
+    UI_UX).
+
+12.8 PWA
+
+-   vite-plugin-pwa with registerType: 'prompt' (show “Update ready”
+    chip), Workbox precache of app shell.
+-   Runtime caching: CacheFirst for /model/*, /audio/*, /fonts/*, icons;
+    NetworkFirst (timeout 3 s) for GET /api/v1/* read endpoints is not
+    used because data comes through Dexie; API calls are not cached by
+    the service worker.
+-   Manifest: name “Kabadiwala Connect”, short_name “Kabadiwala”,
+    display: standalone, orientation: portrait, start_url: /home,
+    theme_color #141414, background_color #F6F3EE, icons 192 and 512
+    (including maskable).
+-   Offline navigation fallback: index.html.
+
+12.9 i18n
+
+Namespaces: common, home, lot, prices, match, handover, ledger, safety,
+settings, recycler, admin, errors. Keys are snake_case. Files:
+src/i18n/{hi,mr,en}.json. Missing key falls back to English and logs a
+console warning in dev. No hard-coded strings in components.
+
+12.10 Theming
+
+Two themes via data-theme on <html>: field (collector) and control
+(recycler and admin). Tokens are defined in UI_UX.md Section 3 as CSS
+variables and mapped through Tailwind 4 @theme.
+
+12.11 Accessibility and input
+
+Touch targets 48 px minimum (56 px in the collector app). All
+interactive elements have accessible names in the current language.
+Focus outlines visible. No reliance on colour alone (icons and text
+accompany colour).
+
+13. Server technical specification
+
+-   Structure: routes/*.ts (thin), services/*.ts (logic),
+    middleware/*.ts, lib/prisma.ts, lib/logger.ts.
+-   Express 5 with express.json({ limit: '200kb' }). Multer memory
+    storage, single file, limit UPLOAD_MAX_BYTES.
+-   Photo checks: magic bytes via file-type must be image/jpeg;
+    recompute SHA-256 and compare with the provided value; write to
+    UPLOAD_DIR/<lotId>/<photoId>.jpg; serve read-only at /uploads only
+    to authenticated users through a route that checks lot access (do
+    not expose the folder statically).
+-   Transactions: state change + trace record + ledger writes happen in
+    prisma.$transaction.
+-   Logging: pino with request ids; never log tokens, OTPs or phone
+    numbers.
+-   Errors: central error middleware maps thrown
+    AppError(code, status, message, details?) to the envelope.
+-   Graceful shutdown on SIGTERM.
+
+14. Security requirements
+
+Helmet defaults; JWT secret from env; passwords hashed; parameterized
+queries via Prisma only; input validated with Zod; upload type and size
+enforced; CORS allow-list; rate limiting on auth; no secrets committed;
+SAMPLE DATA never presented as real; exports anonymized.
+
+15. Performance budgets (targets to measure, not claims)
+
+Collector app initial JS (excluding recycler/admin chunks and ML model)
+target under 250 KB gzip; model loaded lazily; first meaningful screen
+under 4 s on throttled “Fast 3G” with warm cache; lot creation flow
+makes zero network requests; Lighthouse mobile targets: PWA installable,
+Accessibility 90 or higher, Performance 80 or higher. Record measured
+values in DECISIONS.md.
+
+16. Testing
+
+  -----------------------------------------------------------------------
+  Level                   Tool                    Must cover
+  ----------------------- ----------------------- -----------------------
+  Unit                    Vitest                  valuation, matching
+                                                  (eligibility, weights,
+                                                  ties), anomaly (skip
+                                                  cases, z-score, weight
+                                                  range), trend
+                                                  thresholds, canonical
+                                                  JSON and hash chain,
+                                                  sync idempotency
+
+  API                     Vitest + supertest      auth roles, every state
+                                                  transition (valid and
+                                                  invalid), handover
+                                                  confirm, ledger totals,
+                                                  export anonymization,
+                                                  422 for non-verified
+                                                  recycler
+
+  Web unit                Vitest + Testing        Dexie writes, outbox
+                          Library +               creation, i18n key
+                          fake-indexeddb          coverage (all keys
+                                                  exist in hi, mr, en)
+
+  E2E                     Playwright              (1) offline lot
+                                                  creation then sync; (2)
+                                                  external network
+                                                  blocked: app still
+                                                  loads and works offline
+                                                  after first visit; (3)
+                                                  recycler confirms
+                                                  handover by code; (4)
+                                                  suspended recycler
+                                                  never appears in
+                                                  matching; (5) safety
+                                                  popup appears for
+                                                  battery and CRT; (6)
+                                                  language switch
+                                                  persists
+  -----------------------------------------------------------------------
+
+17. Scripts (root package.json)
+
+dev (api + web), build, start, db:migrate, db:seed, db:reset, test,
+test:e2e, lint, format, typecheck.
+
+18. Demo deployment
+
+HTTPS is required for camera, geolocation, service worker and
+crypto.subtle on phones (localhost is exempt on the same device only).
+Use any HTTPS host for the API with the built web app, or a tunnel for
+rehearsal. Set DEMO_MODE=true, seed the database, and install the PWA on
+the demo phone at least once while online so all assets are cached.
+
+19. Definition of done
+
+All endpoints in Section 10 implemented and tested; PRD Section 16 demo
+script runs on a real Android phone; offline e2e tests pass; no external
+requests in the network log for the collector flow; DECISIONS.md lists
+versions, sizes and any deviations; SAMPLE DATA labels visible.
+
+20. Differences from the PRD
+
+1.  Added packages/shared workspace for schemas and pure algorithms.
+2.  Object storage is local disk in the prototype; MinIO is deferred.
+3.  API version prefix is /api/v1 (PRD said /api).
+4.  Recycler ranking runs on the client from a cached directory (and is
+    confirmed by GET /recyclers/match) so ranking works offline.
+5.  ML model source is fixed to a Teachable Machine TensorFlow.js
+    export; a custom model may replace it later if the label set and I/O
+    contract are unchanged.

@@ -1,0 +1,313 @@
+Kabadiwala Connect: Implementation Plan for Antigravity
+
+How the coding agent works, in what order, with which checks. This file
+is about process. The product is in PRD.md, the technical rules in
+TRD.md and BACKEND.md, the routes in APP_FLOW.md, the design in
+UI_UX.md.
+
+1. Operating model
+
+1.  Plan first, then wait. Before writing any code, produce a plan (repo
+    tree, phase list, risks, questions) and stop for approval. Do not
+    start Phase 1 until the person says “approved”.
+2.  One phase at a time. Build only the current phase. At the end run
+    the gates in Section 4, write the report in Section 5, commit, and
+    stop. The person says “continue” to start the next phase.
+3.  Small verified steps. Inside a phase, work in small tasks. After
+    each task run the relevant check (typecheck, unit test, or a quick
+    manual run). Fix before moving on.
+4.  Use the documents as the spec. When something is unclear, do not
+    guess: add it to DECISIONS.md as a question with a proposed answer
+    and continue with the simplest option.
+5.  Never widen scope. No features, routes, screens, libraries or
+    services beyond the documents. If you think something is missing,
+    write it under “Suggestions” in the phase report.
+6.  Be honest in reports. Say what works, what is mocked, what failed,
+    what you did not test. Never claim a test passed without running it.
+
+Suggested Antigravity settings (use the closest equivalent in your
+version): planning-style mode for the plan and each phase start; ask for
+review before running commands that install packages, delete files or
+touch Docker volumes; keep the workspace rules in .agents/rules/ set to
+always apply.
+
+2. Repository bootstrap order (Phase 1 details)
+
+1.  git init, .gitignore (node_modules, dist, uploads, .env, coverage,
+    test-results, playwright-report), .nvmrc, .env.example (TRD 4).
+2.  Root package.json with npm workspaces apps/*, server, packages/* and
+    the scripts from TRD 17.
+3.  packages/shared (empty exports, TypeScript build), server, apps/web
+    created from the official Vite React TypeScript template.
+4.  docker-compose.yml: db (postgres:17) and api; web runs through Vite
+    in dev (TRD 5).
+5.  Copy prisma/schema.prisma unchanged, run the first migration, write
+    prisma/seed.ts skeleton.
+6.  Create DECISIONS.md with the header sections in Section 6.
+
+3. Phases
+
+Each phase lists build, must be true at the end, and do not.
+
+Phase 1: Foundation
+
+Build: repo scaffold; Docker Compose; Prisma migration from the provided
+schema; seed script that already creates categories, sub-categories, the
+admin, 8 recyclers, 3 collectors and safety tips (PRD 8); config
+validation with Zod; GET /api/v1/health; mock OTP auth endpoints
+(/auth/otp/request, /auth/otp/verify) and /auth/login; i18n scaffolding
+with hi, mr, en JSON files loaded from PRD Appendix A; Vite app with PWA
+shell, self-hosted fonts (Noto Sans Devanagari, Oswald, JetBrains Mono),
+the two theme token sets and a bare /dev/ui-kit page. Must be true:
+docker compose up -d db, npm run db:migrate, npm run db:seed and
+npm run dev work from a clean clone; health returns ok; login and code
+verify return a token; the web shell renders Hindi text with correct
+Devanagari marks; the network tab shows no external requests. Do not:
+build screens beyond the language chooser placeholder, or add libraries
+outside TRD 3.
+
+Phase 2: Shared package and algorithms
+
+Build in packages/shared: Zod schemas for every request and response in
+TRD 10; types.ts, constants.ts; valuation.ts, matching.ts and
+matching.config.ts, plausibility.config.ts, anomaly maths, trend maths,
+trace.ts (canonical JSON, SHA-256 chain build and verify). Must be true:
+Vitest unit tests for valuation, matching (eligibility, weights, ties,
+suspended recyclers excluded), anomaly (skip with fewer than 5 samples,
+zero deviation skip, z threshold, weight range), trend thresholds,
+canonical JSON key order, hash chain tamper detection. All pass. Do not:
+import anything server-only or browser-only into shared. Use
+crypto.subtle in the browser path and Node crypto on the server behind
+one small interface.
+
+Phase 3: Reference data and auth APIs
+
+Build: authentication middleware, requireRole, requireVerifiedRecycler,
+rate limiting; GET /materials, /safety, /prices, /prices/board,
+POST /prices, /recyclers/directory, /recyclers/me, PUT /recyclers/me,
+PUT /recyclers/me/rates, PATCH /collectors/me, /auth/me; error
+middleware and envelope; pino with redaction. Must be true: API tests
+for OTP (correct, wrong, expired, sixth attempt, DEMO_MODE=false gives
+501), staff login (same error for wrong email and wrong password), role
+guards, suspended recycler blocked on writes, price board trend values
+for the seeded PCB Pune (UP) and CABLE Nagpur (DOWN) series. Do not: log
+tokens, phones, codes or passwords.
+
+Phase 4: Lots, photos, state machine, trace, anomaly
+
+Build: POST /lots (idempotent by clientId, server refCode), GET /lots,
+GET /lots/:id, photo upload and authenticated photo read,
+select-recycler, quote, accept-quote, cancel, /recyclers/match,
+/lots/:id/trace, /trace/verify; trace service (row lock, in-transaction
+insert); anomaly service. Must be true: API tests for every valid
+transition and one invalid per action, 422 RECYCLER_NOT_VERIFIED,
+recycler cannot quote another recycler’s lot, photo checks (type, size,
+hash mismatch, duplicate), trace verifies and detects a hand-edited
+payload, refCode sequence under two concurrent creates. Do not: expose
+the uploads folder statically.
+
+Phase 5: Handover, ledger, sync, admin and export APIs
+
+Build: /handover/initiate, /handover/confirm (code path and QR path,
+weight difference warning, lockout after 5 wrong tries), /ledger (GET
+and POST, decimal maths), POST /sync (idempotent, ordered, per-action
+transactions, updates payload), all /admin/* routes,
+/export/:dataset.csv with anonymization. Must be true: tests for
+handover paths and errors, ledger partial and full payment moving the
+lot to PAID, overpayment rejected, sync replay returns DUPLICATE for
+every action and creates no extra rows, a rejected action does not block
+a later one, export contains no phone numbers and hashes collector ids.
+All endpoints in TRD 10 exist. Do not: use JavaScript floats for money.
+
+Phase 6: Collector shell, Dexie and sync client
+
+Build: router with guards (APP_FLOW 3), Dexie schema v1 (TRD 12.3),
+zustand store, top bar, connectivity dot, banner, toast, sticky action
+bar, /welcome, /login, /otp, /home (tiles, ticker, sync chip), /sync,
+/settings, sync client (lib/sync.ts) with backoff and 401 handling,
+lib/audio.ts with speechSynthesis fallback, PWA config (TRD 12.8),
+lib/motion.ts and the shared visual components from UI_UX.md Section 15
+that these screens need (ScaleLabel, TickDraw, HazardTape,
+RecycleLoader), each shown in /dev/ui-kit. Must be true: first login
+works online; after that the app opens and navigates in airplane mode;
+language persists; language switch keeps the current screen; unit tests
+for outbox creation and i18n key coverage (every key exists in hi, mr,
+en). Do not: use localStorage for the token.
+
+Phase 7: New lot flow, matching, lot detail
+
+Build: /lot/new/photo (camera input, canvas compression to 1024 px and
+JPEG 0.7, SHA-256, up to 4 photos), /lot/new/material (icon grid; ML
+suggestion only if model files exist), safety popup, /lot/new/weight
+(number pad, slider, condition chips), /lot/new/estimate,
+/lot/:clientId/match, /lot/:clientId with timeline and contextual
+action, /lots; flow guards and draft persistence in Dexie; GPS with the
+three-level fallback. Must be true: Playwright test 1 (offline lot
+creation, then sync, real reference appears) and tests 4 and 5 pass;
+creating a lot makes zero network requests; the draft survives closing
+the app. Do not: block the flow when the model is missing.
+
+Phase 8: Handover, prices, earnings, safety, sync page
+
+Build: /lot/:clientId/handover (weight confirm, optional photo, QR panel
+and code after sync, success screen), /prices with sparkline and stale
+chip, /earnings, /safety flip cards and /safety/:code, rejected-action
+cards on /sync. Must be true: full collector flow from the demo script
+(PRD 16 steps 1 to 14 with recycler steps done through the API or the
+panel if Phase 9 is ready); the QR renders and the code shows;
+stale-rate chip appears when data is older than 7 days.
+
+Phase 9: Recycler panel and admin
+
+Build (lazy-loaded, Control theme): recycler login, dashboard, incoming
+lots, lot detail with quote, handover confirm (camera scanner and manual
+entry), rates, profile; admin login, recyclers (verify, suspend, add),
+flags with trace drawer, data page with exports and a recharts bar
+chart; unverified banner and disabled controls. Must be true: Playwright
+test 3 (recycler confirms handover by code) passes; suspended recycler
+cannot quote; admin verify makes a recycler appear in the collector
+directory after next sync; the collector bundle does not contain
+recharts or panel code.
+
+Phase 10: Polish, accessibility, performance, offline e2e, documentation
+
+Do: finish and tune the aesthetic layer in UI_UX.md Section 15 (its
+components are built earlier, see UI_UX.md 14 step 7); run every check
+in UI_UX.md Section 14; run all six Playwright tests; measure and record
+bundle size, Lighthouse mobile scores, and contrast pairs in
+DECISIONS.md; search for forbidden strings; write README.md (setup, demo
+accounts marked SAMPLE, HTTPS notes), data/ml/README.md,
+apps/web/public/audio/README.md, docs/field-notes.md,
+docs/field-interview-guide.md, docs/unit-economics.md skeletons. Must be
+true: PRD Section 16 demo script runs end to end on the target flow; TRD
+19 definition of done is met or every gap is listed honestly.
+
+4. Quality gates (run at the end of every phase)
+
+    npm run typecheck
+    npm run lint
+    npm run test
+
+Plus, from Phase 7 onwards: npm run test:e2e. Plus a scripted search
+that must return nothing outside node_modules:
+
+    grep -RIn --exclude-dir=node_modules --exclude-dir=.git -E "IRONFORGE|picsum|cdn\.|googleapis|fontawesome|unpkg" .
+
+(.agents/, UI_UX.md and this file mention the strings on purpose;
+exclude those paths in the script.) If a gate fails, fix it or report it
+as failing. Do not skip a gate.
+
+5. Phase report format
+
+Reply with these headings, in this order, keep it short:
+
+1.  Phase and status: done, partly done, or blocked.
+2.  What works (verified, with the command or test that shows it).
+3.  What is mocked or stubbed.
+4.  What failed or was not tested.
+5.  Deviations (each also in DECISIONS.md).
+6.  Measured numbers (bundle sizes, test counts, timings) when relevant.
+7.  Suggestions (things outside scope, for the person to decide).
+8.  Next phase and any question that blocks it.
+
+6. DECISIONS.md structure
+
+Sections: Versions (exact installed versions, Node, Prisma, Postgres
+image tag); Decisions (numbered, date, question, answer, reason)
+starting with BACKEND.md Section 11; Deviations from the documents;
+Measured performance; Contrast results; Design reference statement
+(UI_UX.md 14 step 1); Open questions.
+
+7. Git discipline
+
+Create a repository at the start. Commit at the end of each phase with
+phase N: <summary>. Small commits inside a phase are welcome. Never
+commit .env, uploads/, node_modules, or the trained model unless the
+person supplies it. Tag demo-ready when Phase 10 passes.
+
+8. Work the person must do (the agent cannot)
+
+  ------------------------------------------------------------------------
+  Item                     Owner                   Needed by
+  ------------------------ ----------------------- -----------------------
+  Field visits with at     team                    before the final
+  least two working                                presentation
+  collectors or                                    
+  aggregators, filling                             
+  docs/field-notes.md                              
+
+  Real rates from those    team                    Phase 10
+  visits to replace sample                         
+  base rates                                       
+
+  Photos and a trained     team                    Phase 7 to 10
+  Teachable Machine export                         
+  placed in                                        
+  apps/web/public/model/                           
+  with data/ml/README.md                           
+  filled with measured                             
+  results                                          
+
+  Native Hindi and Marathi native speaker          Phase 10
+  review of hi.json,                               
+  mr.json, safety text                             
+
+  Audio recordings for the native speaker          Phase 10
+  keys in UI_UX.md 12                              
+
+  HTTPS host or tunnel for team                    Phase 8 onwards
+  the phone demo                                   
+
+  Real Android phone test  team                    Phase 10
+  in daylight and airplane                         
+  mode                                             
+
+  Unit-economics numbers   team                    before the final
+                                                   presentation
+  ------------------------------------------------------------------------
+
+9. Common risks and the planned answer
+
+  -----------------------------------------------------------------------
+  Risk                                Answer
+  ----------------------------------- -----------------------------------
+  Camera, GPS, service worker or      use HTTPS host or tunnel; localhost
+  crypto.subtle fail on plain HTTP on only works on the same device
+  a phone                             
+
+  Service worker serves stale files   registerType: 'prompt', show the
+  during development                  Update chip, disable the worker in
+                                      Vite dev, test PWA behaviour on a
+                                      production build
+
+  Model files missing                 app hides the suggestion and
+                                      continues manually (TRD 12.6)
+
+  Devanagari vowel marks clipped      line-height at least 1.6, test on a
+                                      real phone
+
+  Trace hash mismatch from timestamp  create createdAt in code with
+  precision                           milliseconds and hash the same ISO
+                                      string (BACKEND.md 3.5)
+
+  Concurrent trace inserts            row lock plus unique (lotId, seq)
+
+  Money rounding errors               Decimal or integer paise only
+
+  Bundle too big for entry-level      lazy routes, font subsets, no chart
+  phones                              library in collector chunk, measure
+                                      with the build report
+
+  Prisma 7 changes                    stay on Prisma 6.x exact pin
+                                      (BACKEND.md 3.3)
+  -----------------------------------------------------------------------
+
+10. Handy follow-up prompts for the person
+
+-   “Approved. Start Phase 1.”
+-   “Continue with Phase N.”
+-   “Phase N gate X failed. Fix only that, rerun the gate, report.”
+-   “Show me the current DECISIONS.md open questions.”
+-   “Run the offline e2e test and paste the result.”
+-   “Do a scope check: list anything in the repo that is not in the
+    documents.”

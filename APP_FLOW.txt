@@ -1,0 +1,419 @@
+Kabadiwala Connect: App Flow
+
+Every page, route, navigation rule and state transition for the
+prototype. Companion to PRD.md, TRD.md and UI_UX.md. Do not add pages or
+routes that are not listed here.
+
+1. Apps and entry points
+
+  -----------------------------------------------------------------------
+  App               Who               Base path         Device
+  ----------------- ----------------- ----------------- -----------------
+  Collector app     Collector         /                 Android phone,
+  (PWA)                                                 portrait
+
+  Recycler panel    Recycler          /recycler         Laptop or tablet
+                                                        (works on phone
+                                                        too)
+
+  Admin             Admin verifier    /admin            Laptop
+  -----------------------------------------------------------------------
+
+The PWA start_url is /home. If not logged in or language not chosen,
+guards redirect (Section 3).
+
+2. Route table
+
+2.1 Collector routes
+
+  -------------------------------------------------------------------------------
+  Route                     Screen            Needs login       Works offline
+  ------------------------- ----------------- ----------------- -----------------
+  /welcome                  Language          No                Yes
+                            selection                           
+
+  /login                    Phone entry       No                No (needs network
+                                                                the first time
+                                                                only)
+
+  /otp                      OTP entry         No                No (first time
+                                                                only)
+
+  /home                     Home with four    Yes               Yes
+                            big tiles                           
+
+  /lot/new/photo            New lot, step 1:  Yes               Yes
+                            photo                               
+
+  /lot/new/material         New lot, step 2:  Yes               Yes
+                            material icon                       
+
+  /lot/new/weight           New lot, step 3:  Yes               Yes
+                            weight and                          
+                            condition                           
+
+  /lot/new/estimate         Estimate and save Yes               Yes
+
+  /lot/:clientId/match      Recycler match    Yes               Yes (cached
+                            list                                directory)
+
+  /lots                     My lots list      Yes               Yes
+
+  /lot/:clientId            Lot detail and    Yes               Yes
+                            timeline                            
+
+  /lot/:clientId/handover   Handover screen   Yes               Yes (initiation
+                            (QR, code,                          queued)
+                            confirm)                            
+
+  /prices                   Price board       Yes               Yes (cached)
+
+  /earnings                 Earnings ledger   Yes               Yes (cached)
+
+  /safety                   Safety guidance   Yes               Yes
+                            list                                
+
+  /safety/:code             Safety card       Yes               Yes
+                            detail                              
+
+  /sync                     Sync status and   Yes               Yes
+                            pending actions                     
+
+  /settings                 Settings          Yes               Yes
+
+  *                         Not found         No                Yes
+  -------------------------------------------------------------------------------
+
+:clientId is the lot’s client-generated UUID and is used in all lot
+URLs, even after the lot has a server id.
+
+2.2 Recycler routes (all need login with role RECYCLER)
+
+  Route                Screen
+  -------------------- -------------------------------------------------
+  /recycler/login      Email and password login
+  /recycler            Dashboard (counts, latest lots, price snapshot)
+  /recycler/lots       Incoming lots list with filters
+  /recycler/lots/:id   Lot detail, photos, quote form
+  /recycler/handover   Confirm handover (scan QR or enter code)
+  /recycler/rates      Set offered rates per category
+  /recycler/profile    Facility profile, location, radius, pickup
+
+2.3 Admin routes (all need login with role ADMIN)
+
+  Route              Screen
+  ------------------ -------------------------------------------
+  /admin/login       Email and password login
+  /admin/recyclers   Verify or suspend recyclers, add recycler
+  /admin/flags       Anomaly-flagged lots
+  /admin/data        Dataset exports and stats
+
+3. Route guards (evaluated in this order)
+
+1.  Language guard (collector routes only). If no language saved in
+    meta, redirect to /welcome.
+2.  Auth guard. No valid token for the required role: collector routes
+    go to /login; /recycler/* goes to /recycler/login; /admin/* goes to
+    /admin/login.
+3.  Role guard. A logged-in user with the wrong role sees a Forbidden
+    screen with a button to their own home.
+4.  Token expiry. A 401 from the server during sync clears the token and
+    redirects to the login screen; offline app use continues to work
+    until the next sync attempt.
+5.  Lot guard. /lot/:clientId* with an unknown clientId shows “Lot not
+    found” with a button to /lots.
+6.  Flow guard for new lot steps. /lot/new/material requires a photo in
+    the draft; /lot/new/weight requires a material; /lot/new/estimate
+    requires weight. Otherwise redirect to the earliest missing step.
+    The draft lives in Dexie (lots with status: "LOCAL_DRAFT") so it
+    survives app close.
+
+4. Global navigation rules
+
+-   The collector app has no bottom tab bar. Navigation is home tiles
+    plus a top bar with a Back arrow (left) and a language chip and
+    connectivity dot (right). Every screen has one primary action in a
+    sticky bottom bar.
+-   Android hardware Back goes to the previous route; from /home it
+    exits the app. On the new-lot steps, Back goes to the previous step
+    and keeps the draft.
+-   Home icon in the top bar returns to /home from any deep screen.
+-   Recycler and admin use a left sidebar (collapsible on narrow
+    screens) and a top bar with user, logout and connectivity.
+-   Logout (all roles) clears the token; the collector’s local data
+    stays on the device unless “Clear local data” is chosen in Settings
+    (with confirmation).
+
+5. Collector flows
+
+5.1 First launch and login
+
+    flowchart TD
+      A[Open app] --> B{Language saved?}
+      B -- No --> C[/welcome: choose Hindi, Marathi or English/]
+      C --> D[Audio greeting plays]
+      D --> E[/login: enter phone number/]
+      B -- Yes --> F{Token valid?}
+      F -- No --> E
+      F -- Yes --> H[/home/]
+      E --> G[/otp: enter 6-digit code/]
+      G -- Correct --> I[Initial sync: materials, prices, recyclers, safety]
+      I --> H
+      G -- Wrong --> G2[Pictorial + audio error, retry]
+      G2 --> G
+      E -- Offline --> E2[Message: internet needed for first login only]
+
+Details: - /welcome: three large buttons (हिन्दी, मराठी, English).
+Tapping one saves the language, plays the greeting audio, and goes to
+/login. - /login: big number pad, 10-digit phone. Primary action “Send
+code”. Offline shows the message above and disables the button. - /otp:
+six big boxes, number pad. Demo hint chip shows the demo code when
+DEMO_MODE is on (SAMPLE label). Success triggers initial sync with a
+progress bar, then /home.
+
+5.2 Home
+
+Four large tiles in a 2 x 2 grid: New Lot (/lot/new/photo), Price Board
+(/prices), My Lots (/lots), Earnings (/earnings). Below: a wide Safety
+button (/safety) and a small Sync chip (/sync) showing pending count.
+Top bar: settings gear (/settings), language chip, connectivity dot. A
+ticker strip shows 3 to 4 rates from the price board (static text if
+reduced motion).
+
+5.3 Create a lot
+
+    flowchart TD
+      H[/home/] -->|New Lot| P[/lot/new/photo/]
+      P -->|Photo taken, 1 to 4| M[/lot/new/material/]
+      M -->|Material chosen| S{Hazardous category?}
+      S -- Battery or CRT --> SP[Safety popup + audio]
+      SP --> W[/lot/new/weight/]
+      S -- No --> W
+      W -->|Weight and condition set| E[/lot/new/estimate/]
+      E -->|Save lot| L[Lot saved locally, outbox action LOT_CREATE]
+      L --> MT[/lot/:clientId/match/]
+      MT -->|Choose recycler| D[/lot/:clientId/]
+      E -->|Save without choosing| D
+
+Details per step: - Photo (/lot/new/photo): camera button opens the
+camera; up to 4 photos as thumbnails; delete on long press; primary
+“Next” enabled with at least 1 photo. While on this screen the ML model
+preloads in the background. - Material (/lot/new/material): grid of
+large material icons with names. If the model is available, the top
+suggestion is highlighted with its confidence and a speaker button says
+the name. Message “not sure, please choose” if confidence is below 0.60.
+Choosing any icon proceeds. Hazardous categories (BATTERY, CRT) open the
+safety popup before continuing; the collector must tap “I understand”
+(green tick) to close it. - Weight (/lot/new/weight): big number pad
+plus a slider for quick input; unit kg (or count for piece-based
+categories); condition chips (Working, Broken, Burnt) with icons.
+Primary “See value”. - Estimate (/lot/new/estimate): huge rupee amount,
+“rates last updated ” line, speaker button that reads the amount, and a
+fallback label if a state-level average was used. Primary “Find buyer”
+saves the lot (GPS captured now) and goes to match. Secondary “Save for
+later” saves and goes to /lot/:clientId.
+
+5.4 Match and select recycler (/lot/:clientId/match)
+
+-   Shows the top 3 ranked authorized recyclers as cards: name,
+    distance, offered rate for this material, badges (Authorized,
+    Pickup, Best rate, Nearest), estimated value at that rate.
+-   Actions on a card: Choose (with a Pickup toggle if the recycler
+    offers pickup). Choosing queues SELECT_RECYCLER, sets local status
+    LISTED, and goes to /lot/:clientId.
+-   Empty state: “No authorized buyer near you for this material yet”
+    with a Back button and a note that the lot is saved.
+-   The list comes from the cached directory; a “Refresh” chip appears
+    when online.
+
+5.5 Lot detail (/lot/:clientId)
+
+Shows photos, material, weight, estimated value, chosen recycler, quote
+(if any), and a vertical timeline of statuses: Saved, Buyer chosen,
+Quote received, Quote accepted, Handover, Confirmed, Paid. Primary
+action changes with status:
+
+  -------------------------------------------------------------------------
+  Status                  Primary action          Goes to
+  ----------------------- ----------------------- -------------------------
+  DRAFT (saved, no buyer) Find buyer              /lot/:clientId/match
+
+  LISTED (waiting for     Waiting (disabled) with none
+  quote)                  Sync button             
+
+  QUOTED                  Accept quote            queues ACCEPT_QUOTE
+
+  ACCEPTED                Start handover          /lot/:clientId/handover
+
+  HANDED_OVER             Show code again         /lot/:clientId/handover
+
+  CONFIRMED / PAID        View record             expands trace summary
+                                                  (lot ID, hash,
+                                                  timestamps)
+
+  Any before ACCEPTED     Cancel lot (secondary)  confirm dialog then
+                                                  CANCEL_LOT
+  -------------------------------------------------------------------------
+
+5.6 Handover
+
+    sequenceDiagram
+      participant C as Collector app
+      participant S as Server
+      participant R as Recycler panel
+      C->>C: Weigh lot, tap Start handover
+      C->>C: Queue HANDOVER_INITIATE (works offline)
+      C->>S: Sync (when online)
+      S-->>C: handoverRef, OTP, QR payload
+      C->>C: Show QR and 6-digit code
+      R->>R: Scan QR or type code, enter verified weight
+      R->>S: POST /handover/confirm
+      S-->>R: Confirmed (lot CONFIRMED)
+      R->>S: POST /ledger (payment)
+      S-->>C: Next sync: status CONFIRMED and ledger entry
+
+Collector screen /lot/:clientId/handover: weight confirmation, photo of
+the lot at handover (optional additional photo), GPS captured, then
+Start handover creates the queued action. After sync the screen shows
+the QR (with notch-corner frame), the 6-digit code in large digits, and
+the handover reference. If the app is offline, it shows “Connect once to
+get your code” (the code is issued by the server). After the recycler
+confirms, the next sync moves the lot to CONFIRMED and a green tick
+screen appears.
+
+5.7 Price board (/prices)
+
+List of categories with rate, unit, trend arrow (up, down, flat), market
+range, and a speaker button per row; a district selector chip at the
+top; “Last updated” line; if data is older than 7 days a “rates may be
+old” warning chip. Tapping a row expands a 30-day sparkline. Offline
+uses cached data.
+
+5.8 Earnings (/earnings)
+
+Two summary cards: Received and Pending. Below, a list of entries: lot
+code, material icon, amount, mode (cash or UPI icon), status chip.
+Tapping an entry opens /lot/:clientId. Empty state: “No earnings yet”.
+
+5.9 Safety (/safety, /safety/:code)
+
+Grid of safety cards with pictograms (no burning cables, do not open
+CRT, safe batteries, no acid on PCBs, wear gloves, keep away from
+children). Tapping opens the card detail: large pictogram, 2 to 3 short
+lines, speaker button. Cards flip on tap (front pictogram, back
+instructions) and the detail route is the deep link to the same content.
+
+5.10 Sync (/sync)
+
+Shows online or offline state, lastSyncAt, pending action count with a
+list (type, lot code, time, status), REJECTED actions with a
+plain-language reason and a Retry or Dismiss button, and a big Sync now
+button.
+
+5.11 Settings (/settings)
+
+Language, district and operating area (chips), text size (Normal,
+Large), audio on or off, About (version, “SAMPLE DATA” notice,
+field-note link), Clear local data (confirmation dialog), Logout.
+
+6. Offline and connectivity behaviour
+
+  -----------------------------------------------------------------------
+  Situation                           Behaviour
+  ----------------------------------- -----------------------------------
+  Offline                             Orange dot and banner “Offline:
+                                      your work is saved on this phone”
+                                      (audio available). All lot
+                                      creation, price board, ledger
+                                      reading, safety and handover
+                                      initiation work
+
+  Back online                         Green dot; automatic sync; toast
+                                      “Synced” with count
+
+  Sync failure                        Banner “Could not sync, will retry”
+                                      with a Sync now button
+
+  Stale rates (older than 7 days)     Warning chip on estimate and price
+                                      board
+
+  Server rejects an action            Card on /sync and a red dot on the
+                                      lot; nothing is deleted silently
+  -----------------------------------------------------------------------
+
+7. Recycler flows
+
+    flowchart TD
+      L[/recycler/login/] --> D[/recycler dashboard/]
+      D --> R[/recycler/rates: set rates/]
+      D --> LS[/recycler/lots: incoming lots/]
+      LS --> LD[/recycler/lots/:id/]
+      LD -->|Send quote| LD
+      D --> H[/recycler/handover/]
+      H -->|Scan or enter code + verified weight| C[Confirmed]
+      C --> P[Record payment: cash or UPI, paid amount]
+      D --> PR[/recycler/profile/]
+
+-   Dashboard: counts (new lots, quotes waiting, handovers to confirm,
+    payments pending), latest 5 lots, own current rates with freshness,
+    verification status banner (Verified, Pending, Suspended).
+-   Rates: table with one row per accepted material; edit inline; Save
+    writes rates and price entries. Warning if rates are older than 7
+    days.
+-   Incoming lots: filterable list (status, material); rows show photo,
+    material, weight, estimated value, distance, collector area.
+-   Lot detail: photos, details, estimated value, quote input (prefilled
+    with rate x weight), “Send quote”. After quote the lot shows
+    “Waiting for collector”.
+-   Handover confirm: camera scanner and manual fields (handover
+    reference plus 6-digit code), verified weight input,
+    weight-difference warning. On success: summary, trace hash, and a
+    payment form (amount paid, cash or UPI, status). Payment sets ledger
+    entry; when fully paid, lot is PAID.
+-   Profile: name, phone, location on a simple lat/lng form with “Use my
+    location”, service radius, pickup toggle, accepted materials list
+    (read only, edited via rates), authorization details (read only,
+    edited by admin).
+-   Unverified state: if status is Pending or Suspended, the recycler
+    can log in and see the profile but cannot set rates or quote; a
+    banner explains why.
+
+8. Admin flows
+
+-   Recyclers: table with authorization number, issuing body, valid
+    till, status. Actions: Verify, Suspend, Add recycler (dialog). A
+    verified recycler immediately becomes visible in collector
+    directories after their next sync.
+-   Flags: list of lots with anomaly reason and the expected range;
+    “Open trace” shows the hash chain and verification result.
+-   Data: dataset cards (materials, prices, recyclers, transactions,
+    traceability, collectors) each with a CSV download button and row
+    counts; stats cards (lots by status, lots per day chart, verified
+    recyclers).
+
+9. Screen states every screen must implement
+
+Loading (skeleton, not spinner alone), empty (icon plus one line plus
+audio), error (pictogram plus one line plus retry), offline (banner,
+plus disabled actions that need network), success (green tick and short
+audio cue for key actions: lot saved, quote accepted, handover
+confirmed).
+
+10. Lot status to UI mapping
+
+  Server status   Collector chip (English)   Colour token
+  --------------- -------------------------- --------------
+  (local only)    Saved on phone             neutral
+  DRAFT           Saved                      neutral
+  LISTED          Waiting for quote          warning
+  QUOTED          Quote received             accent
+  ACCEPTED        Ready for handover         accent
+  HANDED_OVER     Handover started           accent
+  CONFIRMED       Recycler confirmed         success
+  PAID            Paid                       success
+  CANCELLED       Cancelled                  danger
+
+11. Deep links and sharing
+
+Only these are deep-linkable: /prices, /safety/:code, /lot/:clientId. No
+public share links in the prototype.

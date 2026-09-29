@@ -1,0 +1,515 @@
+// Kabadiwala Connect - database schema (SIH 2026, PS SIH26229)
+// Written for Prisma 6.x (generator prisma-client-js, datasource url in this file).
+// If the project ends up on Prisma 7+, move `url` into prisma.config.ts and follow the
+// official migration guide, then record it in DECISIONS.md.
+//
+// Conventions (TRD Section 6):
+//  - ids are UUID strings; money is Decimal(10,2); weight is Float in kilograms
+//  - timestamps are UTC; API sends ISO 8601 strings
+//  - every seeded row carries isSampleData = true where the column exists
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  COLLECTOR
+  RECYCLER
+  ADMIN
+}
+
+enum Language {
+  HI
+  MR
+  EN
+}
+
+enum AuthorizationStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+}
+
+enum HazardLevel {
+  NONE
+  LOW
+  HIGH
+}
+
+enum Unit {
+  KG
+  PIECE
+}
+
+enum LotStatus {
+  DRAFT
+  LISTED
+  QUOTED
+  ACCEPTED
+  HANDED_OVER
+  CONFIRMED
+  PAID
+  CANCELLED
+}
+
+enum LotCondition {
+  WORKING
+  BROKEN
+  BURNT
+}
+
+enum SourceType {
+  HOUSEHOLD
+  OFFICE
+  SHOP
+  AGGREGATOR
+  OTHER
+}
+
+enum LocationSource {
+  GPS
+  LAST
+  DISTRICT
+}
+
+enum PriceSource {
+  RECYCLER
+  SEED
+  FIELD_SURVEY
+}
+
+enum PhotoPurpose {
+  COLLECTION
+  HANDOVER
+}
+
+enum HandoverMethod {
+  QR
+  OTP
+}
+
+enum PaymentMode {
+  CASH
+  UPI
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  PAID
+}
+
+enum TraceEventType {
+  LOT_CREATED
+  RECYCLER_SELECTED
+  QUOTED
+  QUOTE_ACCEPTED
+  HANDOVER_INITIATED
+  HANDOVER_CONFIRMED
+  PAYMENT_RECORDED
+  CANCELLED
+}
+
+enum SyncActionType {
+  LOT_CREATE
+  SELECT_RECYCLER
+  ACCEPT_QUOTE
+  CANCEL_LOT
+  HANDOVER_INITIATE
+}
+
+enum SyncActionStatus {
+  APPLIED
+  DUPLICATE
+  REJECTED
+}
+
+// ---------------------------------------------------------------------------
+// Users
+// ---------------------------------------------------------------------------
+
+/// Minimal collector profile. Only the phone number is personal data (needed for login).
+model Collector {
+  id                String    @id @default(uuid()) @db.Uuid
+  phone             String    @unique // 10-digit Indian mobile, never exported, never logged
+  preferredLanguage Language  @default(HI)
+  state             String? // e.g. "MH"
+  district          String?
+  operatingArea     String? // free text or chip value, general area only
+  isSampleData      Boolean   @default(false)
+  lastLoginAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  lots        Lot[]
+  ledger      LedgerEntry[]
+  syncActions SyncAction[]
+
+  @@index([district])
+}
+
+/// Login for the admin verifier. Created by seed only.
+model Admin {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  email        String   @unique
+  passwordHash String // bcryptjs, cost 10
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  verifiedRecyclers Recycler[] @relation("RecyclerVerifiedBy")
+}
+
+// ---------------------------------------------------------------------------
+// Recycler / aggregator dataset
+// ---------------------------------------------------------------------------
+
+model Recycler {
+  id                      String              @id @default(uuid()) @db.Uuid
+  name                    String
+  email                   String              @unique
+  passwordHash            String // bcryptjs, cost 10
+  phone                   String? // contact number of the facility (business contact)
+  address                 String?
+  city                    String
+  district                String
+  state                   String
+  lat                     Float
+  lng                     Float
+  serviceRadiusKm         Float               @default(25)
+  pickupAvailable         Boolean             @default(false)
+  authorizationNo         String?
+  authorizationBody       String? // e.g. "State Pollution Control Board" (SAMPLE in seed)
+  authorizationValidTill  DateTime?
+  authorizationStatus     AuthorizationStatus @default(PENDING)
+  verifiedAt              DateTime?
+  verifiedById            String?             @db.Uuid
+  isSampleData            Boolean             @default(false)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  verifiedBy Admin?            @relation("RecyclerVerifiedBy", fields: [verifiedById], references: [id])
+  materials  RecyclerMaterial[]
+  lots       Lot[]             @relation("LotSelectedRecycler")
+  priceEntries PriceEntry[]
+  ledger     LedgerEntry[]
+  handoversConfirmed Handover[]
+
+  @@index([district, authorizationStatus])
+  @@index([state, city])
+}
+
+/// Accepted materials and the rate a recycler offers for each.
+model RecyclerMaterial {
+  id                String   @id @default(uuid()) @db.Uuid
+  recyclerId        String   @db.Uuid
+  categoryId        String   @db.Uuid
+  offeredRatePerUnit Decimal @db.Decimal(10, 2)
+  rateUpdatedAt     DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  recycler Recycler         @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  category MaterialCategory @relation(fields: [categoryId], references: [id])
+
+  @@unique([recyclerId, categoryId])
+  @@index([categoryId])
+}
+
+// ---------------------------------------------------------------------------
+// Material dataset (reference data)
+// ---------------------------------------------------------------------------
+
+model MaterialCategory {
+  id          String      @id @default(uuid()) @db.Uuid
+  code        String      @unique // CABLE PCB BATTERY CRT LCD MOTOR PLASTIC OTHER (UI_UX Section 12)
+  nameEn      String
+  nameHi      String
+  nameMr      String
+  iconKey     String
+  hazardLevel HazardLevel @default(NONE)
+  unit        Unit        @default(KG)
+  sortOrder   Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  subCategories MaterialSubCategory[]
+  recyclerRates RecyclerMaterial[]
+  priceEntries  PriceEntry[]
+  lots          Lot[]
+}
+
+model MaterialSubCategory {
+  id         String   @id @default(uuid()) @db.Uuid
+  categoryId String   @db.Uuid
+  code       String
+  nameEn     String
+  nameHi     String
+  nameMr     String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category MaterialCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, code])
+}
+
+// ---------------------------------------------------------------------------
+// Price dataset
+// ---------------------------------------------------------------------------
+
+model PriceEntry {
+  id              String      @id @default(uuid()) @db.Uuid
+  categoryId      String      @db.Uuid
+  subCategoryCode String?
+  city            String
+  district        String
+  state           String
+  recordedAt      DateTime // date/time the price applies to
+  buyingPrice     Decimal     @db.Decimal(10, 2) // prevailing buying price per unit
+  quotedPrice     Decimal?    @db.Decimal(10, 2) // selling / quoted price where known
+  unit            Unit        @default(KG)
+  marketMin       Decimal?    @db.Decimal(10, 2)
+  marketMax       Decimal?    @db.Decimal(10, 2)
+  source          PriceSource
+  recyclerId      String?     @db.Uuid
+  isSampleData    Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+
+  category MaterialCategory @relation(fields: [categoryId], references: [id])
+  recycler Recycler?        @relation(fields: [recyclerId], references: [id])
+
+  @@index([categoryId, district, recordedAt])
+  @@index([categoryId, city, recordedAt])
+  @@index([recordedAt])
+}
+
+// ---------------------------------------------------------------------------
+// Material and transaction dataset
+// ---------------------------------------------------------------------------
+
+model Lot {
+  id                 String         @id @default(uuid()) @db.Uuid
+  clientId           String         @unique @db.Uuid // client-generated UUID v4, idempotency key
+  refCode            String         @unique // KC-<STATE>-<YYYYMMDD>-<NNNN>, assigned by server
+  collectorId        String         @db.Uuid
+  categoryId         String         @db.Uuid
+  subCategoryCode    String?
+  description        String?
+  condition          LotCondition
+  sourceType         SourceType?
+  approxWeightKg     Float
+  estimatedValue     Decimal        @db.Decimal(10, 2)
+  isEstimateFallback Boolean        @default(false)
+  aiLabel            String?
+  aiConfidence       Float?
+  lat                Float?
+  lng                Float?
+  locationSource     LocationSource?
+  collectedAt        DateTime
+  status             LotStatus      @default(DRAFT)
+  selectedRecyclerId String?        @db.Uuid
+  pickupRequested    Boolean        @default(false)
+  quotedPrice        Decimal?       @db.Decimal(10, 2)
+  finalPrice         Decimal?       @db.Decimal(10, 2)
+  anomalyFlag        Boolean        @default(false)
+  anomalyReason      String? // PRICE_OUTLIER: ... | WEIGHT_IMPLAUSIBLE | WEIGHT_DIFFERENCE
+  anomalyDetail      Json? // { z, mean, sd, expectedMin, expectedMax, weightRange }
+  isSampleData       Boolean        @default(false)
+
+  // status timestamps (timeline in the app)
+  selectedAt   DateTime?
+  quotedAt     DateTime?
+  acceptedAt   DateTime?
+  handedOverAt DateTime?
+  confirmedAt  DateTime?
+  paidAt       DateTime?
+  cancelledAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  collector        Collector        @relation(fields: [collectorId], references: [id])
+  category         MaterialCategory @relation(fields: [categoryId], references: [id])
+  selectedRecycler Recycler?        @relation("LotSelectedRecycler", fields: [selectedRecyclerId], references: [id])
+  photos           LotPhoto[]
+  handover         Handover?
+  trace            TraceRecord[]
+  ledger           LedgerEntry[]
+
+  @@index([collectorId, status])
+  @@index([selectedRecyclerId, status])
+  @@index([categoryId, status])
+  @@index([status, updatedAt])
+  @@index([anomalyFlag])
+  @@index([updatedAt])
+}
+
+model LotPhoto {
+  id        String       @id @default(uuid()) @db.Uuid
+  lotId     String       @db.Uuid
+  path      String // UPLOAD_DIR/<lotId>/<photoId>.jpg, never served statically
+  sha256    String // recomputed by the server, must match the client value
+  sizeBytes Int
+  purpose   PhotoPurpose @default(COLLECTION)
+  takenAt   DateTime
+  createdAt DateTime     @default(now())
+
+  lot Lot @relation(fields: [lotId], references: [id], onDelete: Cascade)
+
+  @@unique([lotId, sha256])
+  @@index([lotId])
+}
+
+// ---------------------------------------------------------------------------
+// Handover and traceability dataset
+// ---------------------------------------------------------------------------
+
+model Handover {
+  id                 String          @id @default(uuid()) @db.Uuid
+  lotId              String          @unique @db.Uuid
+  handoverRef        String          @unique // HO-<8 digits>-<4 uppercase alphanumerics>
+  otpExpiresAt       DateTime // issue time + 24 hours (prototype)
+  otpAttempts        Int             @default(0) // lock after 5 wrong tries
+  weightKg           Float // collector-declared weight
+  lat                Float?
+  lng                Float?
+  handoverAt         DateTime
+  recyclerConfirmed  Boolean         @default(false)
+  confirmedAt        DateTime?
+  confirmedByRecyclerId String?      @db.Uuid
+  weightKgVerified   Float?
+  weightDiffPercent  Float?
+  confirmMethod      HandoverMethod?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  lot         Lot       @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  confirmedBy Recycler? @relation(fields: [confirmedByRecyclerId], references: [id])
+
+  @@index([confirmedByRecyclerId])
+}
+
+/// Append-only hash chain per lot (TRD Section 11.5). Never updated, never deleted.
+model TraceRecord {
+  id        String         @id @default(uuid()) @db.Uuid
+  lotId     String         @db.Uuid
+  seq       Int // 1, 2, 3 ... per lot
+  eventType TraceEventType
+  payload   Json
+  prevHash  String // 64 zeros for seq 1
+  hash      String
+  createdAt DateTime // set by the app with millisecond precision, used in the hash
+
+  lot Lot @relation(fields: [lotId], references: [id], onDelete: Cascade)
+
+  @@unique([lotId, seq])
+  @@index([lotId])
+}
+
+// ---------------------------------------------------------------------------
+// Earnings ledger
+// ---------------------------------------------------------------------------
+
+model LedgerEntry {
+  id          String        @id @default(uuid()) @db.Uuid
+  lotId       String        @db.Uuid
+  collectorId String        @db.Uuid
+  recyclerId  String        @db.Uuid
+  amountPaid  Decimal       @db.Decimal(10, 2)
+  dueAmount   Decimal       @db.Decimal(10, 2) // finalPrice minus total paid so far
+  mode        PaymentMode
+  status      PaymentStatus
+  paidAt      DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  lot       Lot       @relation(fields: [lotId], references: [id])
+  collector Collector @relation(fields: [collectorId], references: [id])
+  recycler  Recycler  @relation(fields: [recyclerId], references: [id])
+
+  @@index([lotId])
+  @@index([collectorId, updatedAt])
+}
+
+// ---------------------------------------------------------------------------
+// Safety guidance
+// ---------------------------------------------------------------------------
+
+model SafetyTip {
+  id              String   @id @default(uuid()) @db.Uuid
+  code            String   @unique // burning crt battery acid gloves children
+  titleEn         String
+  titleHi         String
+  titleMr         String
+  bodyEn          String // 2 to 3 short lines
+  bodyHi          String
+  bodyMr          String
+  pictogramKey    String
+  audioKey        String // safety_burning safety_crt ...
+  appliesToCategoryCode String? // BATTERY or CRT triggers the popup
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Auth and sync support (additions beyond the TRD list, see BACKEND.md Section 3)
+// ---------------------------------------------------------------------------
+
+/// Collector login codes. In DEMO_MODE the code is always 123456 but attempts and expiry still apply.
+model OtpRequest {
+  id         String    @id @default(uuid()) @db.Uuid
+  phone      String
+  codeHash   String // HMAC-SHA256 of the code with JWT_SECRET
+  expiresAt  DateTime // created + 5 minutes
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone, createdAt])
+}
+
+/// One row per offline action received by POST /sync. Gives idempotent replay (DUPLICATE).
+model SyncAction {
+  actionId     String           @id @db.Uuid
+  collectorId  String           @db.Uuid
+  deviceId     String
+  type         SyncActionType
+  status       SyncActionStatus
+  errorCode    String?
+  errorMessage String?
+  serverLotId  String?          @db.Uuid
+  clientCreatedAt DateTime
+  processedAt  DateTime         @default(now())
+
+  collector Collector @relation(fields: [collectorId], references: [id])
+
+  @@index([collectorId, processedAt])
+}
+
+/// Admin and recycler actions that change trust state (verify, suspend, rate change).
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  actorRole Role
+  actorId   String   @db.Uuid
+  action    String // RECYCLER_VERIFIED RECYCLER_SUSPENDED RECYCLER_CREATED RATES_UPDATED ...
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}

@@ -1,15 +1,16 @@
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Volume2, ArrowRight } from 'lucide-react';
+import { useAppStore } from '../../store/useAppStore.js';
 
 export function WelcomeScreen() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const handleSelectLanguage = (lang: 'hi' | 'mr' | 'en') => {
+  const handleSelectLanguage = async (lang: 'hi' | 'mr' | 'en') => {
     i18n.changeLanguage(lang);
-    // In later phases this stores to Dexie meta and routes to /login
-    navigate('/dev/ui-kit');
+    await useAppStore.getState().setLanguage(lang.toUpperCase() as any);
+    navigate('/login');
   };
 
   return (
