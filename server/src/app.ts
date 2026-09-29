@@ -8,6 +8,11 @@ import { errorHandler } from './middleware/error.js';
 import { AppError } from './lib/errors.js';
 import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
+import { materialRouter } from './routes/material.routes.js';
+import { safetyRouter } from './routes/safety.routes.js';
+import { priceRouter } from './routes/price.routes.js';
+import { recyclerRouter } from './routes/recycler.routes.js';
+import { collectorRouter } from './routes/collector.routes.js';
 
 export const app = express();
 
@@ -44,6 +49,11 @@ app.use(
 const apiRouter = express.Router();
 apiRouter.use(healthRouter);
 apiRouter.use('/auth', authRouter);
+apiRouter.use(materialRouter);
+apiRouter.use(safetyRouter);
+apiRouter.use(priceRouter);
+apiRouter.use(recyclerRouter);
+apiRouter.use(collectorRouter);
 
 // Mount under PUBLIC_API_BASE (/api/v1)
 app.use(config.PUBLIC_API_BASE, apiRouter);
