@@ -53,7 +53,7 @@ npm run db:seed
 npm run dev
 ```
 
-- **Collector Web App**: [http://localhost:5173](http://localhost:5173)
+- **Collector Web App**: https://kabadiwala-connect-henna.vercel.app/welcome
 - **Component Catalog**: [http://localhost:5173/dev/ui-kit](http://localhost:5173/dev/ui-kit)
 - **API Health Check**: [http://localhost:4000/api/v1/health](http://localhost:4000/api/v1/health)
 
