@@ -14,3 +14,9 @@ export const prisma: PrismaClient =
 if (process.env.NODE_ENV !== 'production') {
   globalThis.__prismaClient = prisma;
 }
+
+export const isDatabaseConfigured = Boolean(
+  process.env.DATABASE_URL &&
+  (!process.env.VERCEL || (!process.env.DATABASE_URL.includes('localhost') && !process.env.DATABASE_URL.includes('127.0.0.1')))
+);
+

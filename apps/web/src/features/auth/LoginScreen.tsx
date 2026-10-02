@@ -50,13 +50,16 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-kc-bg text-kc-ink flex flex-col pb-28">
+    <div className="min-h-screen text-kc-ink flex flex-col pb-28 relative overflow-hidden">
+      {/* Decorative gradient orb */}
+      <div className="absolute top-[-10%] left-[-20%] w-64 h-64 bg-kc-accent/20 rounded-full blur-[80px] pointer-events-none" />
+
       <TopBar title="Kabadiwala Connect" showBack={false} />
 
-      <main className="flex-1 max-w-md mx-auto w-full px-4 pt-6 flex flex-col justify-between">
+      <main className="flex-1 max-w-md mx-auto w-full px-4 pt-6 flex flex-col justify-between relative z-10">
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-extrabold text-kc-ink">
+            <h1 className="text-4xl font-extrabold text-gradient tracking-tight">
               {t('login_title')}
             </h1>
             <SpeakerButton
@@ -65,15 +68,17 @@ export const LoginScreen: React.FC = () => {
             />
           </div>
 
-          <p className="text-sm text-kc-ink-dim mb-6">
+          <p className="text-sm text-kc-ink-dim mb-8 leading-relaxed">
             We only use your mobile number to sign you in. No personal details needed.
           </p>
 
           {/* Number Display Box */}
-          <div className="relative mb-6">
-            <div className="h-18 rounded-xs border-3 border-kc-border-strong bg-kc-surface flex items-center px-4 shadow-[4px_4px_0px_#141414]">
-              <Phone className="w-6 h-6 text-kc-accent mr-3" />
-              <span className="text-2xl font-mono font-bold tracking-widest text-kc-ink">
+          <div className="relative mb-8">
+            <div className={`h-20 rounded-2xl kc-glass flex items-center px-6 transition-all duration-300 ${phone ? 'border-kc-accent/50 shadow-[0_8px_32px_rgba(0,212,170,0.2)]' : ''}`}>
+              <div className={`p-2 rounded-full mr-4 transition-colors ${phone ? 'bg-kc-accent/20 text-kc-accent' : 'bg-kc-surface-2 text-kc-ink-dim'}`}>
+                <Phone className="w-6 h-6" />
+              </div>
+              <span className="text-3xl font-mono font-bold tracking-widest text-kc-ink">
                 {phone ? (
                   `${phone.slice(0, 5)} ${phone.slice(5)}`
                 ) : (
@@ -83,18 +88,18 @@ export const LoginScreen: React.FC = () => {
             </div>
 
             {error && (
-              <p className="text-sm font-bold text-kc-danger mt-2">{error}</p>
+              <p className="text-sm font-bold text-kc-danger mt-3 animate-pulse">{error}</p>
             )}
           </div>
 
           {/* Sample Demo Account Hint */}
-          <div className="p-3 rounded-xs bg-kc-surface-2 border border-kc-border mb-6 flex items-start gap-2 text-xs">
-            <ShieldCheck className="w-4 h-4 text-kc-accent shrink-0 mt-0.5" />
+          <div className="p-4 rounded-xl kc-glass-strong mb-8 flex items-start gap-3 text-sm">
+            <ShieldCheck className="w-5 h-5 text-kc-accent shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold text-kc-ink">Demo Accounts (SAMPLE DATA):</span>
-              <p className="text-kc-ink-dim mt-0.5">
-                Collector 1 (Hindi): <button type="button" onClick={() => setPhone('9000000001')} className="underline font-mono font-bold text-kc-accent">9000000001</button> • 
-                Collector 2 (Marathi): <button type="button" onClick={() => setPhone('9000000002')} className="underline font-mono font-bold text-kc-accent">9000000002</button>
+              <span className="font-bold text-kc-ink tracking-wide text-xs uppercase opacity-80">Demo Accounts:</span>
+              <p className="text-kc-ink-dim mt-1 text-xs space-y-1">
+                <span className="block">Hindi: <button type="button" onClick={() => setPhone('9000000001')} className="underline font-mono font-bold text-kc-accent hover:text-kc-accent-text transition-colors">9000000001</button></span>
+                <span className="block">Marathi: <button type="button" onClick={() => setPhone('9000000002')} className="underline font-mono font-bold text-kc-accent hover:text-kc-accent-text transition-colors">9000000002</button></span>
               </p>
             </div>
           </div>

@@ -46,7 +46,7 @@ export const NumberPad: React.FC<NumberPadProps> = ({
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'DEL'];
 
   return (
-    <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto w-full select-none">
+    <div className="grid grid-cols-3 gap-4 max-w-xs mx-auto w-full select-none pb-4">
       {keys.map((k) => {
         if (k === 'DEL') {
           return (
@@ -54,10 +54,10 @@ export const NumberPad: React.FC<NumberPadProps> = ({
               key="del"
               type="button"
               onClick={handleBackspace}
-              className="h-16 rounded-xs border-2 border-kc-border-strong bg-kc-surface-2 text-kc-ink flex items-center justify-center font-bold text-xl active:bg-kc-border touch-manipulation focus:outline-none focus:ring-2 focus:ring-kc-focus"
+              className="h-16 w-16 mx-auto rounded-full kc-glass-strong text-kc-ink flex items-center justify-center font-bold text-xl active:bg-kc-danger/20 active:border-kc-danger/50 active:text-kc-danger transition-all touch-manipulation focus:outline-none hover:scale-[1.05]"
               aria-label="Backspace"
             >
-              <Delete className="w-6 h-6 text-kc-ink" />
+              <Delete className="w-6 h-6" />
             </button>
           );
         }
@@ -67,7 +67,7 @@ export const NumberPad: React.FC<NumberPadProps> = ({
             key={k}
             type="button"
             onClick={() => handleDigit(k)}
-            className="h-16 rounded-xs border-2 border-kc-border-strong bg-kc-surface text-kc-ink font-mono font-bold text-2xl active:bg-kc-surface-2 active:translate-y-0.5 touch-manipulation focus:outline-none focus:ring-2 focus:ring-kc-focus"
+            className="h-16 w-16 mx-auto rounded-full kc-glass text-kc-ink font-mono font-medium text-2xl active:bg-kc-accent/20 active:border-kc-accent/50 active:scale-95 hover:scale-[1.05] hover:border-kc-accent/30 transition-all touch-manipulation focus:outline-none flex items-center justify-center"
           >
             {k}
           </button>

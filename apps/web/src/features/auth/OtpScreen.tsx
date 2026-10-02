@@ -7,6 +7,7 @@ import { StickyActionBar } from '../../components/common/StickyActionBar.js';
 import { SpeakerButton } from '../../components/common/SpeakerButton.js';
 import { useAppStore } from '../../store/useAppStore.js';
 import { syncClient } from '../../lib/sync.js';
+import { Sparkles } from 'lucide-react';
 
 export const OtpScreen: React.FC = () => {
   const [otp, setOtp] = useState('');
@@ -76,13 +77,15 @@ export const OtpScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-kc-bg text-kc-ink flex flex-col pb-28">
+    <div className="min-h-screen text-kc-ink flex flex-col pb-28 relative overflow-hidden">
+      <div className="absolute top-[-10%] right-[-20%] w-64 h-64 bg-kc-info/20 rounded-full blur-[80px] pointer-events-none" />
+      
       <TopBar title="Verify Code" />
 
-      <main className="flex-1 max-w-md mx-auto w-full px-4 pt-6 flex flex-col justify-between">
+      <main className="flex-1 max-w-md mx-auto w-full px-4 pt-6 flex flex-col justify-between relative z-10">
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-extrabold text-kc-ink">
+            <h1 className="text-4xl font-extrabold text-gradient tracking-tight">
               {t('enter_code')}
             </h1>
             <SpeakerButton
@@ -91,20 +94,20 @@ export const OtpScreen: React.FC = () => {
             />
           </div>
 
-          <p className="text-sm text-kc-ink-dim mb-4">
-            Code sent to <span className="font-mono font-bold text-kc-ink">{phone}</span>
+          <p className="text-sm text-kc-ink-dim mb-8">
+            Code sent to <span className="font-mono font-bold text-kc-ink tracking-widest">{phone}</span>
           </p>
 
           {/* 6 OTP Digits Display */}
-          <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center justify-between gap-3 mb-8">
             {[0, 1, 2, 3, 4, 5].map((idx) => {
               const digit = otp[idx] || '';
               return (
                 <div
                   key={idx}
-                  className={`w-12 h-16 rounded-xs border-3 bg-kc-surface flex items-center justify-center font-mono font-extrabold text-3xl shadow-[2px_2px_0px_#141414] ${
+                  className={`flex-1 aspect-[3/4] rounded-xl kc-glass flex items-center justify-center font-mono font-extrabold text-3xl transition-all duration-300 ${
                     digit
-                      ? 'border-kc-accent text-kc-ink'
+                      ? 'border-kc-accent/50 text-kc-accent-text shadow-[0_4px_15px_rgba(0,212,170,0.2)] bg-kc-accent/5 scale-105'
                       : 'border-kc-border-strong text-kc-ink-dim/30'
                   }`}
                 >
@@ -119,14 +122,15 @@ export const OtpScreen: React.FC = () => {
             <button
               type="button"
               onClick={() => setOtp('123456')}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-kc-warn-soft text-kc-warn border border-kc-warn/40 text-xs font-mono font-bold active:scale-95"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full kc-glass-strong text-kc-warn border-kc-warn/30 text-xs font-mono font-bold active:scale-95 hover:bg-kc-warn/10 transition-colors"
             >
+              <Sparkles size={14} />
               <span>DEMO OTP: 123456 (Tap to fill)</span>
             </button>
           </div>
 
           {error && (
-            <p className="text-sm font-bold text-kc-danger mb-4">{error}</p>
+            <p className="text-sm font-bold text-kc-danger mb-4 animate-pulse">{error}</p>
           )}
         </div>
 

@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { prisma } from '../lib/prisma.js';
+import { prisma, isDatabaseConfigured } from '../lib/prisma.js';
 import { config } from '../config.js';
 import { AppError } from '../lib/errors.js';
 import { validate } from '../middleware/validate.js';
@@ -108,62 +110,68 @@ authRouter.post(
         isSampleData: true,
       };
 
-      try {
-        const now = nowUtc();
-        const latestRequest = await prisma.otpRequest.findFirst({
-          where: {
-            phone,
-            consumedAt: null,
-            expiresAt: { gt: now },
-          },
-          orderBy: { createdAt: 'desc' },
-        });
-
-        if (latestRequest) {
-          const updatedRequest = await prisma.otpRequest.update({
-            where: { id: latestRequest.id },
-            data: { attempts: { increment: 1 } },
-          });
-
-          if (updatedRequest.attempts > 5) {
-            throw AppError.rateLimited('Maximum attempts exceeded for this code. Please request a new code.');
-          }
-
-          const providedHash = hmacSha256Hex(config.JWT_SECRET, otp);
-          if (!timingSafeEqualString(providedHash, latestRequest.codeHash)) {
-            throw AppError.otpInvalid('Invalid code. Please try again.');
-          }
-
-          await prisma.otpRequest.update({
-            where: { id: latestRequest.id },
-            data: { consumedAt: now },
-          });
-        } else if (otp !== '123456' || !config.DEMO_MODE) {
-          throw AppError.otpInvalid('Code is invalid or expired. Please request a new code.');
-        }
-
-        const collector = await prisma.collector.upsert({
-          where: { phone },
-          update: {
-            lastLoginAt: now,
-            preferredLanguage: preferredLanguage || undefined,
-          },
-          create: {
-            phone,
-            preferredLanguage,
-            state: config.DEFAULT_STATE_CODE,
-            isSampleData: phone.startsWith('900000000'),
-            lastLoginAt: now,
-          },
-        });
-        collectorData = collector;
-        collectorId = collector.id;
-      } catch (dbErr: any) {
-        if (dbErr?.name === 'AppError') throw dbErr;
+      if (!isDatabaseConfigured) {
         if (otp !== '123456' || !config.DEMO_MODE) {
           throw AppError.otpInvalid('Invalid code. In Demo Mode, use 123456.');
         }
-        console.warn('Prisma DB unavailable in /otp/verify, proceeding with demo collector:', dbErr?.message);
+      } else {
+        try {
+          const now = nowUtc();
+          const latestRequest = await prisma.otpRequest.findFirst({
+            where: {
+              phone,
+              consumedAt: null,
+              expiresAt: { gt: now },
+            },
+            orderBy: { createdAt: 'desc' },
+          });
+
+          if (latestRequest) {
+            const updatedRequest = await prisma.otpRequest.update({
+              where: { id: latestRequest.id },
+              data: { attempts: { increment: 1 } },
+            });
+
+            if (updatedRequest.attempts > 5) {
+              throw AppError.rateLimited('Maximum attempts exceeded for this code. Please request a new code.');
+            }
+
+            const providedHash = hmacSha256Hex(config.JWT_SECRET, otp);
+            if (!timingSafeEqualString(providedHash, latestRequest.codeHash)) {
+              throw AppError.otpInvalid('Invalid code. Please try again.');
+            }
+
+            await prisma.otpRequest.update({
+              where: { id: latestRequest.id },
+              data: { consumedAt: now },
+            });
+          } else if (otp !== '123456' || !config.DEMO_MODE) {
+            throw AppError.otpInvalid('Code is invalid or expired. Please request a new code.');
+          }
+
+          const collector = await prisma.collector.upsert({
+            where: { phone },
+            update: {
+              lastLoginAt: now,
+              preferredLanguage: preferredLanguage || undefined,
+            },
+            create: {
+              phone,
+              preferredLanguage,
+              state: config.DEFAULT_STATE_CODE,
+              isSampleData: phone.startsWith('900000000'),
+              lastLoginAt: now,
+            },
+          });
+          collectorData = collector;
+          collectorId = collector.id;
+        } catch (dbErr: any) {
+          if (dbErr?.name === 'AppError') throw dbErr;
+          if (otp !== '123456' || !config.DEMO_MODE) {
+            throw AppError.otpInvalid('Invalid code. In Demo Mode, use 123456.');
+          }
+          console.warn('Prisma DB unavailable in /otp/verify, proceeding with demo collector:', dbErr?.message);
+        }
       }
 
       const token = jwt.sign(
@@ -205,27 +213,7 @@ authRouter.post(
       let userRole: 'RECYCLER' | 'ADMIN' | null = null;
       let userObj: { id: string; name: string; email: string; passwordHash: string } | null = null;
 
-      try {
-        const recycler = await prisma.recycler.findUnique({
-          where: { email },
-          select: { id: true, name: true, email: true, passwordHash: true },
-        });
-
-        if (recycler) {
-          userRole = 'RECYCLER';
-          userObj = recycler;
-        } else {
-          const admin = await prisma.admin.findUnique({
-            where: { email },
-            select: { id: true, name: true, email: true, passwordHash: true },
-          });
-          if (admin) {
-            userRole = 'ADMIN';
-            userObj = admin;
-          }
-        }
-      } catch (dbErr: any) {
-        console.warn('Prisma DB unavailable in /auth/login, checking demo seed accounts:', dbErr?.message);
+      if (!isDatabaseConfigured) {
         if (email.includes('admin') || email === 'admin@sample.kc') {
           userRole = 'ADMIN';
           userObj = {
@@ -260,6 +248,29 @@ authRouter.post(
               passwordHash: await bcrypt.hash('Demo@1234', 10),
             };
           }
+        }
+      } else {
+        try {
+          const recycler = await prisma.recycler.findUnique({
+            where: { email },
+            select: { id: true, name: true, email: true, passwordHash: true },
+          });
+
+          if (recycler) {
+            userRole = 'RECYCLER';
+            userObj = recycler;
+          } else {
+            const admin = await prisma.admin.findUnique({
+              where: { email },
+              select: { id: true, name: true, email: true, passwordHash: true },
+            });
+            if (admin) {
+              userRole = 'ADMIN';
+              userObj = admin;
+            }
+          }
+        } catch (dbErr: any) {
+          console.warn('Prisma DB error in /auth/login, using fallback:', dbErr?.message);
         }
       }
 
@@ -300,6 +311,56 @@ authRouter.post(
 authRouter.get('/me', authenticate, async (req, res, next) => {
   try {
     const auth = req.auth!;
+
+    if (!isDatabaseConfigured) {
+      if (auth.role === 'COLLECTOR') {
+        return res.json({
+          data: {
+            id: auth.sub,
+            role: auth.role,
+            phone: '9000000001',
+            preferredLanguage: 'HI',
+            state: 'MH',
+            district: 'Pune',
+            operatingArea: 'Kothrud',
+            isSampleData: true,
+            createdAt: new Date().toISOString(),
+          },
+          error: null,
+        });
+      }
+      if (auth.role === 'RECYCLER') {
+        return res.json({
+          data: {
+            id: auth.sub,
+            role: auth.role,
+            name: 'EcoEwaste Solutions Pune',
+            email: 'pune.recycler@ecorecycle.com',
+            phone: '020-25678901',
+            city: 'Pune',
+            district: 'Pune',
+            state: 'MH',
+            authorizationStatus: 'VERIFIED',
+            serviceRadiusKm: 25,
+            pickupAvailable: true,
+            isSampleData: true,
+          },
+          error: null,
+        });
+      }
+      if (auth.role === 'ADMIN') {
+        return res.json({
+          data: {
+            id: auth.sub,
+            role: auth.role,
+            name: 'System Administrator (SAMPLE)',
+            email: 'admin@sample.kc',
+          },
+          error: null,
+        });
+      }
+    }
+
     if (auth.role === 'COLLECTOR') {
       try {
         const collector = await prisma.collector.findUnique({

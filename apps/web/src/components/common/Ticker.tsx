@@ -21,7 +21,7 @@ export const Ticker: React.FC<TickerProps> = ({ items, className = '' }) => {
 
   return (
     <div
-      className={`w-full overflow-hidden bg-kc-surface-2 border-b border-kc-border py-1.5 px-2 select-none ${className}`}
+      className={`w-full overflow-hidden bg-kc-surface/40 backdrop-blur-sm border-b border-kc-border py-2 px-2 select-none shadow-sm ${className}`}
       aria-label="Live price ticker"
     >
       <div
@@ -30,17 +30,22 @@ export const Ticker: React.FC<TickerProps> = ({ items, className = '' }) => {
         }`}
       >
         {items.concat(!reduced ? items : []).map((item, idx) => (
-          <div key={`${item.code}-${idx}`} className="inline-flex items-center gap-1.5">
-            <span className="text-kc-ink-dim uppercase">{item.code}:</span>
-            <span className="text-kc-ink font-bold">₹{item.rate}/kg</span>
+          <div key={`${item.code}-${idx}`} className="inline-flex items-center gap-2 kc-glass px-3 py-1 rounded-full border-kc-border/50">
+            <span className="text-kc-ink-dim uppercase text-[10px] tracking-wider">{item.code}</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-kc-ink to-kc-ink-dim font-bold">₹{item.rate}/kg</span>
             {item.trend === 'UP' ? (
-              <ArrowUpRight className="w-3.5 h-3.5 text-kc-success stroke-[3]" />
+              <div className="w-4 h-4 rounded-full bg-kc-success/20 flex items-center justify-center">
+                <ArrowUpRight className="w-3 h-3 text-kc-success stroke-[3]" />
+              </div>
             ) : item.trend === 'DOWN' ? (
-              <ArrowDownRight className="w-3.5 h-3.5 text-kc-danger stroke-[3]" />
+              <div className="w-4 h-4 rounded-full bg-kc-danger/20 flex items-center justify-center">
+                <ArrowDownRight className="w-3 h-3 text-kc-danger stroke-[3]" />
+              </div>
             ) : (
-              <Minus className="w-3 h-3 text-kc-ink-dim stroke-[2.5]" />
+              <div className="w-4 h-4 rounded-full bg-kc-surface-2 flex items-center justify-center">
+                <Minus className="w-2.5 h-2.5 text-kc-ink-dim stroke-[3]" />
+              </div>
             )}
-            <span className="text-kc-border-strong mx-1">•</span>
           </div>
         ))}
       </div>
