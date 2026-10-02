@@ -34,9 +34,9 @@ export const BigTile: React.FC<BigTileProps> = ({
       
       <div className="flex items-start justify-between relative z-10">
         <div className={`flex items-center justify-center w-14 h-14 rounded-xl border transition-colors ${highlightPulse ? 'bg-kc-accent/20 border-kc-accent/40 text-kc-accent group-hover:bg-kc-accent/30' : 'bg-kc-surface-2 border-kc-border text-kc-ink group-hover:bg-kc-surface'}`}>
-          {React.cloneElement(icon as React.ReactElement, { 
-            className: `${(icon as any).props.className || ''} ${highlightPulse ? 'text-kc-accent' : 'text-kc-ink'} group-hover:scale-110 transition-transform duration-300` 
-          })}
+          {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { 
+            className: `${(icon.props as any).className || ''} ${highlightPulse ? 'text-kc-accent' : 'text-kc-ink'} group-hover:scale-110 transition-transform duration-300` 
+          }) : icon}
         </div>
         <SpeakerButton audioKey={audioKey} fallbackText={label} size="sm" />
       </div>
