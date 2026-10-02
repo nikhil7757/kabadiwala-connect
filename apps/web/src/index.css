@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #10B981;     /* emerald-500 */
-  --color-primary-dark: #059669; /* emerald-600 */
-  --color-accent: #F59E0B;       /* amber-500 */
-  --color-bg: #F8FAFC;           /* slate-50 */
+  --color-primary: #10B981;
+  --color-primary-dark: #059669;
+  --color-accent: #F59E0B;
+  --color-bg: #F8FAFC;
   --color-surface: #FFFFFF;
-  --color-text: #0F172A;         /* slate-900 */
-  --color-muted: #64748B;        /* slate-500 */
-  --color-border: #E2E8F0;       /* slate-200 */
+  --color-text: #0F172A;
+  --color-muted: #64748B;
+  --color-border: #E2E8F0;
 }
 
 .dark {
@@ -24,5 +24,30 @@
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Smooth scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #10B981 transparent;
+}
+*::-webkit-scrollbar { width: 6px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #10B981; border-radius: 3px; }
