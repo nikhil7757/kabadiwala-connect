@@ -8,6 +8,19 @@
     <meta name="description" content="Kabadiwala Connect - Bringing the Informal Collector into the Formal Recycling Chain" />
     <link rel="manifest" href="/manifest.json" />
     <title>Kabadiwala Connect</title>
+    <script>
+      // Automatically refresh stale service worker caches from previous deployments
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (var reg of regs) {
+            reg.update();
+            if (reg.waiting) {
+              reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+          }
+        });
+      }
+    </script>
   </head>
   <body class="bg-kc-bg text-kc-ink antialiased selection:bg-kc-accent selection:text-kc-ink min-h-screen">
     <div id="root"></div>

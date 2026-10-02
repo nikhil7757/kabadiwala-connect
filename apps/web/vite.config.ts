@@ -8,17 +8,17 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icons/*.png'],
       manifest: {
         name: 'Kabadiwala Connect',
         short_name: 'Kabadiwala',
         description: 'Bringing the Informal Collector into the Formal Recycling Chain',
         theme_color: '#141414',
-        background_color: '#F6F3EE',
+        background_color: '#0A0B0A',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/home',
+        start_url: '/',
         icons: [
           {
             src: '/icons/icon-192.png',
@@ -39,6 +39,9 @@ export default defineConfig({
         ],
       },
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
