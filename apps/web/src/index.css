@@ -3,51 +3,66 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #10B981;
-  --color-primary-dark: #059669;
-  --color-accent: #F59E0B;
-  --color-bg: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-text: #0F172A;
-  --color-muted: #64748B;
-  --color-border: #E2E8F0;
-}
-
-.dark {
-  --color-bg: #0F172A;
-  --color-surface: #1E293B;
-  --color-text: #F1F5F9;
-  --color-muted: #94A3B8;
-  --color-border: #334155;
+  --color-bg: #0A0B0A;
+  --color-bg-darker: #050605;
+  --color-card: #141614;
+  --color-border: #1F221F;
+  --color-fg: #F5F5F5;
+  --color-muted: #6A6E6A;
+  --color-accent: #A3E635; /* scrap lime */
+  --color-money: #FFB020;
+  --color-silver: #C8C8C8;
+  
+  --font-display: 'Bebas Neue', 'Noto Sans Devanagari', cursive;
+  --font-heading: 'Oswald', 'Noto Sans Devanagari', sans-serif;
+  --font-body: 'Archivo', 'Noto Sans Devanagari', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 body {
   background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
+  color: var(--color-fg);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
-@keyframes marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+.font-display {
+  font-family: var(--font-display);
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+.font-mono {
+  font-family: var(--font-mono);
 }
 
-/* Smooth scrollbar */
+/* Utilities */
+.film-grain {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+}
+
+.scanline {
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+  background-size: 100% 4px;
+}
+
+.text-stroke {
+  -webkit-text-stroke: 1px var(--color-fg);
+  color: transparent;
+}
+
+.corner-notch {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+
 * {
   scrollbar-width: thin;
-  scrollbar-color: #10B981 transparent;
+  scrollbar-color: var(--color-accent) var(--color-bg-darker);
 }
-*::-webkit-scrollbar { width: 6px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: #10B981; border-radius: 3px; }
