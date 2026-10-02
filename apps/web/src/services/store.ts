@@ -22,3 +22,12 @@ export const useStore = create(
     { name: 'kabadiwala-storage' }
   )
 );
+
+export const getItem = (key: string, defaultValue: any = null) => {
+  const item = localStorage.getItem(key);
+  return item ? JSON.parse(item) : defaultValue;
+};
+
+export const setItem = (key: string, value: any) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
