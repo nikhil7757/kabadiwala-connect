@@ -1,284 +1,449 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import confetti from 'canvas-confetti';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Phone,
+  User,
+  CheckCircle2,
+  Sparkles,
+  ArrowRight,
+  ArrowLeft,
+  ShieldCheck,
+} from 'lucide-react';
 import { ratesService } from '../services/ratesService';
 import { pickupService } from '../services/pickupService';
 import { useAuth } from '../hooks/useAuth';
+import { useLang } from '../hooks/useLang';
 
-type Step = 1 | 2 | 3 | 4;
+const TIME_SLOTS = [
+  '09:00 AM – 11:00 AM',
+  '11:00 AM – 01:00 PM',
+  '02:00 PM – 04:00 PM',
+  '04:00 PM – 06:00 PM',
+];
 
-interface AddressForm {
-  name: string;
-  phone: string;
-  address: string;
-  pincode: string;
-  city: string;
-}
+export const SchedulePickup: React.FC = () => {
+  const { lang } = useLang();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const preselectedCollector = searchParams.get('collector');
 
-const SLOTS = ['9am – 11am', '11am – 1pm', '2pm – 4pm', '4pm – 6pm'];
+  const allRates = ratesService.getAll();
 
-function getNext7Days() {
-  return Array.from({ length: 7 }, (_, i) => {
+  const [step, setStep] = useState(1);
+  const [selectedItems, setSelectedItems] = useState<string[]>(['1', '3', '6']);
+  const [weights, setWeights] = useState<Record<string, number>>({ '1': 10, '3': 5, '6': 2 });
+  const [name, setName] = useState(user?.name || 'Priya Sharma');
+  const [phone, setPhone] = useState(user?.phone || '9876543210');
+  const [address, setAddress] = useState('Flat 402, Green Meadows, Link Road');
+  const [city, setCity] = useState(user?.city || 'Mumbai');
+  const [pincode, setPincode] = useState('400053');
+  const [date, setDate] = useState(() => {
     const d = new Date();
-    d.setDate(d.getDate() + i + 1);
+    d.setDate(d.getDate() + 1);
     return d.toISOString().split('T')[0];
   });
-}
+  const [slot, setSlot] = useState(TIME_SLOTS[0]);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-export default function SchedulePickup() {
-  const { user } = useAuth();
-  const nav = useNavigate();
-  const [step, setStep] = useState<Step>(1);
-  const rates = ratesService.getAll();
-  const [selected, setSelected] = useState<string[]>([]);
-  const [weights, setWeights] = useState<Record<string, number>>({});
-  const [addr, setAddr] = useState<AddressForm>({ name: '', phone: '', address: '', pincode: '', city: '' });
-  const [addrErrors, setAddrErrors] = useState<Partial<AddressForm>>({});
-  const [date, setDate] = useState('');
-  const [slot, setSlot] = useState(SLOTS[0]);
+  const toggleItem = (id: string) => {
+    if (selectedItems.includes(id)) {
+      if (selectedItems.length > 1) {
+        setSelectedItems(selectedItems.filter((i) => i !== id));
+      }
+    } else {
+      setSelectedItems([...selectedItems, id]);
+      if (!weights[id]) {
+        setWeights({ ...weights, [id]: 5 });
+      }
+    }
+  };
 
-  if (!user) {
-    return (
-      <div className="text-center mt-16 space-y-4">
-        <div className="text-5xl">🔒</div>
-        <h2 className="text-2xl font-bold">Login Required</h2>
-        <p className="text-slate-500">Please log in to schedule a pickup.</p>
-        <Button onClick={() => nav('/login')}>Login / Sign Up</Button>
-      </div>
-    );
-  }
-
-  const totalEstimated = selected.reduce((sum, id) => {
-    const item = rates.find((r: any) => r.id === id);
-    const kg = weights[id] || 1;
-    return sum + (item ? item.rate * kg : 0);
+  const totalEstimate = selectedItems.reduce((acc, id) => {
+    const r = allRates.find((item: any) => item.id === id);
+    return acc + (r ? r.rate * (weights[id] || 1) : 0);
   }, 0);
 
-  const validateAddr = () => {
-    const errors: Partial<AddressForm> = {};
-    if (!addr.name.trim()) errors.name = 'Name is required';
-    if (!/^[6-9]\d{9}$/.test(addr.phone)) errors.phone = 'Enter a valid 10-digit mobile number';
-    if (!addr.address.trim() || addr.address.length < 10) errors.address = 'Please enter a complete address (min 10 chars)';
-    if (!/^\d{6}$/.test(addr.pincode)) errors.pincode = 'Enter a valid 6-digit pincode';
-    if (!addr.city.trim()) errors.city = 'City is required';
-    setAddrErrors(errors);
-    return Object.keys(errors).length === 0;
+  const handleNext = () => {
+    setErrorMsg('');
+    if (step === 1 && selectedItems.length === 0) {
+      setErrorMsg('Please select at least one material.');
+      return;
+    }
+    if (step === 2) {
+      if (!name.trim()) {
+        setErrorMsg('Please enter your full name.');
+        return;
+      }
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        setErrorMsg('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      if (!address.trim() || address.length < 8) {
+        setErrorMsg('Please provide a complete doorstep street address.');
+        return;
+      }
+      if (!/^\d{6}$/.test(pincode)) {
+        setErrorMsg('Please enter a valid 6-digit Indian PIN code.');
+        return;
+      }
+    }
+    setStep((s) => s + 1);
   };
 
   const handleConfirm = () => {
-    const pickup = pickupService.create({
-      items: selected,
-      userId: user.email,
-      address: `${addr.address}, ${addr.city} - ${addr.pincode}`,
-      date: `${date} ${slot}`,
-      totalEstimated,
-    });
-    nav('/track?id=' + pickup.id);
+    setIsSubmitting(true);
+    setTimeout(() => {
+      const created = pickupService.create({
+        userId: user?.id || 'usr_' + phone,
+        userName: name,
+        userPhone: phone,
+        address: `${address}, ${city} - ${pincode}`,
+        date: `${date} · ${slot}`,
+        collectorId: preselectedCollector || 'c1',
+        items: selectedItems,
+        totalEstimated: totalEstimate,
+      });
+
+      try {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#A3E635', '#FFB020', '#FFFFFF'],
+        });
+      } catch (err) {}
+
+      setIsSubmitting(false);
+      navigate(`/track?id=${created.id}`);
+    }, 700);
   };
 
-  const steps = ['Select Items', 'Address', 'Date & Time', 'Review'];
-
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Step Indicator */}
-      <div className="flex items-center gap-2">
-        {steps.map((label, i) => (
-          <React.Fragment key={label}>
-            <div className={`flex items-center gap-2 ${i + 1 <= step ? 'text-emerald-600' : 'text-slate-400'}`}>
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
-                i + 1 < step ? 'bg-emerald-500 text-white' :
-                i + 1 === step ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 border-2 border-emerald-500' :
-                'bg-slate-100 dark:bg-slate-700 text-slate-400'
-              }`}>
-                {i + 1 < step ? '✓' : i + 1}
-              </div>
-              <span className="hidden sm:block text-xs font-medium">{label}</span>
-            </div>
-            {i < steps.length - 1 && <div className={`flex-1 h-0.5 ${i + 1 < step ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`} />}
-          </React.Fragment>
-        ))}
-      </div>
+    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#A3E635]/10 border border-[#A3E635]/30 text-[#A3E635] text-xs font-mono font-bold tracking-widest rounded-sm mb-3">
+            STEP 0{step} OF 04 // PICKUP DISPATCH WIZARD
+          </div>
+          <h1 className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight">
+            {lang === 'hi' ? 'कबाड़ पिकअप शेड्यूलर' : 'SCHEDULE DOORSTEP PICKUP'}
+          </h1>
+        </div>
 
-      <Card className="p-6">
-        {/* Step 1: Items */}
-        {step === 1 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold">Select Items to Sell</h2>
-            <p className="text-sm text-slate-500">Pick the types of scrap you want to sell. Set approximate weight for each.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {rates.map((r: any) => {
-                const checked = selected.includes(r.id);
-                return (
-                  <label
-                    key={r.id}
-                    className={`flex items-start gap-3 p-3 rounded-xl border-2 cursor-pointer transition ${
-                      checked ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      className="mt-1 accent-emerald-500"
-                      checked={checked}
-                      onChange={(e) => {
-                        if (e.target.checked) setSelected([...selected, r.id]);
-                        else setSelected(selected.filter(id => id !== r.id));
-                      }}
-                    />
-                    <div className="flex-1">
-                      <div className="font-medium">{r.icon} {r.name}</div>
-                      <div className="text-xs text-slate-500">Rs.{r.rate}/kg</div>
-                      {checked && (
-                        <div className="mt-2">
+        {/* Stepper Tabs */}
+        <div className="grid grid-cols-4 gap-2 mb-8 font-mono text-xs">
+          {[
+            { num: 1, label: 'ITEMS' },
+            { num: 2, label: 'ADDRESS' },
+            { num: 3, label: 'SCHEDULE' },
+            { num: 4, label: 'CONFIRM' },
+          ].map((s) => (
+            <div
+              key={s.num}
+              className={`p-3 rounded-sm border text-center transition-all ${
+                step === s.num
+                  ? 'border-[#A3E635] bg-[#A3E635]/10 text-[#A3E635] font-bold'
+                  : step > s.num
+                  ? 'border-[#1F221F] bg-[#141614] text-[#A3E635]'
+                  : 'border-[#1F221F] bg-[#050605] text-[#6A6E6A]'
+              }`}
+            >
+              <span>0{s.num} // </span>
+              <span className="hidden sm:inline">{s.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Main Wizard Card */}
+        <div className="bg-[#141614] border-2 border-[#1F221F] p-6 sm:p-10 corner-brackets relative shadow-2xl">
+          {errorMsg && (
+            <div className="mb-6 p-4 bg-[#FF6B5E]/10 border border-[#FF6B5E] text-[#FF6B5E] text-xs font-mono font-bold rounded-sm">
+              ⚠ {errorMsg}
+            </div>
+          )}
+
+          {/* STEP 1: Select Items & Weights */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-3 border-b border-[#1F221F]">
+                <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5]">
+                  1. SELECT MATERIALS & ESTIMATED KG
+                </h3>
+                <span className="font-mono text-xs text-[#A3E635]">
+                  EST: ₹{totalEstimate}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+                {allRates.map((item: any) => {
+                  const isSelected = selectedItems.includes(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => toggleItem(item.id)}
+                      className={`p-4 rounded-sm border cursor-pointer transition-all flex items-center justify-between ${
+                        isSelected
+                          ? 'border-[#A3E635] bg-[#0A0B0A]'
+                          : 'border-[#1F221F] bg-[#050605] hover:border-[#6A6E6A]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{item.icon}</span>
+                        <div>
+                          <div className="font-heading text-sm uppercase font-bold text-[#F5F5F5]">
+                            {item.name}
+                          </div>
+                          <span className="text-xs font-mono text-[#A3E635]">
+                            ₹{item.rate}/kg
+                          </span>
+                        </div>
+                      </div>
+
+                      {isSelected && (
+                        <div
+                          className="flex items-center gap-1 font-mono text-xs"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <input
                             type="number"
-                            min="0.5"
-                            step="0.5"
-                            value={weights[r.id] || 1}
-                            onChange={e => setWeights({ ...weights, [r.id]: parseFloat(e.target.value) || 1 })}
-                            className="w-24 text-sm p-1 border rounded dark:bg-slate-700 dark:border-slate-600"
-                            placeholder="kg"
+                            min="1"
+                            value={weights[item.id] || 5}
+                            onChange={(e) =>
+                              setWeights({
+                                ...weights,
+                                [item.id]: Math.max(1, parseInt(e.target.value) || 1),
+                              })
+                            }
+                            className="w-14 bg-[#141614] border border-[#1F221F] text-center text-[#F5F5F5] font-bold py-1 px-1 rounded-sm"
                           />
-                          <span className="ml-2 text-xs text-slate-400">kg</span>
+                          <span className="text-[#6A6E6A]">KG</span>
                         </div>
                       )}
                     </div>
-                  </label>
-                );
-              })}
-            </div>
-            {selected.length > 0 && (
-              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-sm">
-                <span className="font-bold text-emerald-700 dark:text-emerald-300">Estimated payout: Rs.{totalEstimated.toFixed(0)}</span>
-                <span className="text-slate-500 ml-2">(based on approx. weights)</span>
-              </div>
-            )}
-            <Button onClick={() => setStep(2)} disabled={selected.length === 0} className="w-full">
-              Continue → Address
-            </Button>
-          </div>
-        )}
-
-        {/* Step 2: Address */}
-        {step === 2 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold">Pickup Address</h2>
-            {[
-              { key: 'name', label: 'Full Name', placeholder: 'e.g. Priya Sharma', type: 'text' },
-              { key: 'phone', label: 'Mobile Number', placeholder: '10-digit number', type: 'tel' },
-              { key: 'address', label: 'Street Address', placeholder: 'Flat no., Street, Landmark', type: 'text' },
-              { key: 'pincode', label: 'Pincode', placeholder: '6-digit pincode', type: 'text' },
-              { key: 'city', label: 'City', placeholder: 'e.g. Mumbai', type: 'text' },
-            ].map(({ key, label, placeholder, type }) => (
-              <div key={key}>
-                <label className="block text-sm font-medium mb-1">{label}</label>
-                <input
-                  type={type}
-                  value={addr[key as keyof AddressForm]}
-                  onChange={e => setAddr({ ...addr, [key]: e.target.value })}
-                  placeholder={placeholder}
-                  className={`w-full p-2.5 border-2 rounded-xl dark:bg-slate-700 transition ${
-                    addrErrors[key as keyof AddressForm]
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-slate-200 dark:border-slate-600 focus:border-emerald-500'
-                  } outline-none`}
-                />
-                {addrErrors[key as keyof AddressForm] && (
-                  <p className="text-xs text-red-500 mt-1">{addrErrors[key as keyof AddressForm]}</p>
-                )}
-              </div>
-            ))}
-            <div className="flex gap-3">
-              <Button onClick={() => setStep(1)} className="flex-1 bg-slate-500 hover:bg-slate-600">← Back</Button>
-              <Button onClick={() => { if (validateAddr()) setStep(3); }} className="flex-1">Continue → Date</Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Date & Time */}
-        {step === 3 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold">Select Date & Time</h2>
-            <div>
-              <label className="block text-sm font-medium mb-2">Pickup Date</label>
-              <div className="grid grid-cols-4 gap-2">
-                {getNext7Days().map(d => (
-                  <button
-                    key={d}
-                    onClick={() => setDate(d)}
-                    className={`p-2 rounded-xl text-xs font-medium border-2 transition ${
-                      date === d ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300'
-                    }`}
-                  >
-                    {new Date(d).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Time Slot</label>
-              <div className="grid grid-cols-2 gap-2">
-                {SLOTS.map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setSlot(s)}
-                    className={`p-3 rounded-xl text-sm font-medium border-2 transition ${
-                      slot === s ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Button onClick={() => setStep(2)} className="flex-1 bg-slate-500 hover:bg-slate-600">← Back</Button>
-              <Button onClick={() => setStep(4)} disabled={!date} className="flex-1">Continue → Review</Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Review */}
-        {step === 4 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold">Review & Confirm</h2>
-            <div className="space-y-3">
-              <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-xl">
-                <p className="text-sm font-bold text-slate-500 mb-2">ITEMS ({selected.length})</p>
-                {selected.map(id => {
-                  const item = rates.find((r: any) => r.id === id);
-                  const kg = weights[id] || 1;
-                  return item ? (
-                    <div key={id} className="flex justify-between text-sm py-1">
-                      <span>{item.icon} {item.name} × {kg}kg</span>
-                      <span className="font-bold">Rs.{(item.rate * kg).toFixed(0)}</span>
-                    </div>
-                  ) : null;
+                  );
                 })}
-                <div className="border-t border-slate-200 dark:border-slate-600 mt-2 pt-2 flex justify-between font-bold text-emerald-600">
-                  <span>Estimated Total</span>
-                  <span>Rs.{totalEstimated.toFixed(0)}</span>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: Address & Citizen Contact */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
+                2. CITIZEN DOORSTEP LOCATION
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                    FULL NAME:
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-body text-sm rounded-sm outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                    PHONE (FOR SATELLITE OTP & UPI):
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    maxLength={10}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                    className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                  />
                 </div>
               </div>
-              <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-xl text-sm space-y-1">
-                <p className="font-bold text-slate-500 mb-2">ADDRESS</p>
-                <p className="font-medium">{addr.name} · {addr.phone}</p>
-                <p className="text-slate-600 dark:text-slate-300">{addr.address}, {addr.city} – {addr.pincode}</p>
+
+              <div>
+                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                  STREET / BUILDING / APARTMENT:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-body text-sm rounded-sm outline-none"
+                />
               </div>
-              <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-xl text-sm">
-                <p className="font-bold text-slate-500 mb-1">DATE & TIME</p>
-                <p>{new Date(date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} · {slot}</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                    METRO CITY:
+                  </label>
+                  <select
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full bg-[#050605] border border-[#1F221F] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                  >
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Bengaluru">Bengaluru</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                    PINCODE (6-DIGIT):
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
+                    className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button onClick={() => setStep(3)} className="flex-1 bg-slate-500 hover:bg-slate-600">← Back</Button>
-              <Button onClick={handleConfirm} className="flex-1 bg-emerald-600 hover:bg-emerald-700">
-                ✓ Confirm Pickup
-              </Button>
+          )}
+
+          {/* STEP 3: Date & Slot Selection */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
+                3. PICKUP DATE & TIME WINDOW
+              </h3>
+
+              <div>
+                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-2">
+                  SELECT DATE:
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-2">
+                  RADIO TIME-SLOT WINDOW:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {TIME_SLOTS.map((s) => (
+                    <label
+                      key={s}
+                      onClick={() => setSlot(s)}
+                      className={`p-4 rounded-sm border cursor-pointer transition-all flex items-center justify-between ${
+                        slot === s
+                          ? 'border-[#A3E635] bg-[#A3E635]/10 text-[#F5F5F5]'
+                          : 'border-[#1F221F] bg-[#050605] text-[#C8C8C8]'
+                      }`}
+                    >
+                      <span className="font-mono text-xs font-bold">{s}</span>
+                      <input
+                        type="radio"
+                        checked={slot === s}
+                        onChange={() => setSlot(s)}
+                        className="accent-[#A3E635]"
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
+          )}
+
+          {/* STEP 4: Review & Dispatch */}
+          {step === 4 && (
+            <div className="space-y-6">
+              <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
+                4. AUDIT & DISPATCH CONFIRMATION
+              </h3>
+
+              <div className="p-6 bg-[#050605] border border-[#1F221F] rounded-sm space-y-4 font-mono text-xs">
+                <div className="flex justify-between border-b border-[#1F221F] pb-3">
+                  <span className="text-[#6A6E6A]">DOORSTEP ADDRESS:</span>
+                  <span className="text-[#F5F5F5] font-bold text-right">
+                    {address}, {city} - {pincode}
+                  </span>
+                </div>
+
+                <div className="flex justify-between border-b border-[#1F221F] pb-3">
+                  <span className="text-[#6A6E6A]">SCHEDULED WINDOW:</span>
+                  <span className="text-[#A3E635] font-bold">
+                    {date} // {slot}
+                  </span>
+                </div>
+
+                <div className="flex justify-between border-b border-[#1F221F] pb-3">
+                  <span className="text-[#6A6E6A]">CITIZEN CONTACT:</span>
+                  <span className="text-[#F5F5F5]">{name} ({phone})</span>
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-sm font-bold text-[#F5F5F5]">ESTIMATED PAYOUT:</span>
+                  <span className="font-display text-3xl font-black text-[#A3E635]">
+                    ₹{totalEstimate}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-mono text-[#6A6E6A]">
+                <ShieldCheck className="w-4 h-4 text-[#A3E635]" />
+                <span>Collector will bring a certified digital scale. You receive cash or UPI.</span>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation Controls */}
+          <div className="pt-8 border-t border-[#1F221F] flex items-center justify-between gap-4">
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s - 1)}
+                className="px-6 py-3 bg-[#050605] border border-[#1F221F] hover:border-[#6A6E6A] font-mono text-xs uppercase font-bold text-[#F5F5F5] rounded-sm flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>BACK</span>
+              </button>
+            ) : <div />}
+
+            {step < 4 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="px-8 py-3 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-lg font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2"
+              >
+                <span>CONTINUE</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleConfirm}
+                className="px-10 py-4 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-xl font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2 active:scale-95"
+              >
+                <Sparkles className="w-5 h-5" />
+                <span>{isSubmitting ? 'DISPATCHING...' : 'DISPATCH PICKUP REQUEST'}</span>
+              </button>
+            )}
           </div>
-        )}
-      </Card>
+        </div>
+      </div>
     </div>
   );
-}
+};
+export default SchedulePickup;

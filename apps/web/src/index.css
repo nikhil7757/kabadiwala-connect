@@ -1,3 +1,9 @@
+@import "@fontsource/bebas-neue";
+@import "@fontsource/oswald";
+@import "@fontsource/archivo";
+@import "@fontsource/jetbrains-mono";
+@import "@fontsource/noto-sans-devanagari";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,17 +12,35 @@
   --color-bg: #0A0B0A;
   --color-bg-darker: #050605;
   --color-card: #141614;
+  --color-card-hover: #1B1E1B;
   --color-border: #1F221F;
+  --color-border-hover: #2E332E;
   --color-fg: #F5F5F5;
   --color-muted: #6A6E6A;
   --color-accent: #A3E635; /* scrap lime */
-  --color-money: #FFB020;
+  --color-accent-soft: rgba(163, 230, 53, 0.12);
+  --color-money: #FFB020; /* money accent amber */
   --color-silver: #C8C8C8;
   
-  --font-display: 'Bebas Neue', 'Noto Sans Devanagari', cursive;
+  --font-display: 'Bebas Neue', 'Oswald', sans-serif;
   --font-heading: 'Oswald', 'Noto Sans Devanagari', sans-serif;
   --font-body: 'Archivo', 'Noto Sans Devanagari', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+}
+
+.light {
+  --color-bg: #F4F6F4;
+  --color-bg-darker: #E6EAE6;
+  --color-card: #FFFFFF;
+  --color-card-hover: #F9FAF9;
+  --color-border: #D1D8D1;
+  --color-border-hover: #B8C2B8;
+  --color-fg: #0A0B0A;
+  --color-muted: #575D57;
+  --color-accent: #65A30D; /* darker lime for high AA contrast in light mode */
+  --color-accent-soft: rgba(101, 163, 13, 0.12);
+  --color-money: #D97706;
+  --color-silver: #4B5563;
 }
 
 body {
@@ -24,6 +48,7 @@ body {
   color: var(--color-fg);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -34,35 +59,105 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
 }
 
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
 .font-mono {
   font-family: var(--font-mono);
 }
 
-/* Utilities */
+/* 1. Drifting Film-Grain Overlay */
 .film-grain {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
   pointer-events: none;
   z-index: 9999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.045;
 }
 
+/* 2. Scanline raster for hero */
 .scanline {
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
   background-size: 100% 4px;
 }
 
+/* 4. Masked / stroked typography */
 .text-stroke {
-  -webkit-text-stroke: 1px var(--color-fg);
+  -webkit-text-stroke: 1.5px var(--color-fg);
+  color: transparent;
+}
+.text-stroke-lime {
+  -webkit-text-stroke: 1.5px var(--color-accent);
   color: transparent;
 }
 
+/* 7. Corner-notch tech cards */
 .corner-notch {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-accent) var(--color-bg-darker);
+.corner-brackets {
+  position: relative;
+}
+.corner-brackets::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px;
+  width: 14px; height: 14px;
+  border-top: 2px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
+  pointer-events: none;
+}
+.corner-brackets::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; right: -2px;
+  width: 14px; height: 14px;
+  border-bottom: 2px solid var(--color-accent);
+  border-right: 2px solid var(--color-accent);
+  pointer-events: none;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  display: inline-flex;
+  animation: marquee 32s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Pulse Glow */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(163, 230, 53, 0.35); }
+  50% { box-shadow: 0 0 30px rgba(163, 230, 53, 0.7); }
+}
+.glow-lime {
+  animation: pulse-glow 2.5s infinite ease-in-out;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-darker);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
 }

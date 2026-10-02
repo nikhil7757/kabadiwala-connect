@@ -1,138 +1,189 @@
 import React, { useState } from 'react';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
+import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { useLang } from '../hooks/useLang';
 
-interface FormState { name: string; email: string; phone: string; subject: string; message: string; }
-interface Errors { name?: string; email?: string; message?: string; }
-
-export default function Contact() {
-  const [form, setForm] = useState<FormState>({ name: '', email: '', phone: '', subject: '', message: '' });
-  const [errors, setErrors] = useState<Errors>({});
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const validate = () => {
-    const e: Errors = {};
-    if (!form.name.trim()) e.name = 'Name is required';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Enter a valid email address';
-    if (!form.message.trim() || form.message.length < 20) e.message = 'Message must be at least 20 characters';
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
+export const Contact: React.FC = () => {
+  const { lang } = useLang();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [category, setCategory] = useState('PICKUP_DISPATCH');
+  const [message, setMessage] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-    setLoading(true);
-    setTimeout(() => { setLoading(false); setSuccess(true); }, 1200);
+    if (!name.trim()) {
+      setErrorMsg('Please enter your full name.');
+      return;
+    }
+    if (!email.includes('@')) {
+      setErrorMsg('Please enter a valid email address.');
+      return;
+    }
+    if (!message.trim() || message.length < 15) {
+      setErrorMsg('Please write a message of at least 15 characters.');
+      return;
+    }
+
+    setErrorMsg('');
+    setSubmitted(true);
+    setTimeout(() => {
+      setName('');
+      setEmail('');
+      setPhone('');
+      setMessage('');
+    }, 4000);
   };
 
-  if (success) {
-    return (
-      <div className="max-w-md mx-auto py-10 text-center space-y-4">
-        <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center text-4xl mx-auto">✅</div>
-        <h2 className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">Message Sent!</h2>
-        <p className="text-slate-500">Thanks for reaching out, {form.name}. We'll get back to you at {form.email} within 24 hours.</p>
-        <Button onClick={() => { setSuccess(false); setForm({ name: '', email: '', phone: '', subject: '', message: '' }); }}>
-          Send Another Message
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-2xl mx-auto py-10">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-extrabold mb-2">Contact Us</h1>
-        <p className="text-slate-500">We typically respond within 24 hours on business days.</p>
-      </div>
-      <div className="grid md:grid-cols-3 gap-8">
-        {/* Info Cards */}
-        <div className="space-y-4">
-          {[
-            { icon: '📞', title: 'Phone', text: '+91 98765 43210\nMon–Sat 9am–6pm' },
-            { icon: '📧', title: 'Email', text: 'support@kabadiwala.in' },
-            { icon: '📍', title: 'Office', text: 'Mumbai, Maharashtra\nIndia 400001' },
-          ].map(({ icon, title, text }) => (
-            <Card key={title} className="p-4 text-center">
-              <div className="text-2xl mb-1">{icon}</div>
-              <div className="font-bold text-sm">{title}</div>
-              <div className="text-xs text-slate-500 whitespace-pre-line mt-1">{text}</div>
-            </Card>
-          ))}
+    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        {/* Header */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="w-8 h-0.5 bg-[#A3E635]" />
+            <span className="font-mono text-xs text-[#A3E635] tracking-widest uppercase font-bold">
+              CITIZEN & COLLECTOR HELPLINE // 24/7 SUPPORT
+            </span>
+          </div>
+          <h1 className="font-display text-5xl sm:text-7xl text-[#F5F5F5] uppercase tracking-tight">
+            CONTACT HEADQUARTERS
+          </h1>
+          <p className="mt-2 text-[#6A6E6A] font-body text-sm sm:text-base max-w-2xl">
+            Direct communication channel for municipal grievance redressal, collector onboarding,
+            and recycling mill accreditation.
+          </p>
         </div>
 
-        {/* Form */}
-        <div className="md:col-span-2">
-          <Card className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Full Name *</label>
-                  <input
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                    placeholder="Priya Sharma"
-                    className={`w-full p-2.5 border-2 rounded-xl dark:bg-slate-700 outline-none transition ${errors.name ? 'border-red-400' : 'border-slate-200 dark:border-slate-600 focus:border-emerald-500'}`}
-                  />
-                  {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column: Direct Info Cards */}
+          <div className="lg:col-span-5 space-y-4 font-mono text-xs">
+            <div className="p-6 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-3">
+              <Phone className="w-5 h-5 text-[#A3E635]" />
+              <div className="font-bold text-sm text-[#F5F5F5]">TOLL-FREE CITIZEN HELPLINE</div>
+              <p className="text-[#6A6E6A]">1800-266-7272 (1800-SCRAP-KC)</p>
+              <div className="text-[11px] text-[#A3E635]">Operating: Mon–Sat 08:00 to 20:00 IST</div>
+            </div>
+
+            <div className="p-6 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-3">
+              <Mail className="w-5 h-5 text-[#FFB020]" />
+              <div className="font-bold text-sm text-[#F5F5F5]">ELECTRONIC DISPATCH</div>
+              <p className="text-[#6A6E6A]">support@kabadiwalaconnect.org.in</p>
+              <p className="text-[#6A6E6A]">grievance@jnarddc.gov.in</p>
+            </div>
+
+            <div className="p-6 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-3">
+              <MapPin className="w-5 h-5 text-[#A3E635]" />
+              <div className="font-bold text-sm text-[#F5F5F5]">INNOVATION OFFICE</div>
+              <p className="text-[#6A6E6A] leading-relaxed">
+                JNARDDC Campus, Wadi, Amravati Road, Nagpur, Maharashtra 440023, India
+              </p>
+            </div>
+          </div>
+
+          {/* Right Column: Technical Support Form */}
+          <div className="lg:col-span-7">
+            <div className="p-6 sm:p-8 bg-[#141614] border-2 border-[#1F221F] rounded-sm corner-brackets space-y-6 shadow-2xl">
+              <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
+                DISPATCH SUPPORT TICKET
+              </h3>
+
+              {errorMsg && (
+                <div className="p-3 bg-[#FF6B5E]/10 border border-[#FF6B5E] text-[#FF6B5E] text-xs font-mono font-bold rounded-sm">
+                  ⚠ {errorMsg}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Email *</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={e => setForm({ ...form, email: e.target.value })}
-                    placeholder="priya@example.com"
-                    className={`w-full p-2.5 border-2 rounded-xl dark:bg-slate-700 outline-none transition ${errors.email ? 'border-red-400' : 'border-slate-200 dark:border-slate-600 focus:border-emerald-500'}`}
-                  />
-                  {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+              )}
+
+              {submitted ? (
+                <div className="p-8 bg-[#050605] border border-[#A3E635] text-center space-y-3 font-mono text-xs">
+                  <CheckCircle2 className="w-8 h-8 text-[#A3E635] mx-auto animate-bounce" />
+                  <div className="font-bold text-base text-[#F5F5F5]">
+                    TICKET #KC-TK-2026-914 LOGGED!
+                  </div>
+                  <p className="text-[#6A6E6A]">
+                    An officer has been assigned. You will receive an SMS response within 2 hours.
+                  </p>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Phone (optional)</label>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={e => setForm({ ...form, phone: e.target.value })}
-                  placeholder="+91 98765 43210"
-                  className="w-full p-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl dark:bg-slate-700 focus:border-emerald-500 outline-none transition"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Subject</label>
-                <select
-                  value={form.subject}
-                  onChange={e => setForm({ ...form, subject: e.target.value })}
-                  className="w-full p-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl dark:bg-slate-700 focus:border-emerald-500 outline-none transition"
-                >
-                  <option value="">Select a topic...</option>
-                  <option>Pickup Issue</option>
-                  <option>Collector Complaint</option>
-                  <option>Rate Query</option>
-                  <option>Become a Collector</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Message *</label>
-                <textarea
-                  value={form.message}
-                  onChange={e => setForm({ ...form, message: e.target.value })}
-                  placeholder="Tell us how we can help... (min 20 characters)"
-                  rows={5}
-                  className={`w-full p-2.5 border-2 rounded-xl dark:bg-slate-700 outline-none transition resize-none ${errors.message ? 'border-red-400' : 'border-slate-200 dark:border-slate-600 focus:border-emerald-500'}`}
-                />
-                {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
-                <p className="text-xs text-slate-400 mt-1">{form.message.length} / 500 characters</p>
-              </div>
-              <Button type="submit" disabled={loading} className="w-full py-3 text-lg">
-                {loading ? '⏳ Sending...' : '📨 Send Message'}
-              </Button>
-            </form>
-          </Card>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs">
+                  <div>
+                    <label className="block text-[#6A6E6A] uppercase mb-1">YOUR FULL NAME:</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Priya Sharma"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 rounded-sm outline-none font-body text-sm"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[#6A6E6A] uppercase mb-1">EMAIL ADDRESS:</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="priya@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 rounded-sm outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#6A6E6A] uppercase mb-1">PHONE NUMBER:</label>
+                      <input
+                        type="tel"
+                        placeholder="10-digit number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 rounded-sm outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#6A6E6A] uppercase mb-1">ISSUE CATEGORY:</label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full bg-[#050605] border border-[#1F221F] text-[#F5F5F5] p-3 rounded-sm outline-none focus:border-[#A3E635]"
+                    >
+                      <option value="PICKUP_DISPATCH">Pickup Dispatch Inquiry</option>
+                      <option value="COLLECTOR_ONBOARDING">Informal Collector Verification / KYC</option>
+                      <option value="RECYCLER_EPR">Recycling Mill EPR Registration</option>
+                      <option value="MANDI_RATES">Discrepancy in Mandi Rates</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#6A6E6A] uppercase mb-1">YOUR MESSAGE (MIN 15 CHARACTERS):</label>
+                    <textarea
+                      required
+                      rows={4}
+                      placeholder="Describe your issue or question in detail..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 rounded-sm outline-none font-body text-sm"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-4 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-lg font-bold uppercase tracking-wider rounded-sm glow-lime transition active:scale-95 flex items-center justify-center gap-2"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>TRANSMIT SUPPORT TICKET</span>
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+export default Contact;
