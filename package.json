@@ -19,6 +19,7 @@
     "db:seed": "npm run db:seed --workspace=server",
     "db:reset": "npm run db:reset --workspace=server",
     "test": "npm run test --workspaces --if-present",
+    "test:layout": "node scripts/run_layout_tests.js",
     "test:e2e": "npm run test:e2e --workspace=apps/web",
     "lint": "npm run lint --workspaces --if-present",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",

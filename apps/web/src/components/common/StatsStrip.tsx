@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useLang } from '../../hooks/useLang';
+import { Container } from '../layout/Container';
 
 function useCounter(target: number, duration = 2000, trigger = true) {
   const [val, setVal] = useState(0);
@@ -23,6 +24,13 @@ function useCounter(target: number, duration = 2000, trigger = true) {
   return val;
 }
 
+/**
+ * Standardized Stats Strip Section (Phase 3 Component)
+ * - 2x2 grid on mobile (grid-cols-2), 4 columns on desktop (lg:grid-cols-4)
+ * - Animated count-up
+ * - Equal height cards with corner bracket styling
+ * - Standardized <Container>
+ */
 export const StatsStrip: React.FC = () => {
   const { lang } = useLang();
   const [inView, setInView] = useState(false);
@@ -35,7 +43,7 @@ export const StatsStrip: React.FC = () => {
           setInView(true);
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.15 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -44,7 +52,7 @@ export const StatsStrip: React.FC = () => {
   const collectors = useCounter(1240, 1800, inView);
   const kgRecycled = useCounter(52340, 2200, inView);
   const co2Saved = useCounter(26, 1600, inView);
-  const paidOutLakhs = useCounter(1840, 2000, inView); // in thousands (18.4 L)
+  const paidOutLakhs = useCounter(1840, 2000, inView);
 
   const stats = [
     {
@@ -74,45 +82,51 @@ export const StatsStrip: React.FC = () => {
   ];
 
   return (
-    <section ref={ref} className="py-16 bg-[#0A0B0A] border-b border-[#1F221F]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <section ref={ref} className="py-12 sm:py-16 bg-[#0A0B0A] border-b border-[#1F221F]">
+      <Container>
         {/* Section Header */}
-        <div className="flex items-center gap-3 mb-10">
+        <div className="flex items-center gap-3 mb-8">
           <span className="w-8 h-0.5 bg-[#A3E635]" />
           <span className="font-mono text-xs text-[#A3E635] tracking-widest uppercase font-bold">
             01 // PROVEN IMPACT TELEMETRY
           </span>
         </div>
 
-        {/* 4 Metrics Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 2x2 Grid on Mobile, 4 Columns on Desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 min-w-0">
           {stats.map((stat, i) => (
             <div
               key={i}
-              className="relative p-6 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-all duration-300 corner-brackets group"
+              data-qa-check="card"
+              className="relative p-4 sm:p-6 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-all corner-brackets flex flex-col justify-between min-w-0 group"
             >
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-mono text-[10px] text-[#A3E635] font-black tracking-widest px-2 py-0.5 rounded bg-[#A3E635]/10 border border-[#A3E635]/30">
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-mono text-[9px] sm:text-[10px] text-[#A3E635] font-black tracking-wider px-1.5 py-0.5 rounded bg-[#A3E635]/10 border border-[#A3E635]/30">
                   {stat.unit}
                 </span>
-                <span className="font-mono text-xs text-[#6A6E6A]">0{i + 1}</span>
+                <span className="font-mono text-[11px] text-[#6A6E6A]">0{i + 1}</span>
               </div>
 
-              <div className="font-display text-4xl sm:text-5xl font-black text-[#F5F5F5] group-hover:text-[#A3E635] transition-colors tracking-tight">
+              <div
+                data-qa-check="heading"
+                className="font-display text-2xl sm:text-4xl lg:text-5xl font-black text-[#F5F5F5] group-hover:text-[#A3E635] transition-colors tracking-tight truncate"
+              >
                 {stat.value}
               </div>
 
-              <div className="mt-3 font-heading text-sm uppercase font-bold text-[#C8C8C8] tracking-wider">
+              <div className="mt-2 font-heading text-xs sm:text-sm uppercase font-bold text-[#C8C8C8] tracking-wider truncate">
                 {stat.label}
               </div>
 
-              <div className="mt-1 text-xs text-[#6A6E6A] font-body">
+              <div className="mt-1 text-[11px] sm:text-xs text-[#6A6E6A] font-body line-clamp-1">
                 {stat.sub}
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };
+
+export default StatsStrip;

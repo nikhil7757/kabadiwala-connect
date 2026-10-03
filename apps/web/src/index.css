@@ -4,11 +4,51 @@
 @import "@fontsource/jetbrains-mono";
 @import "@fontsource/noto-sans-devanagari";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+/* ==========================================================================
+   PHASE 1: FOUNDATION - CSS RESET & DESIGN TOKENS
+   ========================================================================== */
+
+/* 1. Global Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg, video {
+  max-width: 100%;
+  display: block;
+}
+
+/* Accessible anchor scroll margin accounting for sticky header */
+[id] {
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+/* 2. Unified Design Tokens */
 :root {
+  /* Brand Theme Colors */
   --color-bg: #0A0B0A;
   --color-bg-darker: #050605;
   --color-card: #141614;
@@ -19,13 +59,38 @@
   --color-muted: #6A6E6A;
   --color-accent: #A3E635; /* scrap lime */
   --color-accent-soft: rgba(163, 230, 53, 0.12);
-  --color-money: #FFB020; /* money accent amber */
+  --color-money: #FFB020;  /* money accent amber */
   --color-silver: #C8C8C8;
-  
+
+  /* Typography */
   --font-display: 'Bebas Neue', 'Oswald', sans-serif;
   --font-heading: 'Oswald', 'Noto Sans Devanagari', sans-serif;
   --font-body: 'Archivo', 'Noto Sans Devanagari', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Structural Geometry */
+  --header-h: 72px;
+  --bottom-nav-h: 64px;
+
+  /* Strict Z-Index Scale */
+  --z-base: 0;
+  --z-content: 10;
+  --z-sticky: 20;
+  --z-header: 30;
+  --z-dropdown: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+
+  /* Standard Spacing Scale (4, 8, 12, 16, 24, 32, 48, 64, 96px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
 }
 
 .light {
@@ -37,22 +102,17 @@
   --color-border-hover: #B8C2B8;
   --color-fg: #0A0B0A;
   --color-muted: #575D57;
-  --color-accent: #65A30D; /* darker lime for high AA contrast in light mode */
+  --color-accent: #65A30D;
   --color-accent-soft: rgba(101, 163, 13, 0.12);
   --color-money: #D97706;
   --color-silver: #4B5563;
 }
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-
+/* Typography Classes */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
 
 .font-display {
@@ -71,23 +131,54 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-mono);
 }
 
-/* 1. Drifting Film-Grain Overlay */
-.film-grain {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.045;
+/* Fluid Headline: clamp(2.25rem, 6vw, 4.5rem) */
+.fluid-headline {
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
 }
 
-/* 2. Scanline raster for hero */
+/* Standardized Section Padding (64px mobile, 96px desktop) */
+.section-py {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
+}
+
+@media (min-width: 1024px) {
+  .section-py {
+    padding-top: var(--space-24);
+    padding-bottom: var(--space-24);
+  }
+}
+
+/* Minimum Tap Target Utility (WCAG 2.5.5 - 44px min) */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Drifting Film-Grain Overlay: clipped, pointer-events none, no 100vw overflow */
+.film-grain {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--z-modal);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+}
+
+/* Scanline raster */
 .scanline {
   background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
   background-size: 100% 4px;
 }
 
-/* 4. Masked / stroked typography */
+/* Masked / stroked typography */
 .text-stroke {
   -webkit-text-stroke: 1.5px var(--color-fg);
   color: transparent;
@@ -97,7 +188,7 @@ h1, h2, h3, h4, h5, h6 {
   color: transparent;
 }
 
-/* 7. Corner-notch tech cards */
+/* Corner-notch tech cards */
 .corner-notch {
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
 }
@@ -124,14 +215,16 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
-/* Marquee Animation */
+/* Seamless Marquee Track */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 .animate-marquee {
   display: inline-flex;
-  animation: marquee 32s linear infinite;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+  will-change: transform;
 }
 .animate-marquee:hover {
   animation-play-state: paused;
@@ -139,8 +232,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Pulse Glow */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(163, 230, 53, 0.35); }
-  50% { box-shadow: 0 0 30px rgba(163, 230, 53, 0.7); }
+  0%, 100% { box-shadow: 0 0 12px rgba(163, 230, 53, 0.25); }
+  50% { box-shadow: 0 0 24px rgba(163, 230, 53, 0.6); }
 }
 .glow-lime {
   animation: pulse-glow 2.5s infinite ease-in-out;
@@ -148,8 +241,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-bg-darker);
@@ -160,4 +253,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent);
+}
+
+/* Respect Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+    overflow-x: auto;
+  }
 }

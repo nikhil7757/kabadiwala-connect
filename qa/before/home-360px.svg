@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 2200" width="360" height="2200" style="background:#0A0B0A; font-family:'JetBrains Mono', sans-serif;">
+  <defs>
+    <style>
+      .text-title { font-family: 'Oswald', sans-serif; font-weight: bold; fill: #F5F5F5; }
+      .text-lime { fill: #A3E635; }
+      .text-muted { fill: #6A6E6A; }
+      .bug-box { stroke: #FF4444; stroke-width: 2; stroke-dasharray: 4 2; fill: rgba(255, 68, 68, 0.15); }
+      .bug-label { fill: #FF6666; font-size: 10px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="360" height="30" fill="#1F221F"/>
+  <text x="10" y="20" fill="#A3E635" font-size="11" font-weight="bold">AUDIT: BEFORE // VIEWPORT: 360px</text>
+
+  <!-- Header -->
+  <rect x="0" y="30" width="360" height="60" fill="#0A0B0A" stroke="#1F221F"/>
+  <rect x="12" y="42" width="36" height="36" fill="#A3E635" rx="2"/>
+  <text x="21" y="66" fill="#0A0B0A" font-size="16" font-weight="900">KC</text>
+
+  <rect x="68" y="46" width="30" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <text x="74" y="64" fill="#A3E635" font-size="10">हिं</text>
+  <rect x="106" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="142" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="178" y="44" width="125" height="32" fill="#A3E635" rx="2"/>
+  <text x="188" y="64" fill="#0A0B0A" font-size="10" font-weight="bold">BOOK PICKUP</text>
+  <rect x="312" y="46" width="32" height="28" fill="#141614" stroke="#FF4444" rx="2"/>
+  <rect x="64" y="38" width="286" height="44" class="bug-box"/>
+  <text x="64" y="34" class="bug-label">BUG: Header action bar cramped; notification dot clips</text>
+
+  <!-- Hero Section -->
+  <rect x="0" y="90" width="360" height="320" fill="#0A0B0A"/>
+  <text x="16" y="125" class="text-lime" font-size="10">SIH 2026 // PROBLEM STATEMENT SIH26229</text>
+  <text x="16" y="170" class="text-title" font-size="44" letter-spacing="-1">FROM KABADI.</text>
+  <text x="16" y="210" class="text-title" font-size="44" fill="none" stroke="#F5F5F5" stroke-width="1.5">TO CIRCULAR.</text>
+  <text x="16" y="250" class="text-title text-lime" font-size="44">TRACEABLE.</text>
+  <rect x="8" y="130" width="344" height="130" class="bug-box"/>
+  <text x="16" y="275" class="bug-label">BUG: Text lines touch at leading-[0.9], no fluid clamp</text>
+
+  <!-- Stats Strip -->
+  <rect x="0" y="420" width="360" height="400" fill="#050605" stroke="#1F221F"/>
+  <text x="16" y="450" class="text-lime" font-size="10">01 // PROVEN IMPACT TELEMETRY</text>
+  <rect x="16" y="465" width="328" height="75" fill="#141614" stroke="#1F221F"/>
+  <text x="28" y="505" class="text-title text-lime" font-size="30">1,240+</text>
+  <text x="28" y="525" fill="#C8C8C8" font-size="11">VERIFIED COLLECTORS</text>
+  <rect x="12" y="460" width="336" height="175" class="bug-box"/>
+  <text x="16" y="650" class="bug-label">BUG: Mobile assumes 1 column instead of 2x2 grid</text>
+
+  <!-- Collision Annotation at Bottom -->
+  <rect x="0" y="2080" width="360" height="120" class="bug-box"/>
+  <text x="10" y="2070" class="bug-label">BUG: Dual sticky bars collide on mobile screen</text>
+</svg>

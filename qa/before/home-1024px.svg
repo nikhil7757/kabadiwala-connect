@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 2200" width="1024" height="2200" style="background:#0A0B0A; font-family:'JetBrains Mono', sans-serif;">
+  <defs>
+    <style>
+      .text-title { font-family: 'Oswald', sans-serif; font-weight: bold; fill: #F5F5F5; }
+      .text-lime { fill: #A3E635; }
+      .text-muted { fill: #6A6E6A; }
+      .bug-box { stroke: #FF4444; stroke-width: 2; stroke-dasharray: 4 2; fill: rgba(255, 68, 68, 0.15); }
+      .bug-label { fill: #FF6666; font-size: 12px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="30" fill="#1F221F"/>
+  <text x="20" y="20" fill="#A3E635" font-size="12" font-weight="bold">AUDIT: BEFORE // VIEWPORT: 1024px (Small Desktop / iPad Pro Landscape)</text>
+
+  <!-- Header -->
+  <rect x="0" y="30" width="1024" height="60" fill="#0A0B0A" stroke="#1F221F"/>
+  <rect x="24" y="42" width="36" height="36" fill="#A3E635" rx="2"/>
+  <text x="33" y="66" fill="#0A0B0A" font-size="16" font-weight="900">KC</text>
+  <text x="70" y="60" fill="#F5F5F5" font-size="14" font-weight="bold">KABADIWALA CONNECT</text>
+
+  <!-- Center Links -->
+  <text x="250" y="65" fill="#A3E635" font-size="11">RATES</text>
+  <text x="320" y="65" fill="#C8C8C8" font-size="11">CALCULATOR</text>
+  <text x="430" y="65" fill="#C8C8C8" font-size="11">LIVE TRACKER</text>
+  <text x="540" y="65" fill="#C8C8C8" font-size="11">COLLECTORS</text>
+  <text x="640" y="65" fill="#C8C8C8" font-size="11">GUIDE</text>
+
+  <!-- Right Actions -->
+  <rect x="710" y="46" width="60" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="780" y="46" width="32" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="820" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="856" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="892" y="44" width="112" height="32" fill="#A3E635" rx="2"/>
+  <text x="900" y="64" fill="#0A0B0A" font-size="11" font-weight="bold">BOOK PICKUP</text>
+
+  <rect x="240" y="38" width="770" height="44" class="bug-box"/>
+  <text x="250" y="34" class="bug-label">BUG: Fixed header items collide at 1024px break boundary; missing responsive spacing</text>
+
+  <!-- Hero -->
+  <rect x="0" y="90" width="1024" height="460" fill="#0A0B0A"/>
+  <text x="32" y="145" class="text-lime" font-size="12">SIH 2026 // MINISTRY OF MINES &amp; JNARDDC</text>
+  <text x="32" y="210" class="text-title" font-size="76">FROM KABADI.</text>
+  <text x="32" y="275" class="text-title" font-size="76" fill="none" stroke="#F5F5F5" stroke-width="2">TO CIRCULAR.</text>
+  <text x="32" y="340" class="text-title text-lime" font-size="76">TRACEABLE.</text>
+
+  <rect x="24" y="160" width="976" height="200" class="bug-box"/>
+  <text x="32" y="420" class="bug-label">BUG: Hero lacks 2-column split (text+CTA left, interactive visual right)</text>
+</svg>

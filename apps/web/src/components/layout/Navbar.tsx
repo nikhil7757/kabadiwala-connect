@@ -10,19 +10,25 @@ import {
   Menu,
   X,
   User,
-  Shield,
-  Truck,
   Layers,
-  Award,
+  Truck,
 } from 'lucide-react';
 import { useLang } from '../../hooks/useLang';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../hooks/useAuth';
+import { Logo } from '../common/Logo';
+import { Icon } from '../common/Icon';
 
 interface NavbarProps {
   onOpenCommandPalette?: () => void;
 }
 
+/**
+ * Standardized 3-Zone Sticky Glass Navbar (Phase 1, 2, 3)
+ * Zone 1: Brand Logo & Wordmark (min-w-0, shrink-0)
+ * Zone 2: Navigation Links (hidden on mobile, lg:flex, min-w-0)
+ * Zone 3: Actions & Mobile Drawer Toggle (min-w-0, flex items-center, no collision)
+ */
 export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
   const { lang, setLang } = useLang();
   const { isDark, toggleTheme } = useTheme();
@@ -43,40 +49,52 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
 
   const navLinks = [
     { to: '/rates', label: 'RATES (₹/KG)', labelHi: 'स्क्रैप दरें' },
-    { to: '/calculator', label: 'SMART CALCULATOR', labelHi: 'कैलकुलेटर' },
+    { to: '/calculator', label: 'CALCULATOR', labelHi: 'कैलकुलेटर' },
     { to: '/track', label: 'LIVE TRACKER', labelHi: 'लाइव ट्रैकर' },
     { to: '/collectors', label: 'COLLECTORS', labelHi: 'कबाड़ीवाले' },
-    { to: '/learn', label: 'SEGREGATION GUIDE', labelHi: 'गाइड' },
+    { to: '/learn', label: 'GUIDE', labelHi: 'गाइड' },
   ];
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A0B0A]/85 backdrop-blur-md border-b border-[#1F221F] transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between gap-4">
-          {/* Left Brand Identity */}
-          <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <span className="w-10 h-10 rounded-sm bg-[#A3E635] text-[#0A0B0A] font-display text-2xl font-black flex items-center justify-center shadow-[0_0_15px_rgba(163,230,53,0.3)] group-hover:scale-105 transition-transform">
-              KC
-            </span>
-            <div className="hidden sm:block">
-              <span className="font-heading font-black text-xl text-[#F5F5F5] tracking-wider block leading-none">
+      {/* 1. Main Sticky Header */}
+      <header
+        role="banner"
+        className="fixed top-0 left-0 right-0 z-[30] h-[var(--header-h,72px)] bg-[#0A0B0A]/90 backdrop-blur-md border-b border-[#1F221F] transition-colors"
+      >
+        <div className="max-w-[1280px] 2xl:max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-4 min-w-0">
+          {/* Zone 1: Logo & Brand Text */}
+          <Link
+            to="/"
+            className="flex items-center gap-3 shrink-0 min-w-0 group"
+            data-qa-check="nav-logo"
+            aria-label="Kabadiwala Connect Home"
+          >
+            <Logo size="md" />
+            <div className="hidden sm:flex flex-col min-w-0">
+              <span className="font-heading font-black text-lg md:text-xl text-[#F5F5F5] tracking-wider leading-none uppercase truncate group-hover:text-[#A3E635] transition-colors">
                 KABADIWALA CONNECT
               </span>
-              <span className="font-mono text-[9px] text-[#A3E635] tracking-widest block uppercase mt-1">
+              <span className="font-mono text-[9px] text-[#A3E635] tracking-widest uppercase mt-1 leading-none">
                 SCRAP · COMMUNITY · CHAIN
               </span>
             </div>
           </Link>
 
-          {/* Center Links (Desktop) */}
-          <div className="hidden lg:flex items-center gap-1 font-mono text-xs">
+          {/* Zone 2: Navigation Links (Desktop) */}
+          <nav
+            role="navigation"
+            aria-label="Main Navigation"
+            className="hidden xl:flex items-center gap-1 font-mono text-xs min-w-0"
+          >
             {navLinks.map((link) => {
               const isActive = location.pathname === link.to;
               return (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`px-3 py-1.5 rounded-sm transition-all flex items-center gap-2 uppercase tracking-wider font-semibold ${
+                  data-qa-check="nav-item"
+                  className={`px-3 py-2 rounded-sm transition-all flex items-center gap-1.5 uppercase tracking-wider font-semibold whitespace-nowrap min-h-[44px] ${
                     isActive
                       ? 'text-[#A3E635] bg-[#A3E635]/10 border border-[#A3E635]/30'
                       : 'text-[#C8C8C8] hover:text-[#F5F5F5] hover:bg-[#141614]'
@@ -84,61 +102,65 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${
-                      isActive ? 'bg-[#A3E635] animate-ping' : 'bg-transparent'
+                      isActive ? 'bg-[#A3E635]' : 'bg-transparent'
                     }`}
                   />
                   <span>{lang === 'hi' ? link.labelHi : link.label}</span>
                 </Link>
               );
             })}
-          </div>
+          </nav>
 
-          {/* Right Action Icons & Toggles */}
-          <div className="flex items-center gap-2">
-            {/* Command Palette Trigger (Ctrl+K) */}
+          {/* Zone 3: Actions & Quick Toggles */}
+          <div className="flex items-center gap-2 shrink-0 min-w-0">
+            {/* Command Palette Trigger (Desktop 2xl) */}
             <button
               onClick={onOpenCommandPalette}
               aria-label="Search and command palette"
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#141614] border border-[#1F221F] hover:border-[#6A6E6A] rounded-sm text-xs font-mono text-[#6A6E6A] hover:text-[#F5F5F5] transition"
+              data-qa-check="button"
+              className="hidden 2xl:inline-flex items-center gap-2 px-3 py-1.5 min-h-[44px] bg-[#141614] border border-[#1F221F] hover:border-[#6A6E6A] rounded-sm text-xs font-mono text-[#6A6E6A] hover:text-[#F5F5F5] transition"
             >
-              <Search className="w-3.5 h-3.5" />
+              <Icon icon={Search} size={16} />
               <span>⌘K</span>
             </button>
 
-            {/* Language Toggle (EN / HI) */}
+            {/* Language Switcher */}
             <button
               onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
-              className="px-2.5 py-1.5 rounded-sm bg-[#141614] border border-[#1F221F] text-xs font-mono font-bold text-[#A3E635] hover:border-[#A3E635] transition"
-              aria-label="Toggle language"
+              className="min-h-[44px] min-w-[44px] px-3 py-1.5 rounded-sm bg-[#141614] border border-[#1F221F] text-xs font-mono font-bold text-[#A3E635] hover:border-[#A3E635] transition flex items-center justify-center"
+              aria-label="Toggle language between English and Hindi"
+              data-qa-check="button"
             >
               {lang === 'en' ? 'हिं' : 'EN'}
             </button>
 
-            {/* Theme Toggle (Dark / Light) */}
+            {/* Theme Switcher (Desktop/Tablet; Mobile available in drawer) */}
             <button
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-sm bg-[#141614] border border-[#1F221F] text-[#C8C8C8] hover:text-[#A3E635] flex items-center justify-center transition"
-              aria-label="Toggle visual mode"
+              className="hidden sm:flex min-h-[44px] min-w-[44px] rounded-sm bg-[#141614] border border-[#1F221F] text-[#C8C8C8] hover:text-[#A3E635] items-center justify-center transition"
+              aria-label="Toggle visual theme mode"
+              data-qa-check="button"
             >
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <Icon icon={isDark ? Sun : Moon} size={16} />
             </button>
 
-            {/* Notification Bell with Badge */}
-            <div className="relative">
+            {/* Notification Bell (Hidden on small mobile to avoid crowding; accessible in drawer) */}
+            <div className="relative hidden sm:block">
               <button
                 onClick={() => setNotifOpen(!notifOpen)}
-                className="w-9 h-9 rounded-sm bg-[#141614] border border-[#1F221F] text-[#C8C8C8] hover:text-[#A3E635] flex items-center justify-center transition relative"
+                className="min-h-[44px] min-w-[44px] rounded-sm bg-[#141614] border border-[#1F221F] text-[#C8C8C8] hover:text-[#A3E635] flex items-center justify-center transition relative"
                 aria-label="View notifications"
+                data-qa-check="button"
               >
-                <Bell className="w-4 h-4" />
+                <Icon icon={Bell} size={16} />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#A3E635] animate-pulse" />
+                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#A3E635] animate-pulse" />
                 )}
               </button>
 
-              {/* Notification Drawer */}
+              {/* Notification Drawer Popover */}
               {notifOpen && (
-                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-[#0A0B0A] border-2 border-[#1F221F] rounded-sm shadow-2xl p-4 space-y-3 z-50 corner-brackets">
+                <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-32px)] bg-[#0A0B0A] border-2 border-[#1F221F] rounded-sm shadow-2xl p-4 space-y-3 z-[40] corner-brackets">
                   <div className="flex items-center justify-between pb-2 border-b border-[#1F221F] text-xs font-mono">
                     <span className="font-bold text-[#F5F5F5] uppercase">TELEMETRY ALERTS</span>
                     <span className="text-[#A3E635]">{unreadCount} NEW</span>
@@ -165,9 +187,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
               )}
             </div>
 
-            {/* Auth Dropdown or Login */}
+            {/* Auth Link (Desktop) */}
             {user ? (
-              <div className="flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-2">
                 <Link
                   to={
                     user.role === 'COLLECTOR'
@@ -178,9 +200,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
                       ? '/municipality'
                       : '/dashboard'
                   }
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#141614] border border-[#A3E635] text-xs font-mono font-bold text-[#A3E635] rounded-sm uppercase hover:bg-[#A3E635] hover:text-[#0A0B0A] transition"
+                  data-qa-check="button"
+                  className="min-h-[44px] px-3 py-1.5 bg-[#141614] border border-[#A3E635] text-xs font-mono font-bold text-[#A3E635] rounded-sm uppercase hover:bg-[#A3E635] hover:text-[#0A0B0A] transition flex items-center gap-1.5"
                 >
-                  <User className="w-3.5 h-3.5" />
+                  <Icon icon={User} size={16} />
                   <span>{user.name.split(' ')[0]}</span>
                 </Link>
                 <button
@@ -188,7 +211,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
                     logout();
                     navigate('/');
                   }}
-                  className="text-xs font-mono text-[#6A6E6A] hover:text-[#FF6B5E] px-2 py-1"
+                  data-qa-check="button"
+                  className="min-h-[44px] min-w-[44px] text-xs font-mono text-[#6A6E6A] hover:text-[#FF6B5E] p-2 flex items-center justify-center"
                 >
                   OUT
                 </button>
@@ -196,139 +220,204 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
             ) : (
               <Link
                 to="/auth"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-xs font-mono font-bold text-[#F5F5F5] rounded-sm uppercase transition"
+                data-qa-check="button"
+                className="hidden md:inline-flex items-center justify-center min-h-[44px] px-3.5 py-1.5 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-xs font-mono font-bold text-[#F5F5F5] rounded-sm uppercase transition"
               >
-                <span>LOGIN</span>
+                LOGIN
               </Link>
             )}
 
-            {/* Primary CTA (Book Pickup) */}
+            {/* Primary Action Button: Book Pickup (Desktop) */}
             <Link
               to="/book"
-              className="px-4 py-2 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-sm font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-1.5 active:scale-95 transition"
+              data-qa-check="button"
+              className="hidden sm:inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-sm font-bold uppercase tracking-wider rounded-sm glow-lime active:scale-95 transition"
             >
-              <Sparkles className="w-4 h-4" />
+              <Icon icon={Sparkles} size={16} />
               <span>{lang === 'hi' ? 'बुक करें' : 'BOOK PICKUP'}</span>
             </Link>
 
-            {/* Mobile Hamburger Toggle */}
+            {/* Mobile Hamburger Toggle (Visible < 1280px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-9 h-9 rounded-sm bg-[#141614] border border-[#1F221F] text-[#F5F5F5] flex items-center justify-center"
-              aria-label="Toggle navigation menu"
+              className="xl:hidden min-h-[44px] min-w-[44px] rounded-sm bg-[#141614] border border-[#1F221F] text-[#F5F5F5] flex items-center justify-center"
+              aria-label="Toggle navigation drawer"
+              data-qa-check="button"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <Icon icon={mobileMenuOpen ? X : Menu} size={20} />
             </button>
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* 2. Mobile Drawer Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden px-4 py-6 bg-[#0A0B0A] border-b border-[#1F221F] space-y-4 font-mono text-sm">
-            <div className="space-y-2">
+          <div
+            role="dialog"
+            aria-label="Mobile Navigation"
+            className="xl:hidden fixed top-[var(--header-h,72px)] left-0 right-0 max-h-[calc(100vh-var(--header-h,72px)-var(--bottom-nav-h,64px))] overflow-y-auto bg-[#0A0B0A] border-b border-[#1F221F] p-4 space-y-4 font-mono text-sm shadow-2xl z-[40]"
+          >
+            <div className="space-y-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-sm text-[#C8C8C8] hover:text-[#A3E635] hover:bg-[#141614]"
+                  data-qa-check="nav-item"
+                  className="flex items-center gap-2 min-h-[44px] px-3 py-2 rounded-sm text-[#C8C8C8] hover:text-[#A3E635] hover:bg-[#141614]"
                 >
-                  {lang === 'hi' ? link.labelHi : link.label}
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A3E635]" />
+                  <span>{lang === 'hi' ? link.labelHi : link.label}</span>
                 </Link>
               ))}
             </div>
 
-            <div className="pt-4 border-t border-[#1F221F] space-y-2">
+            <div className="pt-3 border-t border-[#1F221F] space-y-2">
               <Link
-                to="/dashboard"
+                to="/book"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-[#A3E635] hover:bg-[#141614]"
+                data-qa-check="button"
+                className="flex items-center justify-center gap-2 min-h-[48px] w-full bg-[#A3E635] text-[#0A0B0A] font-heading font-bold text-sm uppercase tracking-wider rounded-sm"
               >
-                HOUSEHOLD DASHBOARD
+                <Icon icon={Sparkles} size={16} />
+                <span>{lang === 'hi' ? 'स्क्रैप पिकअप बुक करें' : 'BOOK DOORSTEP PICKUP'}</span>
               </Link>
-              <Link
-                to="/collector"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-[#A3E635] hover:bg-[#141614]"
-              >
-                COLLECTOR TERMINAL
-              </Link>
-              <Link
-                to="/recycler"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-[#A3E635] hover:bg-[#141614]"
-              >
-                RECYCLER BATCH TRACEABILITY
-              </Link>
-              <Link
-                to="/municipality"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-[#A3E635] hover:bg-[#141614]"
-              >
-                MUNICIPALITY GOVERNANCE
-              </Link>
-              <Link
-                to="/rewards"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-[#FFB020] hover:bg-[#141614]"
-              >
-                GREEN LEADERBOARD & REWARDS
-              </Link>
+
+              <div className="flex items-center justify-between pt-2 border-t border-[#1F221F] text-xs">
+                <span className="text-[#6A6E6A]">APPEARANCE</span>
+                <button
+                  onClick={toggleTheme}
+                  data-qa-check="button"
+                  className="flex items-center gap-2 px-3 py-2 bg-[#141614] border border-[#1F221F] text-[#C8C8C8] hover:text-[#A3E635] rounded-sm min-h-[44px]"
+                >
+                  <Icon icon={isDark ? Sun : Moon} size={16} />
+                  <span>{isDark ? 'LIGHT MODE' : 'DARK MODE'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 text-xs text-[#A3E635] bg-[#141614] border border-[#1F221F] rounded-sm text-center min-h-[44px] flex items-center justify-center"
+                >
+                  CITIZEN PORTAL
+                </Link>
+                <Link
+                  to="/collector"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 text-xs text-[#A3E635] bg-[#141614] border border-[#1F221F] rounded-sm text-center min-h-[44px] flex items-center justify-center"
+                >
+                  COLLECTOR TERMINAL
+                </Link>
+                <Link
+                  to="/recycler"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 text-xs text-[#C8C8C8] bg-[#141614] border border-[#1F221F] rounded-sm text-center min-h-[44px] flex items-center justify-center"
+                >
+                  RECYCLER TRACE
+                </Link>
+                <Link
+                  to="/municipality"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 text-xs text-[#C8C8C8] bg-[#141614] border border-[#1F221F] rounded-sm text-center min-h-[44px] flex items-center justify-center"
+                >
+                  GOVERNANCE
+                </Link>
+              </div>
+
+              {!user ? (
+                <Link
+                  to="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  data-qa-check="button"
+                  className="flex items-center justify-center min-h-[44px] w-full text-xs font-mono font-bold text-[#F5F5F5] bg-[#141614] border border-[#1F221F] rounded-sm uppercase mt-2"
+                >
+                  SIGN IN / REGISTER
+                </Link>
+              ) : (
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  data-qa-check="button"
+                  className="w-full min-h-[44px] text-xs font-mono text-[#FF6B5E] bg-[#141614] border border-[#1F221F] rounded-sm uppercase mt-2 flex items-center justify-center"
+                >
+                  LOGOUT ({user.name})
+                </button>
+              )}
             </div>
           </div>
         )}
-      </nav>
+      </header>
 
-      {/* Mobile Sticky Bottom Tab Bar */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0A0B0A]/95 backdrop-blur-md border-t border-[#1F221F] h-16 flex items-center justify-around px-2 font-mono text-[10px]">
+      {/* 3. Mobile Sticky Bottom Tab Bar (sm:hidden, height = var(--bottom-nav-h)) */}
+      <nav
+        role="navigation"
+        aria-label="Mobile Bottom Navigation"
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-[20] h-[var(--bottom-nav-h,64px)] bg-[#0A0B0A]/95 backdrop-blur-md border-t border-[#1F221F] flex items-center justify-around px-2 font-mono text-[10px] pb-[env(safe-area-inset-bottom)]"
+      >
         <Link
           to="/"
-          className={`flex flex-col items-center gap-1 ${
+          data-qa-check="nav-item"
+          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[48px] gap-1 ${
             location.pathname === '/' ? 'text-[#A3E635]' : 'text-[#6A6E6A]'
           }`}
         >
-          <Radio className="w-5 h-5" />
+          <Icon icon={Radio} size={16} />
           <span>HOME</span>
         </Link>
+
         <Link
           to="/rates"
-          className={`flex flex-col items-center gap-1 ${
+          data-qa-check="nav-item"
+          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[48px] gap-1 ${
             location.pathname === '/rates' ? 'text-[#A3E635]' : 'text-[#6A6E6A]'
           }`}
         >
-          <Layers className="w-5 h-5" />
+          <Icon icon={Layers} size={16} />
           <span>RATES</span>
         </Link>
+
+        {/* Center Booking Action: No negative margins, safe in-bar layout */}
         <Link
           to="/book"
-          className="flex flex-col items-center gap-1 text-[#A3E635] font-bold"
+          data-qa-check="button"
+          aria-label="Book scrap pickup"
+          className="flex flex-col items-center justify-center min-h-[44px] min-w-[48px] gap-1 text-[#A3E635] font-bold"
         >
-          <div className="w-10 h-10 rounded-full bg-[#A3E635] text-[#0A0B0A] flex items-center justify-center -mt-5 shadow-lg">
-            <Sparkles className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-sm bg-[#A3E635] text-[#0A0B0A] flex items-center justify-center shadow-md">
+            <Icon icon={Sparkles} size={16} />
           </div>
-          <span>BOOK</span>
+          <span className="text-[9px]">BOOK</span>
         </Link>
+
         <Link
           to="/track"
-          className={`flex flex-col items-center gap-1 ${
+          data-qa-check="nav-item"
+          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[48px] gap-1 ${
             location.pathname === '/track' ? 'text-[#A3E635]' : 'text-[#6A6E6A]'
           }`}
         >
-          <Truck className="w-5 h-5" />
+          <Icon icon={Truck} size={16} />
           <span>TRACK</span>
         </Link>
+
         <Link
           to={user ? '/dashboard' : '/auth'}
-          className={`flex flex-col items-center gap-1 ${
+          data-qa-check="nav-item"
+          className={`flex flex-col items-center justify-center min-h-[44px] min-w-[48px] gap-1 ${
             location.pathname.startsWith('/dashboard') || location.pathname === '/auth'
               ? 'text-[#A3E635]'
               : 'text-[#6A6E6A]'
           }`}
         >
-          <User className="w-5 h-5" />
+          <Icon icon={User} size={16} />
           <span>ACCOUNT</span>
         </Link>
-      </div>
+      </nav>
     </>
   );
 };
+
+export default Navbar;

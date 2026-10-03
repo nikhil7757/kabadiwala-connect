@@ -7,13 +7,12 @@ import {
   Award,
   Truck,
   ArrowRight,
-  Clock,
-  CheckCircle2,
-  Calendar,
 } from 'lucide-react';
 import { pickupService } from '../services/pickupService';
 import { useAuth } from '../hooks/useAuth';
 import { useLang } from '../hooks/useLang';
+import { Container } from '../components/layout/Container';
+import { Icon } from '../components/common/Icon';
 
 export const UserDashboard: React.FC = () => {
   const { lang } = useLang();
@@ -41,8 +40,8 @@ export const UserDashboard: React.FC = () => {
   const ecoPoints = totalKg * 10;
 
   return (
-    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-12 sm:py-16">
+      <Container>
         {/* Top Citizen Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-[#1F221F] mb-10 gap-4">
           <div>
@@ -52,7 +51,10 @@ export const UserDashboard: React.FC = () => {
                 HOUSEHOLD PORTAL // ACTIVE CITIZEN
               </span>
             </div>
-            <h1 className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight">
+            <h1
+              data-qa-check="heading"
+              className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight"
+            >
               WELCOME BACK, {user?.name || 'PRIYA SHARMA'}
             </h1>
             <p className="text-xs font-mono text-[#6A6E6A] mt-1">
@@ -62,63 +64,64 @@ export const UserDashboard: React.FC = () => {
 
           <Link
             to="/book"
-            className="px-6 py-3 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-base font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2 active:scale-95 transition"
+            data-qa-check="button"
+            className="min-h-[48px] px-6 py-2.5 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-sm font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2 active:scale-95 transition shrink-0"
           >
             <span>+ SCHEDULE NEW PICKUP</span>
-            <ArrowRight className="w-4 h-4" />
+            <Icon icon={ArrowRight} size={16} />
           </Link>
         </div>
 
-        {/* 4 Telemetry Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
+        {/* 4 Telemetry Stat Cards: 2x2 on mobile, 4 on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
+          <div data-qa-check="card" className="p-4 sm:p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
             <div className="flex items-center justify-between font-mono text-xs text-[#6A6E6A] mb-2">
               <span>TOTAL CASH EARNED</span>
-              <TrendingUp className="w-4 h-4 text-[#FFB020]" />
+              <Icon icon={TrendingUp} size={16} className="text-[#FFB020]" />
             </div>
-            <div className="font-display text-4xl font-bold text-[#FFB020]">
+            <div className="font-display text-3xl sm:text-4xl font-bold text-[#FFB020] truncate">
               ₹{totalEarned.toLocaleString()}
             </div>
-            <div className="text-[11px] font-mono text-[#6A6E6A] mt-1">
-              INSTANT SPOT UPI PAYOUTS
+            <div className="text-[10px] sm:text-[11px] font-mono text-[#6A6E6A] mt-1">
+              INSTANT SPOT UPI
             </div>
           </div>
 
-          <div className="p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
+          <div data-qa-check="card" className="p-4 sm:p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
             <div className="flex items-center justify-between font-mono text-xs text-[#6A6E6A] mb-2">
               <span>SCRAP DIVERTED</span>
-              <Package className="w-4 h-4 text-[#A3E635]" />
+              <Icon icon={Package} size={16} className="text-[#A3E635]" />
             </div>
-            <div className="font-display text-4xl font-bold text-[#A3E635]">
+            <div className="font-display text-3xl sm:text-4xl font-bold text-[#A3E635] truncate">
               {totalKg} KG
             </div>
-            <div className="text-[11px] font-mono text-[#6A6E6A] mt-1">
-              DIVERTED FROM DEONAR LANDFILL
+            <div className="text-[10px] sm:text-[11px] font-mono text-[#6A6E6A] mt-1">
+              ZERO LANDFILL LEAKAGE
             </div>
           </div>
 
-          <div className="p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
+          <div data-qa-check="card" className="p-4 sm:p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
             <div className="flex items-center justify-between font-mono text-xs text-[#6A6E6A] mb-2">
               <span>CO₂ OFFSET SAVED</span>
-              <Leaf className="w-4 h-4 text-[#A3E635]" />
+              <Icon icon={Leaf} size={16} className="text-[#A3E635]" />
             </div>
-            <div className="font-display text-4xl font-bold text-[#F5F5F5]">
+            <div className="font-display text-3xl sm:text-4xl font-bold text-[#F5F5F5] truncate">
               {co2AvoidedKg} KG
             </div>
-            <div className="text-[11px] font-mono text-[#6A6E6A] mt-1">
-              CERTIFIED GREENHOUSE BALANCE
+            <div className="text-[10px] sm:text-[11px] font-mono text-[#6A6E6A] mt-1">
+              CERTIFIED GREENHOUSE
             </div>
           </div>
 
-          <div className="p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
+          <div data-qa-check="card" className="p-4 sm:p-6 bg-[#141614] border border-[#1F221F] corner-brackets">
             <div className="flex items-center justify-between font-mono text-xs text-[#6A6E6A] mb-2">
-              <span>GREEN REWARD POINTS</span>
-              <Award className="w-4 h-4 text-[#FFB020]" />
+              <span>GREEN POINTS</span>
+              <Icon icon={Award} size={16} className="text-[#FFB020]" />
             </div>
-            <div className="font-display text-4xl font-bold text-[#FFB020]">
+            <div className="font-display text-3xl sm:text-4xl font-bold text-[#FFB020] truncate">
               {ecoPoints} PTS
             </div>
-            <div className="text-[11px] font-mono text-[#A3E635] mt-1">
+            <div className="text-[10px] sm:text-[11px] font-mono text-[#A3E635] mt-1">
               TIER: SILVER RECYCLER
             </div>
           </div>
@@ -126,10 +129,11 @@ export const UserDashboard: React.FC = () => {
 
         {/* Tabbed Pickups Feed */}
         <div className="space-y-6">
-          <div className="flex items-center gap-3 border-b border-[#1F221F] pb-3 font-mono text-xs">
+          <div className="flex items-center gap-3 border-b border-[#1F221F] pb-2 font-mono text-xs">
             <button
               onClick={() => setTab('active')}
-              className={`pb-2 px-3 border-b-2 font-bold uppercase transition ${
+              data-qa-check="button"
+              className={`min-h-[44px] px-3 border-b-2 font-bold uppercase transition flex items-center ${
                 tab === 'active'
                   ? 'border-[#A3E635] text-[#A3E635]'
                   : 'border-transparent text-[#6A6E6A] hover:text-[#F5F5F5]'
@@ -139,7 +143,8 @@ export const UserDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setTab('history')}
-              className={`pb-2 px-3 border-b-2 font-bold uppercase transition ${
+              data-qa-check="button"
+              className={`min-h-[44px] px-3 border-b-2 font-bold uppercase transition flex items-center ${
                 tab === 'history'
                   ? 'border-[#A3E635] text-[#A3E635]'
                   : 'border-transparent text-[#6A6E6A] hover:text-[#F5F5F5]'
@@ -153,14 +158,16 @@ export const UserDashboard: React.FC = () => {
             {(tab === 'active' ? activePickups : pastPickups).map((pickup) => (
               <div
                 key={pickup.id}
-                className="p-6 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-all rounded-sm corner-brackets flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                data-qa-check="card"
+                className="p-5 sm:p-6 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-all rounded-sm corner-brackets flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
-                <div className="space-y-2">
+                <div className="space-y-2 min-w-0">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-xs text-[#A3E635] font-bold">
                       #{pickup.id}
                     </span>
                     <span
+                      data-qa-check="badge"
                       className={`px-2 py-0.5 rounded-xs font-mono text-[10px] font-bold uppercase ${
                         pickup.status === 'PAID'
                           ? 'bg-[#A3E635]/10 text-[#A3E635] border border-[#A3E635]/30'
@@ -174,16 +181,16 @@ export const UserDashboard: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="text-sm font-body text-[#C8C8C8]">
+                  <div className="text-sm font-body text-[#C8C8C8] truncate">
                     {pickup.address}
                   </div>
 
                   <div className="text-xs font-mono text-[#6A6E6A]">
-                    ASSIGNED TO: <span className="text-[#F5F5F5]">Verified Kabadiwala (Rajesh Kumar)</span>
+                    ASSIGNED TO: <span className="text-[#F5F5F5]">Verified Kabadiwala</span>
                   </div>
                 </div>
 
-                <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#1F221F]">
+                <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#1F221F] shrink-0">
                   <div className="font-mono text-right">
                     <span className="text-[10px] text-[#6A6E6A] block">
                       {pickup.status === 'PAID' ? 'FINAL PAYOUT:' : 'ESTIMATED VALUATION:'}
@@ -195,9 +202,10 @@ export const UserDashboard: React.FC = () => {
 
                   <Link
                     to={`/track?id=${pickup.id}`}
-                    className="px-4 py-2 bg-[#050605] border border-[#1F221F] hover:border-[#A3E635] text-xs font-mono text-[#A3E635] font-bold rounded-sm flex items-center gap-1.5 transition"
+                    data-qa-check="button"
+                    className="min-h-[44px] px-4 py-2 bg-[#050605] border border-[#1F221F] hover:border-[#A3E635] text-xs font-mono text-[#A3E635] font-bold rounded-sm flex items-center gap-1.5 transition"
                   >
-                    <Truck className="w-3.5 h-3.5" />
+                    <Icon icon={Truck} size={14} />
                     <span>GPS TRACKER →</span>
                   </Link>
                 </div>
@@ -211,8 +219,9 @@ export const UserDashboard: React.FC = () => {
             )}
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };
+
 export default UserDashboard;

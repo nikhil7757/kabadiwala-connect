@@ -1,0 +1,2900 @@
+[
+  {
+    "page": "home",
+    "url": "/",
+    "width": 320,
+    "screenshot": "home_320px.png",
+    "scrollWidth": 320,
+    "innerWidth": 320,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 27,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x15px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 104,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "home",
+    "url": "/",
+    "width": 360,
+    "screenshot": "home_360px.png",
+    "scrollWidth": 360,
+    "innerWidth": 360,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 31,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x15px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 105,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "home",
+    "url": "/",
+    "width": 390,
+    "screenshot": "home_390px.png",
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 32,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x15px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 105,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "home",
+    "url": "/",
+    "width": 768,
+    "screenshot": "home_768px.png",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 34,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "home",
+    "url": "/",
+    "width": 1024,
+    "screenshot": "home_1024px.png",
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 32,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "home",
+    "url": "/",
+    "width": 1280,
+    "screenshot": "home_1280px.png",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 32,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "home",
+    "url": "/",
+    "width": 1440,
+    "screenshot": "home_1440px.png",
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 32,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "home",
+    "url": "/",
+    "width": 1920,
+    "screenshot": "home_1920px.png",
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 31,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-3.5 h-3....)",
+        "overlapArea": "12x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 320,
+    "screenshot": "rates_320px.png",
+    "scrollWidth": 320,
+    "innerWidth": 320,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 47,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 360,
+    "screenshot": "rates_360px.png",
+    "scrollWidth": 360,
+    "innerWidth": 360,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 47,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 390,
+    "screenshot": "rates_390px.png",
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 47,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 768,
+    "screenshot": "rates_768px.png",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 1024,
+    "screenshot": "rates_1024px.png",
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 1280,
+    "screenshot": "rates_1280px.png",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 1440,
+    "screenshot": "rates_1440px.png",
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "rates",
+    "url": "/rates",
+    "width": 1920,
+    "screenshot": "rates_1920px.png",
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 320,
+    "screenshot": "calculator_320px.png",
+    "scrollWidth": 411,
+    "innerWidth": 320,
+    "hasHorizontalOverflow": true,
+    "overflowDiff": 91,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 71,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 360,
+    "screenshot": "calculator_360px.png",
+    "scrollWidth": 411,
+    "innerWidth": 360,
+    "hasHorizontalOverflow": true,
+    "overflowDiff": 51,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 71,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 390,
+    "screenshot": "calculator_390px.png",
+    "scrollWidth": 411,
+    "innerWidth": 390,
+    "hasHorizontalOverflow": true,
+    "overflowDiff": 21,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 71,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 768,
+    "screenshot": "calculator_768px.png",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 1024,
+    "screenshot": "calculator_1024px.png",
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 1280,
+    "screenshot": "calculator_1280px.png",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 1440,
+    "screenshot": "calculator_1440px.png",
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "calculator",
+    "url": "/calculator",
+    "width": 1920,
+    "screenshot": "calculator_1920px.png",
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 320,
+    "screenshot": "schedule_320px.png",
+    "scrollWidth": 320,
+    "innerWidth": 320,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 29,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 360,
+    "screenshot": "schedule_360px.png",
+    "scrollWidth": 360,
+    "innerWidth": 360,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 29,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 390,
+    "screenshot": "schedule_390px.png",
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 29,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 768,
+    "screenshot": "schedule_768px.png",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 1024,
+    "screenshot": "schedule_1024px.png",
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 1280,
+    "screenshot": "schedule_1280px.png",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 1440,
+    "screenshot": "schedule_1440px.png",
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "schedule",
+    "url": "/schedule",
+    "width": 1920,
+    "screenshot": "schedule_1920px.png",
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 320,
+    "screenshot": "track_320px.png",
+    "scrollWidth": 320,
+    "innerWidth": 320,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 26,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 360,
+    "screenshot": "track_360px.png",
+    "scrollWidth": 360,
+    "innerWidth": 360,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 27,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 390,
+    "screenshot": "track_390px.png",
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 27,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 768,
+    "screenshot": "track_768px.png",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 1024,
+    "screenshot": "track_1024px.png",
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 1280,
+    "screenshot": "track_1280px.png",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 1440,
+    "screenshot": "track_1440px.png",
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "track",
+    "url": "/track",
+    "width": 1920,
+    "screenshot": "track_1920px.png",
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 320,
+    "screenshot": "collectors_320px.png",
+    "scrollWidth": 320,
+    "innerWidth": 320,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 34,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 42,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 360,
+    "screenshot": "collectors_360px.png",
+    "scrollWidth": 360,
+    "innerWidth": 360,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 45,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 42,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 390,
+    "screenshot": "collectors_390px.png",
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 47,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 42,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 768,
+    "screenshot": "collectors_768px.png",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 47,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 1024,
+    "screenshot": "collectors_1024px.png",
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 46,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 1280,
+    "screenshot": "collectors_1280px.png",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 46,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 1440,
+    "screenshot": "collectors_1440px.png",
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 46,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "collectors",
+    "url": "/collectors",
+    "width": 1920,
+    "screenshot": "collectors_1920px.png",
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 46,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 320,
+    "screenshot": "dashboard-user_320px.png",
+    "scrollWidth": 320,
+    "innerWidth": 320,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 26,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 360,
+    "screenshot": "dashboard-user_360px.png",
+    "scrollWidth": 360,
+    "innerWidth": 360,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 26,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 390,
+    "screenshot": "dashboard-user_390px.png",
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 26,
+    "smallTargets": [
+      {
+        "tag": "a",
+        "text": "KC",
+        "size": "13x21px"
+      },
+      {
+        "tag": "button",
+        "text": "हिं",
+        "size": "26x22px"
+      },
+      {
+        "tag": "button",
+        "text": "Toggle visual mode",
+        "size": "38x28px"
+      },
+      {
+        "tag": "button",
+        "text": "View notifications",
+        "size": "38x28px"
+      },
+      {
+        "tag": "a",
+        "text": "BOOK PICKUP",
+        "size": "105x24px"
+      }
+    ]
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 768,
+    "screenshot": "dashboard-user_768px.png",
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 1024,
+    "screenshot": "dashboard-user_1024px.png",
+    "scrollWidth": 1024,
+    "innerWidth": 1024,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 1280,
+    "screenshot": "dashboard-user_1280px.png",
+    "scrollWidth": 1280,
+    "innerWidth": 1280,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 1440,
+    "screenshot": "dashboard-user_1440px.png",
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  },
+  {
+    "page": "dashboard-user",
+    "url": "/dashboard/user",
+    "width": 1920,
+    "screenshot": "dashboard-user_1920px.png",
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "hasHorizontalOverflow": false,
+    "overflowDiff": 0,
+    "blocksZoom": true,
+    "viewportMeta": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
+    "overlapsCount": 20,
+    "overlaps": [
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "a (flex items-center gap-3 shrink...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "13x21px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "svg (lucide lucide-radio w-5 h-5...)",
+        "overlapArea": "12x22px"
+      },
+      {
+        "elemA": "button (px-2.5 py-1.5 rounded-sm bg-[#...)",
+        "elemB": "a (flex flex-col items-center gap...)",
+        "overlapArea": "14x22px"
+      }
+    ],
+    "smallTargetsCount": 0,
+    "smallTargets": []
+  }
+]

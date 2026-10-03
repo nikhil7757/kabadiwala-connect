@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 2200" width="1920" height="2200" style="background:#0A0B0A; font-family:'JetBrains Mono', sans-serif;">
+  <defs>
+    <style>
+      .text-title { font-family: 'Oswald', sans-serif; font-weight: bold; fill: #F5F5F5; }
+      .text-lime { fill: #A3E635; }
+      .text-muted { fill: #6A6E6A; }
+      .bug-box { stroke: #FF4444; stroke-width: 2; stroke-dasharray: 4 2; fill: rgba(255, 68, 68, 0.15); }
+      .bug-label { fill: #FF6666; font-size: 16px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1920" height="36" fill="#1F221F"/>
+  <text x="48" y="24" fill="#A3E635" font-size="16" font-weight="bold">AUDIT: BEFORE // VIEWPORT: 1920px (Full HD Ultrawide / 1080p Monitor)</text>
+
+  <!-- Header -->
+  <rect x="0" y="36" width="1920" height="72" fill="#0A0B0A" stroke="#1F221F"/>
+  <rect x="48" y="52" width="40" height="40" fill="#A3E635" rx="2"/>
+  <text x="58" y="79" fill="#0A0B0A" font-size="20" font-weight="900">KC</text>
+  <text x="100" y="72" fill="#F5F5F5" font-size="18" font-weight="bold">KABADIWALA CONNECT</text>
+
+  <!-- Hero Section -->
+  <rect x="0" y="108" width="1920" height="540" fill="#0A0B0A"/>
+  <text x="48" y="190" class="text-lime" font-size="16">SIH 2026 // MINISTRY OF MINES &amp; JNARDDC</text>
+  <text x="48" y="280" class="text-title" font-size="110">FROM KABADI.</text>
+  <text x="48" y="370" class="text-title" font-size="110" fill="none" stroke="#F5F5F5" stroke-width="2">TO CIRCULAR.</text>
+  <text x="48" y="460" class="text-title text-lime" font-size="110">TRACEABLE.</text>
+
+  <!-- Inconsistent container bounds -->
+  <rect x="48" y="680" width="1824" height="150" class="bug-box"/>
+  <text x="64" y="755" class="bug-label">BUG: Header and footer stretch edge-to-edge (1920px) without unified max-width container</text>
+</svg>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Star, QrCode, Phone, MapPin, ArrowRight, RotateCw } from 'lucide-react';
+import { ShieldCheck, Star, MapPin, ArrowRight, RotateCw, QrCode } from 'lucide-react';
 import { useLang } from '../../hooks/useLang';
+import { Icon } from './Icon';
 
 interface CollectorProps {
   collector: {
@@ -15,12 +16,18 @@ interface CollectorProps {
   };
 }
 
+/**
+ * Standardized Collector Card (Phase 2 & 3 Component)
+ * - Equal height in flex/grid stretch
+ * - No clipping or fixed-height overflow
+ * - Digital ID reveal toggle
+ * - Marked with [data-qa-check="card"]
+ */
 export const CollectorFlipCard: React.FC<CollectorProps> = ({ collector }) => {
-  const [flipped, setFlipped] = useState(false);
+  const [showId, setShowId] = useState(false);
   const navigate = useNavigate();
   const { lang } = useLang();
 
-  // Synthetic avatar styling
   const initials = collector.name
     .split(' ')
     .map((n) => n[0])
@@ -28,56 +35,60 @@ export const CollectorFlipCard: React.FC<CollectorProps> = ({ collector }) => {
 
   return (
     <div
-      className="relative h-[410px] w-full cursor-pointer [perspective:1000px] select-none"
-      onClick={() => setFlipped(!flipped)}
+      data-qa-check="card"
+      className="bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-all rounded-sm corner-brackets p-6 flex flex-col justify-between min-h-[380px] w-full min-w-0"
     >
-      <div
-        className={`relative w-full h-full duration-500 [transform-style:preserve-3d] transition-transform ${
-          flipped ? '[transform:rotateY(180deg)]' : ''
-        }`}
-      >
-        {/* ==================== FRONT OF CARD ==================== */}
-        <div className="absolute inset-0 w-full h-full bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-colors p-6 flex flex-col justify-between [backface-visibility:hidden] corner-brackets">
+      {!showId ? (
+        <>
+          {/* Top Bar: Verification Badge & City */}
           <div>
-            {/* Top Bar: Verification Badge & City */}
-            <div className="flex items-center justify-between mb-4">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#A3E635]/10 border border-[#A3E635]/30 text-[#A3E635] text-[11px] font-mono font-bold tracking-wider rounded-sm">
-                <ShieldCheck className="w-3.5 h-3.5" />
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <span
+                data-qa-check="badge"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#A3E635]/10 border border-[#A3E635]/30 text-[#A3E635] text-[10px] sm:text-[11px] font-mono font-bold tracking-wider rounded-sm shrink-0"
+              >
+                <Icon icon={ShieldCheck} size={14} />
                 <span>GOVT VERIFIED</span>
               </span>
-              <span className="flex items-center gap-1 text-xs font-mono text-[#6A6E6A]">
-                <MapPin className="w-3 h-3 text-[#A3E635]" />
-                {collector.city}
+              <span className="inline-flex items-center gap-1 text-xs font-mono text-[#6A6E6A] truncate">
+                <Icon icon={MapPin} size={12} className="text-[#A3E635]" />
+                <span className="truncate">{collector.city}</span>
               </span>
             </div>
 
-            {/* Avatar & Name */}
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 rounded-sm bg-[#050605] border-2 border-[#1F221F] flex items-center justify-center font-display text-2xl text-[#A3E635] font-bold shadow-inner">
+            {/* Avatar & Collector Name */}
+            <div className="flex items-center gap-3.5 mb-4">
+              <div
+                data-qa-check="avatar"
+                className="w-14 h-14 rounded-sm bg-[#050605] border-2 border-[#1F221F] flex items-center justify-center font-display text-xl text-[#A3E635] font-bold shrink-0 aspect-square"
+              >
                 {initials}
               </div>
-              <div>
-                <h3 className="font-heading text-2xl font-bold text-[#F5F5F5] uppercase tracking-wide">
+              <div className="min-w-0">
+                <h3
+                  data-qa-check="heading"
+                  className="font-heading text-lg sm:text-xl font-bold text-[#F5F5F5] uppercase tracking-wide truncate"
+                >
                   {collector.name}
                 </h3>
                 <div className="flex items-center gap-1 mt-0.5 text-xs text-[#FFB020] font-mono font-bold">
-                  <Star className="w-3.5 h-3.5 fill-[#FFB020]" />
+                  <Icon icon={Star} size={14} className="fill-[#FFB020] text-[#FFB020]" />
                   <span>{collector.rating.toFixed(1)} / 5.0</span>
-                  <span className="text-[#6A6E6A] font-normal">(184 reviews)</span>
+                  <span className="text-[#6A6E6A] font-normal text-[11px]">(184)</span>
                 </div>
               </div>
             </div>
 
-            {/* Specialties / Badges */}
-            <div className="space-y-2 mt-4">
-              <span className="text-[11px] font-mono text-[#6A6E6A] uppercase tracking-wider block">
-                VERIFIED CATEGORIES:
+            {/* Verified Category Tags */}
+            <div className="space-y-1.5 mt-3">
+              <span className="text-[10px] font-mono text-[#6A6E6A] uppercase tracking-wider block">
+                SPECIALTIES:
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {collector.categories.map((c) => (
                   <span
                     key={c}
-                    className="px-2 py-0.5 bg-[#050605] border border-[#1F221F] text-[#C8C8C8] text-[11px] font-mono uppercase rounded-sm"
+                    className="px-2 py-0.5 bg-[#050605] border border-[#1F221F] text-[#C8C8C8] text-[10px] font-mono uppercase rounded-sm"
                   >
                     {c}
                   </span>
@@ -86,76 +97,91 @@ export const CollectorFlipCard: React.FC<CollectorProps> = ({ collector }) => {
             </div>
           </div>
 
-          {/* Bottom Flip Trigger Hint */}
-          <div className="pt-4 border-t border-[#1F221F] flex items-center justify-between text-xs font-mono text-[#6A6E6A]">
-            <span className="flex items-center gap-1.5 text-[#A3E635]">
-              <RotateCw className="w-3.5 h-3.5 animate-spin-slow" />
-              <span>TAP TO VIEW DIGITAL ID</span>
-            </span>
-            <span>KC-{collector.id.toUpperCase()}</span>
-          </div>
-        </div>
+          {/* Bottom Actions */}
+          <div className="pt-4 mt-4 border-t border-[#1F221F] space-y-2">
+            <button
+              type="button"
+              onClick={() => setShowId(true)}
+              data-qa-check="button"
+              className="w-full min-h-[44px] text-xs font-mono text-[#A3E635] hover:text-[#bbf451] flex items-center justify-center gap-1.5"
+            >
+              <Icon icon={RotateCw} size={14} />
+              <span>VIEW DIGITAL GOVT ID</span>
+            </button>
 
-        {/* ==================== BACK OF CARD (Digital ID) ==================== */}
-        <div className="absolute inset-0 w-full h-full bg-[#050605] border-2 border-[#A3E635] p-6 flex flex-col justify-between [transform:rotateY(180deg)] [backface-visibility:hidden]">
+            <button
+              type="button"
+              onClick={() => navigate(`/book?collector=${collector.id}`)}
+              data-qa-check="button"
+              className="w-full min-h-[44px] bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-sm font-bold uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 active:scale-95 transition"
+            >
+              <span>{lang === 'hi' ? 'बुक करें' : 'BOOK THIS COLLECTOR'}</span>
+              <Icon icon={ArrowRight} size={16} />
+            </button>
+          </div>
+        </>
+      ) : (
+        /* Digital ID Mode */
+        <div className="flex flex-col justify-between h-full space-y-4">
           <div>
-            {/* Digital ID Header */}
             <div className="flex items-center justify-between pb-3 border-b border-[#1F221F]">
               <div>
-                <div className="text-[10px] font-mono text-[#6A6E6A]">JNARDDC RECYCLING NETWORK</div>
+                <div className="text-[9px] font-mono text-[#6A6E6A]">JNARDDC CIRCULAR NETWORK</div>
                 <div className="font-mono text-xs font-bold text-[#A3E635]">
-                  OFFICIAL DIGITAL OPERATOR PASS
+                  DIGITAL OPERATOR PASS
                 </div>
               </div>
-              <QrCode className="w-8 h-8 text-[#F5F5F5]" />
+              <Icon icon={QrCode} size={28} className="text-[#F5F5F5]" />
             </div>
 
-            {/* Detailed Credentials */}
-            <div className="py-4 space-y-3 font-mono text-xs">
+            <div className="py-3 space-y-2 font-mono text-xs">
               <div className="flex justify-between">
-                <span className="text-[#6A6E6A]">OPERATOR ID:</span>
+                <span className="text-[#6A6E6A]">ID:</span>
                 <span className="text-[#F5F5F5] font-bold">KC-2026-{collector.id.toUpperCase()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#6A6E6A]">FULL NAME:</span>
-                <span className="text-[#F5F5F5]">{collector.name}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#6A6E6A]">TELEPHONE:</span>
+                <span className="text-[#6A6E6A]">PHONE:</span>
                 <span className="text-[#F5F5F5]">{collector.phone}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#6A6E6A]">PICKUPS LOGGED:</span>
-                <span className="text-[#A3E635] font-bold">428 COMPLETED</span>
+                <span className="text-[#6A6E6A]">SCALE:</span>
+                <span className="text-[#A3E635] font-bold">CALIBRATED BT</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#6A6E6A]">ON-TIME RATE:</span>
-                <span className="text-[#FFB020] font-bold">99.2% ACCURACY</span>
+                <span className="text-[#6A6E6A]">PICKUPS:</span>
+                <span className="text-[#A3E635]">428 COMPLETED</span>
               </div>
             </div>
 
-            {/* Operating Area & Slots */}
-            <div className="p-3 bg-[#141614] border border-[#1F221F] rounded-sm text-xs font-mono text-[#C8C8C8]">
-              <span className="text-[#6A6E6A] block text-[10px] mb-1">AVAILABLE TIME SLOTS TODAY:</span>
+            <div className="p-2.5 bg-[#050605] border border-[#1F221F] rounded-sm text-[11px] font-mono text-[#C8C8C8]">
+              <span className="text-[#6A6E6A] block text-[9px] mb-0.5">SLOTS TODAY:</span>
               <span>{collector.slots.join(' · ')}</span>
             </div>
           </div>
 
-          {/* Action Trigger Button */}
-          <div className="pt-2">
+          <div className="space-y-2 pt-2 border-t border-[#1F221F]">
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/book?collector=${collector.id}`);
-              }}
-              className="w-full py-3 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-base font-bold uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 transition"
+              type="button"
+              onClick={() => setShowId(false)}
+              data-qa-check="button"
+              className="w-full min-h-[44px] text-xs font-mono text-[#C8C8C8] hover:text-[#F5F5F5] flex items-center justify-center gap-1"
             >
-              <span>{lang === 'hi' ? 'इस कबाड़ीवाले को बुक करें' : 'BOOK THIS COLLECTOR'}</span>
-              <ArrowRight className="w-4 h-4" />
+              ← RETURN TO PROFILE
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`/book?collector=${collector.id}`)}
+              data-qa-check="button"
+              className="w-full min-h-[44px] bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-sm font-bold uppercase tracking-wider rounded-sm flex items-center justify-center gap-2"
+            >
+              <span>CONFIRM BOOKING</span>
+              <Icon icon={ArrowRight} size={16} />
             </button>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
+
+export default CollectorFlipCard;

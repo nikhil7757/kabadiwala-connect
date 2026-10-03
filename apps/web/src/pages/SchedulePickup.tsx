@@ -17,6 +17,8 @@ import { ratesService } from '../services/ratesService';
 import { pickupService } from '../services/pickupService';
 import { useAuth } from '../hooks/useAuth';
 import { useLang } from '../hooks/useLang';
+import { Container } from '../components/layout/Container';
+import { Icon } from '../components/common/Icon';
 
 const TIME_SLOTS = [
   '09:00 AM – 11:00 AM',
@@ -112,7 +114,7 @@ export const SchedulePickup: React.FC = () => {
 
       try {
         confetti({
-          particleCount: 120,
+          particleCount: 100,
           spread: 80,
           origin: { y: 0.6 },
           colors: ['#A3E635', '#FFB020', '#FFFFFF'],
@@ -125,14 +127,17 @@ export const SchedulePickup: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-12 sm:py-16">
+      <Container className="max-w-4xl">
         {/* Header */}
         <div className="mb-10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#A3E635]/10 border border-[#A3E635]/30 text-[#A3E635] text-xs font-mono font-bold tracking-widest rounded-sm mb-3">
             STEP 0{step} OF 04 // PICKUP DISPATCH WIZARD
           </div>
-          <h1 className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight">
+          <h1
+            data-qa-check="heading"
+            className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight"
+          >
             {lang === 'hi' ? 'कबाड़ पिकअप शेड्यूलर' : 'SCHEDULE DOORSTEP PICKUP'}
           </h1>
         </div>
@@ -162,7 +167,10 @@ export const SchedulePickup: React.FC = () => {
         </div>
 
         {/* Main Wizard Card */}
-        <div className="bg-[#141614] border-2 border-[#1F221F] p-6 sm:p-10 corner-brackets relative shadow-2xl">
+        <div
+          data-qa-check="card"
+          className="bg-[#141614] border-2 border-[#1F221F] p-6 sm:p-10 corner-brackets relative shadow-2xl min-w-0"
+        >
           {errorMsg && (
             <div className="mb-6 p-4 bg-[#FF6B5E]/10 border border-[#FF6B5E] text-[#FF6B5E] text-xs font-mono font-bold rounded-sm">
               ⚠ {errorMsg}
@@ -173,8 +181,8 @@ export const SchedulePickup: React.FC = () => {
           {step === 1 && (
             <div className="space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-[#1F221F]">
-                <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5]">
-                  1. SELECT MATERIALS & ESTIMATED KG
+                <h3 className="font-heading text-lg sm:text-xl uppercase font-bold text-[#F5F5F5]">
+                  1. SELECT MATERIALS &amp; ESTIMATED KG
                 </h3>
                 <span className="font-mono text-xs text-[#A3E635]">
                   EST: ₹{totalEstimate}
@@ -188,16 +196,17 @@ export const SchedulePickup: React.FC = () => {
                     <div
                       key={item.id}
                       onClick={() => toggleItem(item.id)}
-                      className={`p-4 rounded-sm border cursor-pointer transition-all flex items-center justify-between ${
+                      data-qa-check="card"
+                      className={`p-4 rounded-sm border cursor-pointer transition-all flex items-center justify-between min-h-[56px] ${
                         isSelected
                           ? 'border-[#A3E635] bg-[#0A0B0A]'
                           : 'border-[#1F221F] bg-[#050605] hover:border-[#6A6E6A]'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{item.icon}</span>
-                        <div>
-                          <div className="font-heading text-sm uppercase font-bold text-[#F5F5F5]">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-2xl shrink-0">{item.icon}</span>
+                        <div className="min-w-0">
+                          <div className="font-heading text-sm uppercase font-bold text-[#F5F5F5] truncate">
                             {item.name}
                           </div>
                           <span className="text-xs font-mono text-[#A3E635]">
@@ -208,7 +217,7 @@ export const SchedulePickup: React.FC = () => {
 
                       {isSelected && (
                         <div
-                          className="flex items-center gap-1 font-mono text-xs"
+                          className="flex items-center gap-1 font-mono text-xs shrink-0"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <input
@@ -221,7 +230,7 @@ export const SchedulePickup: React.FC = () => {
                                 [item.id]: Math.max(1, parseInt(e.target.value) || 1),
                               })
                             }
-                            className="w-14 bg-[#141614] border border-[#1F221F] text-center text-[#F5F5F5] font-bold py-1 px-1 rounded-sm"
+                            className="w-14 min-h-[36px] bg-[#141614] border border-[#1F221F] text-center text-[#F5F5F5] font-bold py-1 px-1 rounded-sm"
                           />
                           <span className="text-[#6A6E6A]">KG</span>
                         </div>
@@ -236,13 +245,13 @@ export const SchedulePickup: React.FC = () => {
           {/* STEP 2: Address & Citizen Contact */}
           {step === 2 && (
             <div className="space-y-6">
-              <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
+              <h3 className="font-heading text-lg sm:text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
                 2. CITIZEN DOORSTEP LOCATION
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1.5 font-bold">
                     FULL NAME:
                   </label>
                   <input
@@ -250,13 +259,13 @@ export const SchedulePickup: React.FC = () => {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-body text-sm rounded-sm outline-none"
+                    className="w-full min-h-[44px] bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] px-3.5 font-body text-sm rounded-sm outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
-                    PHONE (FOR SATELLITE OTP & UPI):
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1.5 font-bold">
+                    PHONE (FOR SATELLITE OTP &amp; UPI):
                   </label>
                   <input
                     type="tel"
@@ -264,13 +273,13 @@ export const SchedulePickup: React.FC = () => {
                     maxLength={10}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                    className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                    className="w-full min-h-[44px] bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] px-3.5 font-mono text-sm rounded-sm outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1.5 font-bold">
                   STREET / BUILDING / APARTMENT:
                 </label>
                 <input
@@ -278,19 +287,19 @@ export const SchedulePickup: React.FC = () => {
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-body text-sm rounded-sm outline-none"
+                  className="w-full min-h-[44px] bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] px-3.5 font-body text-sm rounded-sm outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1.5 font-bold">
                     METRO CITY:
                   </label>
                   <select
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full bg-[#050605] border border-[#1F221F] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                    className="w-full min-h-[44px] bg-[#050605] border border-[#1F221F] text-[#F5F5F5] px-3 font-mono text-sm rounded-sm outline-none"
                   >
                     <option value="Mumbai">Mumbai</option>
                     <option value="Pune">Pune</option>
@@ -301,7 +310,7 @@ export const SchedulePickup: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1">
+                  <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-1.5 font-bold">
                     PINCODE (6-DIGIT):
                   </label>
                   <input
@@ -310,7 +319,7 @@ export const SchedulePickup: React.FC = () => {
                     maxLength={6}
                     value={pincode}
                     onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
-                    className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                    className="w-full min-h-[44px] bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] px-3.5 font-mono text-sm rounded-sm outline-none"
                   />
                 </div>
               </div>
@@ -320,24 +329,24 @@ export const SchedulePickup: React.FC = () => {
           {/* STEP 3: Date & Slot Selection */}
           {step === 3 && (
             <div className="space-y-6">
-              <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
-                3. PICKUP DATE & TIME WINDOW
+              <h3 className="font-heading text-lg sm:text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
+                3. PICKUP DATE &amp; TIME WINDOW
               </h3>
 
               <div>
-                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-2">
+                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-2 font-bold">
                   SELECT DATE:
                 </label>
                 <input
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] p-3 font-mono text-sm rounded-sm outline-none"
+                  className="w-full min-h-[44px] bg-[#050605] border border-[#1F221F] focus:border-[#A3E635] text-[#F5F5F5] px-3.5 font-mono text-sm rounded-sm outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-2">
+                <label className="block font-mono text-xs text-[#6A6E6A] uppercase mb-2 font-bold">
                   RADIO TIME-SLOT WINDOW:
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -345,7 +354,7 @@ export const SchedulePickup: React.FC = () => {
                     <label
                       key={s}
                       onClick={() => setSlot(s)}
-                      className={`p-4 rounded-sm border cursor-pointer transition-all flex items-center justify-between ${
+                      className={`min-h-[52px] p-3.5 rounded-sm border cursor-pointer transition-all flex items-center justify-between ${
                         slot === s
                           ? 'border-[#A3E635] bg-[#A3E635]/10 text-[#F5F5F5]'
                           : 'border-[#1F221F] bg-[#050605] text-[#C8C8C8]'
@@ -356,7 +365,7 @@ export const SchedulePickup: React.FC = () => {
                         type="radio"
                         checked={slot === s}
                         onChange={() => setSlot(s)}
-                        className="accent-[#A3E635]"
+                        className="accent-[#A3E635] w-4 h-4"
                       />
                     </label>
                   ))}
@@ -368,26 +377,26 @@ export const SchedulePickup: React.FC = () => {
           {/* STEP 4: Review & Dispatch */}
           {step === 4 && (
             <div className="space-y-6">
-              <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
-                4. AUDIT & DISPATCH CONFIRMATION
+              <h3 className="font-heading text-lg sm:text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
+                4. AUDIT &amp; DISPATCH CONFIRMATION
               </h3>
 
               <div className="p-6 bg-[#050605] border border-[#1F221F] rounded-sm space-y-4 font-mono text-xs">
-                <div className="flex justify-between border-b border-[#1F221F] pb-3">
+                <div className="flex flex-col sm:flex-row justify-between border-b border-[#1F221F] pb-3 gap-1">
                   <span className="text-[#6A6E6A]">DOORSTEP ADDRESS:</span>
-                  <span className="text-[#F5F5F5] font-bold text-right">
+                  <span className="text-[#F5F5F5] font-bold sm:text-right">
                     {address}, {city} - {pincode}
                   </span>
                 </div>
 
-                <div className="flex justify-between border-b border-[#1F221F] pb-3">
+                <div className="flex flex-col sm:flex-row justify-between border-b border-[#1F221F] pb-3 gap-1">
                   <span className="text-[#6A6E6A]">SCHEDULED WINDOW:</span>
                   <span className="text-[#A3E635] font-bold">
                     {date} // {slot}
                   </span>
                 </div>
 
-                <div className="flex justify-between border-b border-[#1F221F] pb-3">
+                <div className="flex flex-col sm:flex-row justify-between border-b border-[#1F221F] pb-3 gap-1">
                   <span className="text-[#6A6E6A]">CITIZEN CONTACT:</span>
                   <span className="text-[#F5F5F5]">{name} ({phone})</span>
                 </div>
@@ -401,21 +410,22 @@ export const SchedulePickup: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2 text-xs font-mono text-[#6A6E6A]">
-                <ShieldCheck className="w-4 h-4 text-[#A3E635]" />
+                <Icon icon={ShieldCheck} size={16} className="text-[#A3E635]" />
                 <span>Collector will bring a certified digital scale. You receive cash or UPI.</span>
               </div>
             </div>
           )}
 
-          {/* Navigation Controls */}
-          <div className="pt-8 border-t border-[#1F221F] flex items-center justify-between gap-4">
+          {/* Navigation Controls with 44px min tap targets */}
+          <div className="pt-6 border-t border-[#1F221F] flex items-center justify-between gap-4">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={() => setStep((s) => s - 1)}
-                className="px-6 py-3 bg-[#050605] border border-[#1F221F] hover:border-[#6A6E6A] font-mono text-xs uppercase font-bold text-[#F5F5F5] rounded-sm flex items-center gap-2"
+                data-qa-check="button"
+                className="min-h-[48px] px-6 py-2.5 bg-[#050605] border border-[#1F221F] hover:border-[#6A6E6A] font-mono text-xs uppercase font-bold text-[#F5F5F5] rounded-sm flex items-center gap-2"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <Icon icon={ArrowLeft} size={16} />
                 <span>BACK</span>
               </button>
             ) : <div />}
@@ -424,26 +434,29 @@ export const SchedulePickup: React.FC = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="px-8 py-3 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-lg font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2"
+                data-qa-check="button"
+                className="min-h-[48px] px-8 py-2.5 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-base font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2"
               >
                 <span>CONTINUE</span>
-                <ArrowRight className="w-4 h-4" />
+                <Icon icon={ArrowRight} size={16} />
               </button>
             ) : (
               <button
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleConfirm}
-                className="px-10 py-4 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-xl font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2 active:scale-95"
+                data-qa-check="button"
+                className="min-h-[52px] px-8 py-3.5 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-lg font-bold uppercase tracking-wider rounded-sm glow-lime flex items-center gap-2 active:scale-95"
               >
-                <Sparkles className="w-5 h-5" />
+                <Icon icon={Sparkles} size={18} />
                 <span>{isSubmitting ? 'DISPATCHING...' : 'DISPATCH PICKUP REQUEST'}</span>
               </button>
             )}
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };
+
 export default SchedulePickup;

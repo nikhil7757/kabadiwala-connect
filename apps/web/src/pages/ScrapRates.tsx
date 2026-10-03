@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, TrendingUp, ArrowUpRight, Scale, Filter } from 'lucide-react';
+import { Search, TrendingUp, ArrowUpRight } from 'lucide-react';
 import {
   AreaChart,
   Area,
@@ -10,6 +10,8 @@ import {
 } from 'recharts';
 import { ratesService } from '../services/ratesService';
 import { useLang } from '../hooks/useLang';
+import { Container } from '../components/layout/Container';
+import { Icon } from '../components/common/Icon';
 
 export const ScrapRates: React.FC = () => {
   const { lang } = useLang();
@@ -31,8 +33,8 @@ export const ScrapRates: React.FC = () => {
   const activeItemData = allRates.find((r: any) => r.id === selectedItem) || allRates[0];
 
   return (
-    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-12 sm:py-16">
+      <Container>
         {/* Header */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-3">
@@ -41,7 +43,10 @@ export const ScrapRates: React.FC = () => {
               OFFICIAL MANDI RATES // LIVE BENCHMARK
             </span>
           </div>
-          <h1 className="font-display text-5xl sm:text-7xl text-[#F5F5F5] uppercase tracking-tight">
+          <h1
+            data-qa-check="heading"
+            className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#F5F5F5] uppercase tracking-tight"
+          >
             {lang === 'hi' ? 'दैनिक स्क्रैप दरें' : 'DAILY SCRAP RATES'}
           </h1>
           <p className="mt-2 text-[#6A6E6A] font-body text-sm sm:text-base max-w-2xl">
@@ -52,24 +57,27 @@ export const ScrapRates: React.FC = () => {
         </div>
 
         {/* 7-Day Trend Chart Showcase */}
-        <div className="mb-12 bg-[#141614] border border-[#1F221F] p-6 sm:p-8 corner-brackets">
+        <div
+          data-qa-check="card"
+          className="mb-12 bg-[#141614] border border-[#1F221F] p-6 sm:p-8 corner-brackets min-w-0"
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#1F221F] gap-4">
             <div>
               <div className="flex items-center gap-2 font-mono text-xs text-[#A3E635] mb-1 font-bold">
-                <TrendingUp className="w-4 h-4" />
+                <Icon icon={TrendingUp} size={16} />
                 <span>7-DAY HISTORICAL PRICE INDEX</span>
               </div>
-              <h3 className="font-heading text-2xl font-bold uppercase text-[#F5F5F5]">
+              <h3 className="font-heading text-xl sm:text-2xl font-bold uppercase text-[#F5F5F5]">
                 {activeItemData.name} — ₹{activeItemData.rate}/KG
               </h3>
             </div>
-            <div className="text-right font-mono text-xs text-[#6A6E6A]">
+            <div className="sm:text-right font-mono text-xs text-[#6A6E6A]">
               <span>MARKET VARIANCE: </span>
               <span className="text-[#A3E635] font-bold">+4.2% THIS WEEK</span>
             </div>
           </div>
 
-          <div className="h-64 sm:h-72 mt-6">
+          <div className="h-64 sm:h-72 mt-6 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trendData}>
                 <defs>
@@ -110,7 +118,8 @@ export const ScrapRates: React.FC = () => {
               <button
                 key={c}
                 onClick={() => setSelectedCategory(c)}
-                className={`px-4 py-2 font-mono text-xs uppercase font-bold tracking-wider rounded-sm border transition-all ${
+                data-qa-check="button"
+                className={`min-h-[44px] px-4 py-2 font-mono text-xs uppercase font-bold tracking-wider rounded-sm border transition-all flex items-center justify-center ${
                   selectedCategory === c
                     ? 'bg-[#A3E635] text-[#0A0B0A] border-[#A3E635]'
                     : 'bg-[#141614] text-[#C8C8C8] border-[#1F221F] hover:border-[#6A6E6A]'
@@ -123,13 +132,13 @@ export const ScrapRates: React.FC = () => {
 
           {/* Search Box */}
           <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-3 w-4 h-4 text-[#6A6E6A]" />
+            <Icon icon={Search} size={16} className="absolute left-3.5 top-3.5 text-[#6A6E6A]" />
             <input
               type="text"
               placeholder="Search 15 materials..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-[#141614] border border-[#1F221F] focus:border-[#A3E635] font-mono text-xs text-[#F5F5F5] rounded-sm outline-none"
+              className="w-full min-h-[44px] pl-10 pr-4 py-2 bg-[#141614] border border-[#1F221F] focus:border-[#A3E635] font-mono text-xs text-[#F5F5F5] rounded-sm outline-none"
             />
           </div>
         </div>
@@ -142,6 +151,7 @@ export const ScrapRates: React.FC = () => {
               <div
                 key={item.id}
                 onClick={() => setSelectedItem(item.id)}
+                data-qa-check="card"
                 className={`p-6 bg-[#141614] border rounded-sm cursor-pointer transition-all corner-brackets flex flex-col justify-between ${
                   isSelected
                     ? 'border-[#A3E635] shadow-[0_0_15px_rgba(163,230,53,0.2)]'
@@ -150,11 +160,11 @@ export const ScrapRates: React.FC = () => {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl p-2 bg-[#050605] border border-[#1F221F] rounded-sm">
+                    <span className="text-3xl p-2 bg-[#050605] border border-[#1F221F] rounded-sm shrink-0">
                       {item.icon}
                     </span>
-                    <div>
-                      <h4 className="font-heading text-lg font-bold text-[#F5F5F5] uppercase">
+                    <div className="min-w-0">
+                      <h4 className="font-heading text-lg font-bold text-[#F5F5F5] uppercase truncate">
                         {item.name}
                       </h4>
                       <span className="text-xs font-mono text-[#6A6E6A] uppercase">
@@ -162,9 +172,9 @@ export const ScrapRates: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  <span className="font-mono text-xs text-[#A3E635] flex items-center">
+                  <span className="font-mono text-xs text-[#A3E635] flex items-center shrink-0">
                     LIVE
-                    <ArrowUpRight className="w-3.5 h-3.5 ml-0.5" />
+                    <Icon icon={ArrowUpRight} size={14} className="ml-0.5" />
                   </span>
                 </div>
 
@@ -174,16 +184,20 @@ export const ScrapRates: React.FC = () => {
                     <span className="text-3xl font-black text-[#A3E635]">₹{item.rate}</span>
                     <span className="text-xs text-[#6A6E6A]"> / KG</span>
                   </div>
-                  <button className="px-3 py-1 bg-[#050605] border border-[#1F221F] hover:border-[#A3E635] text-[11px] text-[#C8C8C8] uppercase font-bold rounded-sm">
-                    {isSelected ? 'VIEWING TREND' : 'VIEW TREND'}
+                  <button
+                    data-qa-check="button"
+                    className="min-h-[44px] px-3.5 py-1.5 bg-[#050605] border border-[#1F221F] hover:border-[#A3E635] text-xs text-[#C8C8C8] uppercase font-bold rounded-sm flex items-center justify-center"
+                  >
+                    {isSelected ? 'VIEWING' : 'VIEW TREND'}
                   </button>
                 </div>
               </div>
             );
           })}
         </div>
-      </div>
+      </Container>
     </div>
   );
 };
+
 export default ScrapRates;

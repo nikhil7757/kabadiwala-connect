@@ -4,17 +4,16 @@ import { motion } from 'framer-motion';
 import {
   Truck,
   CheckCircle2,
-  Clock,
   MapPin,
   Phone,
-  ShieldCheck,
-  Scale,
   Navigation,
   RefreshCw,
 } from 'lucide-react';
 import { pickupService } from '../services/pickupService';
 import { collectors } from '../data/seed';
 import { useLang } from '../hooks/useLang';
+import { Container } from '../components/layout/Container';
+import { Icon } from '../components/common/Icon';
 
 const STEPS = ['REQUESTED', 'ACCEPTED', 'ON_THE_WAY', 'WEIGHED', 'PAID'];
 
@@ -48,7 +47,6 @@ export const TrackPickup: React.FC = () => {
     return () => clearInterval(interval);
   }, [id]);
 
-  // Simulated moving GPS pin
   useEffect(() => {
     const moveTimer = setInterval(() => {
       setGpsPos((prev) => ({
@@ -62,17 +60,22 @@ export const TrackPickup: React.FC = () => {
   if (!pickup) {
     return (
       <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-24 text-center font-mono">
-        <h2 className="text-2xl text-[#FF6B5E]">NO PICKUP RECORD FOUND</h2>
-        <Link to="/book" className="mt-4 inline-block text-[#A3E635] hover:underline">
-          Schedule New Pickup →
-        </Link>
+        <Container>
+          <h2 className="text-2xl text-[#FF6B5E]">NO PICKUP RECORD FOUND</h2>
+          <Link
+            to="/book"
+            data-qa-check="button"
+            className="mt-4 inline-flex items-center min-h-[44px] px-4 text-[#A3E635] hover:underline"
+          >
+            Schedule New Pickup →
+          </Link>
+        </Container>
       </div>
     );
   }
 
   const currentIdx = STEPS.indexOf(pickup.status);
 
-  // Demo helper to cycle statuses
   const advanceStatus = () => {
     const nextIdx = (currentIdx + 1) % STEPS.length;
     pickupService.updateStatus(pickup.id, STEPS[nextIdx]);
@@ -80,8 +83,8 @@ export const TrackPickup: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-12 sm:py-16">
+      <Container>
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <div>
@@ -91,7 +94,10 @@ export const TrackPickup: React.FC = () => {
                 TELEMETRY RADAR // REAL-TIME GPS
               </span>
             </div>
-            <h1 className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight">
+            <h1
+              data-qa-check="heading"
+              className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight"
+            >
               TRACK PICKUP: {pickup.id}
             </h1>
             <p className="text-xs font-mono text-[#6A6E6A] mt-1">
@@ -100,21 +106,24 @@ export const TrackPickup: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Demo Status Step Switcher */}
             <button
               onClick={advanceStatus}
-              className="px-4 py-2 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-xs font-mono text-[#A3E635] font-bold rounded-sm flex items-center gap-2"
+              data-qa-check="button"
+              className="min-h-[44px] px-4 py-2 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-xs font-mono text-[#A3E635] font-bold rounded-sm flex items-center gap-2"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
+              <Icon icon={RefreshCw} size={14} />
               <span>SIMULATE NEXT STATUS ({pickup.status})</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column: 5-Stage Animated Status Timeline */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="p-6 sm:p-8 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-w-0">
+          {/* Left Column: 5-Stage Status Timeline */}
+          <div className="lg:col-span-6 space-y-6 min-w-0">
+            <div
+              data-qa-check="card"
+              className="p-6 sm:p-8 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-8"
+            >
               <h3 className="font-heading text-xl uppercase font-bold text-[#F5F5F5] pb-3 border-b border-[#1F221F]">
                 DISPATCH PIPELINE STATUS
               </h3>
@@ -126,7 +135,6 @@ export const TrackPickup: React.FC = () => {
 
                   return (
                     <div key={stepName} className="relative">
-                      {/* Status Node Dot */}
                       <div
                         className={`absolute -left-[31px] top-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                           isDone
@@ -135,7 +143,7 @@ export const TrackPickup: React.FC = () => {
                         }`}
                       >
                         {isDone ? (
-                          <CheckCircle2 className="w-4 h-4 stroke-[3]" />
+                          <Icon icon={CheckCircle2} size={16} className="stroke-[3]" />
                         ) : (
                           <span className="font-mono text-[10px] font-bold">{idx + 1}</span>
                         )}
@@ -177,21 +185,27 @@ export const TrackPickup: React.FC = () => {
 
             {/* Assigned Collector Digital Profile Card */}
             {collector && (
-              <div className="p-6 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-4">
+              <div
+                data-qa-check="card"
+                className="p-6 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-4"
+              >
                 <span className="font-mono text-xs text-[#A3E635] font-bold uppercase tracking-wider block">
                   ASSIGNED VERIFIED COLLECTOR
                 </span>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-sm bg-[#050605] border border-[#1F221F] flex items-center justify-center font-display text-xl text-[#A3E635] font-bold">
+                <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      data-qa-check="avatar"
+                      className="w-12 h-12 rounded-sm bg-[#050605] border border-[#1F221F] flex items-center justify-center font-display text-xl text-[#A3E635] font-bold shrink-0 aspect-square"
+                    >
                       {collector.name[0]}
                     </div>
-                    <div>
-                      <h4 className="font-heading text-lg uppercase font-bold text-[#F5F5F5]">
+                    <div className="min-w-0">
+                      <h4 className="font-heading text-lg uppercase font-bold text-[#F5F5F5] truncate">
                         {collector.name}
                       </h4>
-                      <span className="text-xs font-mono text-[#6A6E6A]">
+                      <span className="text-xs font-mono text-[#6A6E6A] truncate block">
                         OPERATOR ID: KC-MH-{collector.id.toUpperCase()}
                       </span>
                     </div>
@@ -199,9 +213,10 @@ export const TrackPickup: React.FC = () => {
 
                   <a
                     href={`tel:${collector.phone}`}
-                    className="px-4 py-2 bg-[#A3E635] text-[#0A0B0A] font-mono text-xs font-bold uppercase rounded-sm flex items-center gap-2 hover:bg-[#bbf451] transition"
+                    data-qa-check="button"
+                    className="min-h-[44px] px-4 py-2 bg-[#A3E635] text-[#0A0B0A] font-mono text-xs font-bold uppercase rounded-sm flex items-center gap-2 hover:bg-[#bbf451] transition shrink-0"
                   >
-                    <Phone className="w-3.5 h-3.5" />
+                    <Icon icon={Phone} size={14} />
                     <span>CALL ({collector.phone.slice(-4)})</span>
                   </a>
                 </div>
@@ -215,21 +230,23 @@ export const TrackPickup: React.FC = () => {
           </div>
 
           {/* Right Column: Moving GPS Radar Screen */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="p-6 sm:p-8 bg-[#050605] border-2 border-[#1F221F] rounded-sm corner-brackets space-y-4 shadow-2xl">
+          <div className="lg:col-span-6 space-y-6 min-w-0">
+            <div
+              data-qa-check="card"
+              className="p-6 sm:p-8 bg-[#050605] border-2 border-[#1F221F] rounded-sm corner-brackets space-y-4 shadow-2xl"
+            >
               <div className="flex items-center justify-between font-mono text-xs">
                 <span className="text-[#A3E635] font-bold flex items-center gap-1.5">
-                  <Navigation className="w-4 h-4 text-[#A3E635] animate-spin-slow" />
+                  <Icon icon={Navigation} size={16} className="text-[#A3E635] animate-spin-slow" />
                   <span>SATELLITE POSITIONING RADAR</span>
                 </span>
                 <span className="text-[#6A6E6A]">EST. ARRIVAL: 14 MINS</span>
               </div>
 
-              {/* Simulated Map Canvas */}
-              <div className="relative h-80 sm:h-96 bg-[#0A0B0A] border border-[#1F221F] rounded-sm overflow-hidden scanline">
-                {/* Grid Overlay */}
+              {/* Map Canvas */}
+              <div className="relative h-72 sm:h-96 bg-[#0A0B0A] border border-[#1F221F] rounded-sm overflow-hidden scanline">
                 <div
-                  className="absolute inset-0 opacity-20"
+                  className="absolute inset-0 opacity-20 pointer-events-none"
                   style={{
                     backgroundImage:
                       'linear-gradient(to right, #1F221F 1px, transparent 1px), linear-gradient(to bottom, #1F221F 1px, transparent 1px)',
@@ -240,7 +257,7 @@ export const TrackPickup: React.FC = () => {
                 {/* Destination Point (Citizen Home) */}
                 <div className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
                   <div className="w-8 h-8 rounded-full bg-[#A3E635]/20 border border-[#A3E635] flex items-center justify-center text-[#A3E635] animate-pulse">
-                    <MapPin className="w-4 h-4" />
+                    <Icon icon={MapPin} size={16} />
                   </div>
                   <span className="font-mono text-[9px] text-[#A3E635] font-bold bg-[#0A0B0A]/90 px-1 mt-1 border border-[#1F221F]">
                     CITIZEN HOME
@@ -255,7 +272,7 @@ export const TrackPickup: React.FC = () => {
                 >
                   <div className="relative">
                     <div className="w-10 h-10 rounded-full bg-[#FFB020]/20 border-2 border-[#FFB020] flex items-center justify-center text-[#FFB020] shadow-[0_0_20px_rgba(255,176,32,0.6)]">
-                      <Truck className="w-5 h-5" />
+                      <Icon icon={Truck} size={18} />
                     </div>
                     <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#A3E635] animate-ping" />
                   </div>
@@ -263,9 +280,6 @@ export const TrackPickup: React.FC = () => {
                     {collector?.name?.split(' ')[0] || 'KABADIWALA'}
                   </span>
                 </motion.div>
-
-                {/* Radar Sweep Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A3E635]/5 to-transparent pointer-events-none animate-marquee" />
               </div>
 
               {/* Telemetry Readout */}
@@ -286,8 +300,9 @@ export const TrackPickup: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };
+
 export default TrackPickup;

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
-import { BookOpen, CheckCircle2, XCircle, Award, HelpCircle, ArrowRight } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import { useLang } from '../hooks/useLang';
+import { Container } from '../components/layout/Container';
+import { Icon } from '../components/common/Icon';
 
 const QUIZ_QUESTIONS = [
   {
@@ -106,17 +108,20 @@ export const Learn: React.FC = () => {
   ];
 
   return (
-    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+    <div className="bg-[#0A0B0A] text-[#F5F5F5] min-h-screen py-12 sm:py-16">
+      <Container className="max-w-5xl">
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-10 sm:mb-12">
           <div className="flex items-center gap-3 mb-3">
             <span className="w-8 h-0.5 bg-[#A3E635]" />
             <span className="font-mono text-xs text-[#A3E635] tracking-widest uppercase font-bold">
               KNOWLEDGE REPOSITORY // CIRCULAR CITIZEN
             </span>
           </div>
-          <h1 className="font-display text-5xl sm:text-7xl text-[#F5F5F5] uppercase tracking-tight">
+          <h1
+            data-qa-check="heading"
+            className="font-display text-4xl sm:text-6xl lg:text-7xl text-[#F5F5F5] uppercase tracking-tight"
+          >
             {lang === 'hi' ? 'स्क्रैप पृथक्करण व ज्ञान' : 'SEGREGATION GUIDE & QUIZ'}
           </h1>
           <p className="mt-2 text-[#6A6E6A] font-body text-sm sm:text-base max-w-2xl">
@@ -127,16 +132,17 @@ export const Learn: React.FC = () => {
         </div>
 
         {/* 3 Technical Segregation Guidelines */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 sm:mb-16">
           {segregationGuides.map((guide, i) => (
             <div
               key={i}
+              data-qa-check="card"
               className="p-6 bg-[#141614] border border-[#1F221F] rounded-sm corner-brackets space-y-4"
             >
               <span className="font-mono text-[10px] text-[#A3E635] tracking-widest block font-bold">
                 {guide.code}
               </span>
-              <h3 className="font-heading text-xl font-bold uppercase text-[#F5F5F5]">
+              <h3 data-qa-check="heading" className="font-heading text-lg sm:text-xl font-bold uppercase text-[#F5F5F5]">
                 {guide.title}
               </h3>
               <ul className="space-y-2 text-xs font-mono text-[#C8C8C8]">
@@ -152,19 +158,25 @@ export const Learn: React.FC = () => {
         </div>
 
         {/* Interactive 5-Question Quiz Console */}
-        <div className="p-6 sm:p-10 bg-[#141614] border-2 border-[#1F221F] rounded-sm corner-brackets space-y-8 shadow-2xl">
-          <div className="flex items-center justify-between pb-4 border-b border-[#1F221F]">
+        <div
+          data-qa-check="card"
+          className="p-6 sm:p-10 bg-[#141614] border-2 border-[#1F221F] rounded-sm corner-brackets space-y-8 shadow-2xl min-w-0"
+        >
+          <div className="flex flex-wrap items-center justify-between pb-4 border-b border-[#1F221F] gap-2">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-[#A3E635] font-bold">
-                <HelpCircle className="w-4 h-4" />
+                <Icon icon={HelpCircle} size={16} />
                 <span>CIRCULAR ECONOMY CITIZEN TEST</span>
               </div>
-              <h2 className="font-heading text-2xl uppercase font-bold text-[#F5F5F5] mt-1">
+              <h2 className="font-heading text-xl sm:text-2xl uppercase font-bold text-[#F5F5F5] mt-1">
                 5-QUESTION SEGREGATION AUDIT
               </h2>
             </div>
             {submitted && (
-              <div className="font-mono text-sm font-bold text-[#A3E635] px-3 py-1 bg-[#A3E635]/10 border border-[#A3E635] rounded-sm">
+              <div
+                data-qa-check="badge"
+                className="font-mono text-sm font-bold text-[#A3E635] px-3 py-1 bg-[#A3E635]/10 border border-[#A3E635] rounded-sm"
+              >
                 SCORE: {calculateScore()} / {QUIZ_QUESTIONS.length}
               </div>
             )}
@@ -198,10 +210,11 @@ export const Learn: React.FC = () => {
                           key={optIdx}
                           type="button"
                           onClick={() => handleSelect(qIdx, optIdx)}
-                          className={`p-3 rounded-sm border text-left transition-all ${btnStyle}`}
+                          data-qa-check="button"
+                          className={`min-h-[48px] p-3 rounded-sm border text-left transition-all flex items-center ${btnStyle}`}
                         >
-                          <span className="opacity-50 mr-2">{String.fromCharCode(65 + optIdx)}.</span>
-                          {opt}
+                          <span className="opacity-50 mr-2 shrink-0">{String.fromCharCode(65 + optIdx)}.</span>
+                          <span>{opt}</span>
                         </button>
                       );
                     })}
@@ -221,9 +234,10 @@ export const Learn: React.FC = () => {
             <button
               onClick={handleSubmitQuiz}
               disabled={Object.keys(answers).length < QUIZ_QUESTIONS.length}
-              className="w-full py-4 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-lg font-bold uppercase tracking-wider rounded-sm glow-lime transition disabled:opacity-40"
+              data-qa-check="button"
+              className="w-full min-h-[52px] py-4 bg-[#A3E635] hover:bg-[#bbf451] text-[#0A0B0A] font-heading text-lg font-bold uppercase tracking-wider rounded-sm glow-lime transition disabled:opacity-40"
             >
-              SUBMIT & AUDIT QUIZ SCORE
+              SUBMIT &amp; AUDIT QUIZ SCORE
             </button>
           ) : (
             <div className="p-6 bg-[#050605] border border-[#A3E635] rounded-sm text-center space-y-2 font-mono text-xs">
@@ -234,8 +248,9 @@ export const Learn: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+      </Container>
     </div>
   );
 };
+
 export default Learn;

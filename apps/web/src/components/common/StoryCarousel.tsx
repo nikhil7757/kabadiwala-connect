@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
 import { useLang } from '../../hooks/useLang';
+import { Container } from '../layout/Container';
+import { Icon } from './Icon';
 
 const STORIES = [
   {
@@ -49,13 +51,17 @@ const STORIES = [
   },
 ];
 
+/**
+ * Standardized Ground Stories / Testimonials Section (Phase 3 Component)
+ * - Safe layout without negative margins or z-index collisions
+ * - Accessible 44px carousel controls
+ * - Inside standardized <Container>
+ */
 export const StoryCarousel: React.FC = () => {
   const { lang } = useLang();
   const [activeIdx, setActiveIdx] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Autoplay
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
@@ -66,83 +72,99 @@ export const StoryCarousel: React.FC = () => {
 
   return (
     <section
-      className="py-24 bg-[#0A0B0A] border-b border-[#1F221F]"
+      className="py-12 sm:py-16 lg:py-24 bg-[#050605] border-b border-[#1F221F]"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <Container>
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-4">
           <div>
             <div className="flex items-center gap-3 mb-3">
               <span className="w-8 h-0.5 bg-[#A3E635]" />
               <span className="font-mono text-xs text-[#A3E635] tracking-widest uppercase font-bold">
-                04 // REAL GROUND STORIES
+                05 // PROVEN GROUND IMPACT
               </span>
             </div>
-            <h2 className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight">
+            <h2
+              data-qa-check="heading"
+              className="font-display text-4xl sm:text-6xl text-[#F5F5F5] uppercase tracking-tight"
+            >
               {lang === 'hi' ? 'नागरिकों और कबाड़ियों के अनुभव' : 'GROUND TRUTH STORIES'}
             </h2>
+            <p className="mt-2 text-sm sm:text-base text-[#6A6E6A] font-body max-w-xl">
+              Real voices from citizens, informal operators, and housing societies.
+            </p>
           </div>
 
-          {/* Nav Buttons */}
-          <div className="flex items-center gap-3">
+          {/* Nav Controls */}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveIdx((p) => (p === 0 ? STORIES.length - 1 : p - 1))}
               aria-label="Previous story"
-              className="w-12 h-12 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-[#F5F5F5] rounded-sm flex items-center justify-center transition"
+              data-qa-check="button"
+              className="w-12 h-12 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-[#F5F5F5] rounded-sm flex items-center justify-center transition min-h-[44px] min-w-[44px]"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <Icon icon={ChevronLeft} size={20} />
             </button>
             <button
               onClick={() => setActiveIdx((p) => (p + 1) % STORIES.length)}
               aria-label="Next story"
-              className="w-12 h-12 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-[#F5F5F5] rounded-sm flex items-center justify-center transition"
+              data-qa-check="button"
+              className="w-12 h-12 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635] text-[#F5F5F5] rounded-sm flex items-center justify-center transition min-h-[44px] min-w-[44px]"
             >
-              <ChevronRight className="w-5 h-5" />
+              <Icon icon={ChevronRight} size={20} />
             </button>
           </div>
         </div>
 
         {/* Carousel Viewport */}
-        <div ref={containerRef} className="relative overflow-hidden">
+        <div className="relative overflow-hidden">
           <div
             className="flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ transform: `translateX(-${activeIdx * 100}%)` }}
           >
             {STORIES.map((story) => (
-              <div key={story.id} className="w-full shrink-0 px-2 sm:px-4">
-                <div className="p-8 sm:p-12 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-colors corner-brackets space-y-6">
+              <div key={story.id} className="w-full shrink-0 px-1">
+                <div
+                  data-qa-check="card"
+                  className="p-6 sm:p-10 bg-[#141614] border border-[#1F221F] hover:border-[#A3E635]/60 transition-colors corner-brackets space-y-6"
+                >
                   {/* Top Bar with rating & badge */}
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-1 text-[#FFB020]">
                       {Array.from({ length: story.rating }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-[#FFB020]" />
+                        <Icon key={i} icon={Star} size={16} className="fill-[#FFB020] text-[#FFB020]" />
                       ))}
                     </div>
-                    <span className="px-2.5 py-1 bg-[#050605] border border-[#1F221F] text-xs font-mono text-[#A3E635] rounded-sm">
+                    <span
+                      data-qa-check="badge"
+                      className="px-2.5 py-1 bg-[#050605] border border-[#1F221F] text-xs font-mono text-[#A3E635] rounded-sm"
+                    >
                       {story.scrapType}
                     </span>
                   </div>
 
                   {/* Quote Body */}
                   <div className="relative">
-                    <Quote className="absolute -top-3 -left-2 w-10 h-10 text-[#1F221F] -z-0 opacity-40" />
-                    <p className="relative z-10 text-lg sm:text-2xl text-[#F5F5F5] font-body leading-relaxed italic">
+                    <p className="text-base sm:text-xl text-[#F5F5F5] font-body leading-relaxed italic">
                       "{story.quote}"
                     </p>
                   </div>
 
                   {/* Author Persona */}
                   <div className="flex items-center gap-4 pt-4 border-t border-[#1F221F]">
-                    <div className="w-12 h-12 rounded-sm bg-[#050605] border border-[#1F221F] flex items-center justify-center font-display text-lg text-[#A3E635] font-bold">
+                    <div
+                      data-qa-check="avatar"
+                      className="w-12 h-12 rounded-sm bg-[#050605] border border-[#1F221F] flex items-center justify-center font-display text-lg text-[#A3E635] font-bold shrink-0 aspect-square"
+                    >
                       {story.avatar}
                     </div>
-                    <div>
-                      <h4 className="font-heading text-lg font-bold text-[#F5F5F5] uppercase">
+                    <div className="min-w-0">
+                      <h4 className="font-heading text-base sm:text-lg font-bold text-[#F5F5F5] uppercase truncate">
                         {story.name}
                       </h4>
-                      <p className="text-xs font-mono text-[#6A6E6A]">
+                      <p className="text-xs font-mono text-[#6A6E6A] truncate">
                         {story.role} · <span className="text-[#C8C8C8]">{story.city}</span>
                       </p>
                     </div>
@@ -154,7 +176,7 @@ export const StoryCarousel: React.FC = () => {
         </div>
 
         {/* Progress Dots */}
-        <div className="flex items-center justify-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-2 mt-6">
           {STORIES.map((_, i) => (
             <button
               key={i}
@@ -166,7 +188,9 @@ export const StoryCarousel: React.FC = () => {
             />
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };
+
+export default StoryCarousel;

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 2200" width="320" height="2200" style="background:#0A0B0A; font-family:'JetBrains Mono', sans-serif;">
+  <defs>
+    <style>
+      .text-title { font-family: 'Oswald', sans-serif; font-weight: bold; fill: #F5F5F5; }
+      .text-lime { fill: #A3E635; }
+      .text-muted { fill: #6A6E6A; }
+      .bug-box { stroke: #FF4444; stroke-width: 2; stroke-dasharray: 4 2; fill: rgba(255, 68, 68, 0.15); }
+      .bug-label { fill: #FF6666; font-size: 10px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <!-- Title & Viewport Banner -->
+  <rect x="0" y="0" width="320" height="30" fill="#1F221F"/>
+  <text x="10" y="20" fill="#A3E635" font-size="11" font-weight="bold">AUDIT: BEFORE // VIEWPORT: 320px</text>
+
+  <!-- 1. Header (Navbar) Overlap Bug -->
+  <rect x="0" y="30" width="320" height="60" fill="#0A0B0A" stroke="#1F221F"/>
+  <!-- Logo -->
+  <rect x="12" y="42" width="36" height="36" fill="#A3E635" rx="2"/>
+  <text x="21" y="66" fill="#0A0B0A" font-size="16" font-weight="900">KC</text>
+
+  <!-- Overflowing Action Row -->
+  <!-- Lang button -->
+  <rect x="58" y="46" width="30" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <text x="64" y="64" fill="#A3E635" font-size="10">हिं</text>
+  <!-- Theme button -->
+  <rect x="94" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <!-- Bell button -->
+  <rect x="128" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <!-- Book Pickup Button (Overflowing viewport) -->
+  <rect x="162" y="44" width="110" height="32" fill="#A3E635" rx="2"/>
+  <text x="172" y="64" fill="#0A0B0A" font-size="10" font-weight="bold">BOOK PICKUP</text>
+  <!-- Hamburger (Cut off past 320px) -->
+  <rect x="280" y="46" width="30" height="28" fill="#141614" stroke="#FF4444" rx="2"/>
+  <!-- Collision Annotation -->
+  <rect x="54" y="38" width="266" height="44" class="bug-box"/>
+  <text x="60" y="34" class="bug-label">BUG: Header actions collide &amp; exceed 320px width</text>
+
+  <!-- 2. Hero Section (Font Overflow & Bad Wrap) -->
+  <rect x="0" y="90" width="320" height="320" fill="#0A0B0A"/>
+  <text x="16" y="125" class="text-lime" font-size="10">SIH 2026 // MINISTRY OF MINES</text>
+  <text x="16" y="165" class="text-title" font-size="38" letter-spacing="-1">FROM KABADI.</text>
+  <text x="16" y="200" class="text-title" font-size="38" fill="none" stroke="#F5F5F5" stroke-width="1.5">TO CIRCULAR.</text>
+  <text x="16" y="235" class="text-title text-lime" font-size="38">TRACEABLE.</text>
+  <!-- Collision Box -->
+  <rect x="8" y="135" width="304" height="110" class="bug-box"/>
+  <text x="16" y="260" class="bug-label">BUG: text-5xl overflows bounds; leading-[0.9] collides</text>
+
+  <!-- 3. Stats Strip (1 col instead of 2x2 grid) -->
+  <rect x="0" y="420" width="320" height="400" fill="#050605" stroke="#1F221F"/>
+  <text x="16" y="450" class="text-lime" font-size="10">01 // PROVEN IMPACT TELEMETRY</text>
+  <rect x="16" y="465" width="288" height="75" fill="#141614" stroke="#1F221F"/>
+  <text x="28" y="505" class="text-title text-lime" font-size="28">1,240+</text>
+  <text x="28" y="525" fill="#C8C8C8" font-size="11">VERIFIED COLLECTORS</text>
+  
+  <rect x="16" y="550" width="288" height="75" fill="#141614" stroke="#1F221F"/>
+  <text x="28" y="590" class="text-title text-lime" font-size="28">52,340 KG</text>
+  <text x="28" y="610" fill="#C8C8C8" font-size="11">RECYCLED WEIGHT</text>
+  <rect x="12" y="460" width="296" height="175" class="bug-box"/>
+  <text x="16" y="650" class="bug-label">BUG: 1-col mobile vertical stretch, missing 2x2 grid</text>
+
+  <!-- 4. Rate Ticker Marquee Overlap -->
+  <rect x="0" y="830" width="320" height="45" fill="#050605" stroke="#1F221F"/>
+  <rect x="0" y="830" width="130" height="45" fill="#A3E635"/>
+  <text x="8" y="858" fill="#0A0B0A" font-size="10" font-weight="900">MANDI LIVE RATES</text>
+  <text x="140" y="858" fill="#C8C8C8" font-size="10">COPPER ₹420/KG / BRASS ₹310</text>
+  <rect x="120" y="830" width="50" height="45" class="bug-box"/>
+  <text x="16" y="895" class="bug-label">BUG: Tag cuts off ticker marquee with no gap</text>
+
+  <!-- 5. Collector Flip Card (Fixed 410px height & pseudo notch overlap) -->
+  <rect x="0" y="920" width="320" height="440" fill="#0A0B0A"/>
+  <rect x="16" y="940" width="288" height="410" fill="#141614" stroke="#1F221F"/>
+  <rect x="12" y="935" width="296" height="420" class="bug-box"/>
+  <text x="16" y="1375" class="bug-label">BUG: Fixed h-410px causes vertical overflow &amp; stack clash</text>
+
+  <!-- 6. Mobile Bottom Nav + Sticky CTA Bar Collision -->
+  <!-- Content -->
+  <rect x="0" y="1390" width="320" height="600" fill="#050605"/>
+  <text x="16" y="1430" class="text-title" font-size="18">BOOKING &amp; FOOTER</text>
+  <text x="16" y="1460" class="text-muted" font-size="11">Content gets buried under stacked sticky bars...</text>
+
+  <!-- Sticky CTA Bar (bottom-0 z-40) -->
+  <rect x="0" y="2080" width="320" height="55" fill="#0A0B0A" stroke="#A3E635" stroke-width="1.5"/>
+  <text x="10" y="2105" fill="#A3E635" font-size="10" font-weight="bold">ONLINE COLLECTORS ACTIVE</text>
+  <rect x="190" y="2090" width="120" height="34" fill="#A3E635" rx="2"/>
+  <text x="200" y="2112" fill="#0A0B0A" font-size="10" font-weight="bold">BOOK PICKUP</text>
+
+  <!-- Mobile Bottom Tab Bar (bottom-0 z-50 h-16) Stacked directly on top -->
+  <rect x="0" y="2135" width="320" height="65" fill="rgba(10,11,10,0.92)" stroke="#1F221F"/>
+  <text x="20" y="2175" class="text-muted" font-size="9">HOME</text>
+  <text x="80" y="2175" class="text-muted" font-size="9">RATES</text>
+  <circle cx="160" cy="2150" r="18" fill="#A3E635"/>
+  <text x="145" y="2155" fill="#0A0B0A" font-size="9" font-weight="bold">BOOK</text>
+  <text x="220" y="2175" class="text-muted" font-size="9">TRACK</text>
+  <text x="270" y="2175" class="text-muted" font-size="9">USER</text>
+
+  <!-- Collision Annotation -->
+  <rect x="0" y="2080" width="320" height="120" class="bug-box"/>
+  <text x="10" y="2070" class="bug-label">CRITICAL: StickyCtaBar &amp; Mobile Nav collide at bottom-0</text>
+</svg>

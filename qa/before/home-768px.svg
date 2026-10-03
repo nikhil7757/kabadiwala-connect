@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 2200" width="768" height="2200" style="background:#0A0B0A; font-family:'JetBrains Mono', sans-serif;">
+  <defs>
+    <style>
+      .text-title { font-family: 'Oswald', sans-serif; font-weight: bold; fill: #F5F5F5; }
+      .text-lime { fill: #A3E635; }
+      .text-muted { fill: #6A6E6A; }
+      .bug-box { stroke: #FF4444; stroke-width: 2; stroke-dasharray: 4 2; fill: rgba(255, 68, 68, 0.15); }
+      .bug-label { fill: #FF6666; font-size: 11px; font-weight: bold; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="768" height="30" fill="#1F221F"/>
+  <text x="16" y="20" fill="#A3E635" font-size="12" font-weight="bold">AUDIT: BEFORE // VIEWPORT: 768px (Tablet Portrait)</text>
+
+  <!-- Header -->
+  <rect x="0" y="30" width="768" height="60" fill="#0A0B0A" stroke="#1F221F"/>
+  <rect x="24" y="42" width="36" height="36" fill="#A3E635" rx="2"/>
+  <text x="33" y="66" fill="#0A0B0A" font-size="16" font-weight="900">KC</text>
+  <text x="70" y="60" fill="#F5F5F5" font-size="14" font-weight="bold">KABADIWALA CONNECT</text>
+
+  <!-- Actions on Tablet: Center links still hidden (hidden lg:flex), hamburger active -->
+  <rect x="420" y="46" width="60" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <text x="432" y="64" fill="#6A6E6A" font-size="11">⌘K</text>
+  <rect x="490" y="46" width="32" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="530" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="566" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+  <rect x="602" y="44" width="115" height="32" fill="#A3E635" rx="2"/>
+  <text x="612" y="64" fill="#0A0B0A" font-size="11" font-weight="bold">BOOK PICKUP</text>
+  <rect x="724" y="46" width="28" height="28" fill="#141614" stroke="#1F221F" rx="2"/>
+
+  <!-- Hero Section -->
+  <rect x="0" y="90" width="768" height="420" fill="#0A0B0A"/>
+  <text x="24" y="140" class="text-lime" font-size="12">SIH 2026 // MINISTRY OF MINES &amp; JNARDDC</text>
+  <text x="24" y="200" class="text-title" font-size="64" letter-spacing="-1">FROM KABADI.</text>
+  <text x="24" y="260" class="text-title" font-size="64" fill="none" stroke="#F5F5F5" stroke-width="2">TO CIRCULAR.</text>
+  <text x="24" y="320" class="text-title text-lime" font-size="64">TRACEABLE.</text>
+  <text x="24" y="360" fill="#C8C8C8" font-size="14">Bringing the Informal Collector into the Formal Recycling Chain.</text>
+  <rect x="18" y="150" width="732" height="180" class="bug-box"/>
+  <text x="24" y="390" class="bug-label">BUG: Hero is single-column stacked rather than 2-column text/visual split</text>
+
+  <!-- Missing sections: No How It Works 3-step section, No FAQ accordion -->
+  <rect x="24" y="530" width="720" height="80" class="bug-box"/>
+  <text x="36" y="575" class="bug-label">BUG: Missing Phase 3 structural sections: 'How It Works (3 equal cards)', 'FAQ Accordion'</text>
+</svg>
